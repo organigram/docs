@@ -1,0 +1,19 @@
+import Grid from '@mui/material/Grid'
+import { Organigram } from '@organigram/js'
+import Minimap from '../../../../stack/components/Organigram/Minimap'
+
+export const metadata = { title: '🏡 Organizations', order: 3.2 }
+
+# Organizations 🏡
+
+An organization is a collection of organigrams. Each organigram can have different visibility levels.
+
+Look for instance this template of a for-profit company:
+
+<Grid sx={{ height: '700px' }}>
+  <Minimap organigram={new Organigram('forProfit')} />
+</Grid>
+
+Many organigrams can be combined to become very large maps of who has the power to officially take any given decision within very large organization. You can see an example of that on our [Create a consortium](/docs/guides/consortium) Guide.
+
+And because all the rules of decision and the general structure of the organigram is enforced on a cryptographic network, it becomes impossible to fake or change the dates, time, contents or context of any official action without everyone noticing.

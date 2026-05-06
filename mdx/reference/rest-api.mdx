@@ -1,0 +1,271 @@
+export const metadata = { title: "🌐 Web API", order: 4.35 }
+
+# Web API 🌐
+
+The official reference for the API routes used by Organigram.ai. Unlike the package references, these endpoints document the application layer itself, including RPC-style JSON routes, uploads, authentication callbacks, webhooks, and server-side integrations.
+
+## Conventions
+
+- Most application mutations are sent as `POST` requests with a JSON body containing an `action` field.
+- Upload and webhook routes disable the default Next.js body parser when they need raw bodies or `multipart/form-data`.
+- Authentication varies by route: some endpoints are public, while others require a NextAuth session, a walletless token, or a provider-specific secret.
+
+## Route summary
+
+### Action routes
+
+- [/api](/docs/reference/rest-api#route_api): Legacy RPC-style entrypoint that delegates an `action` payload to the concrete application route.
+- [/api/account](/docs/reference/rest-api#route_apiaccount): Account, profile, and privacy operations for the current signed-in user.
+- [/api/workspace](/docs/reference/rest-api#route_apiworkspace): Workspace reads and mutations, including membership and ownership changes.
+- [/api/organigram](/docs/reference/rest-api#route_apiorganigram): Organigram, organ, procedure, entry, and asset mutations for authenticated users.
+- [/api/organization](/docs/reference/rest-api#route_apiorganization): Organization lookups plus authenticated organization mutations.
+- [/api/subscription](/docs/reference/rest-api#route_apisubscription): Subscription updates and invoice lookups for the current user or sponsor.
+
+### Uploads and generated assets
+
+- [/api/ipfs/\[...workspaceId\]](/docs/reference/rest-api#route_apiipfsworkspaceId): Uploads a workspace file to Web3.Storage and tracks billable storage usage.
+- [/api/certifiedProof/\[...workspaceId\]](/docs/reference/rest-api#route_apicertifiedProofworkspaceId): Generates, signs, stores, and bills a certified proof PDF for a workspace transaction.
+- [/api/nlp/\[...workspaceId\]](/docs/reference/rest-api#route_apinlpworkspaceId): Builds an organigram draft from plain text or uploaded documents.
+
+### Authentication, billing, and integrations
+
+- [/api/auth/\[...nextauth\]](/docs/reference/rest-api#route_apiauthnextauth): NextAuth endpoint used for SIWE sign-in, session resolution, and auth callbacks.
+- [/api/gasStation](/docs/reference/rest-api#route_apigasStation): Relays a transaction through the gas station after verifying signer and workspace access.
+
+
+## Action routes
+
+### ++dnt++/api
+
+Legacy RPC-style entrypoint that delegates an `action` payload to the concrete application route.
+
+| Field | Value |
+| --- | --- |
+| Methods | `POST` |
+| Auth | Depends on the delegated action |
+| Body | JSON payload with an `action` field |
+| Notes | Prefer the concrete route once the target endpoint is known. |
+
+
+
+### ++dnt++/api/account
+
+Account, profile, and privacy operations for the current signed-in user.
+
+| Field | Value |
+| --- | --- |
+| Methods | `POST` |
+| Auth | Session required |
+| Body | JSON payload with an `action` field |
+| Notes | Also reachable through `/api` with the same `action` payload. |
+
+
+**Actions**
+
+| Action | Auth | Description |
+| --- | --- | --- |
+| `getProfile` | Session required | Loads the profile attached to the current user. |
+| `createProfile` | Session required | Creates a profile for the current user. |
+| `updateUser` | Session required | Updates the user record with the provided data. |
+| `deleteUser` | Session required | Deletes a user account on behalf of the current user. |
+| `updateProfile` | Session required | Updates profile fields for the current user. |
+| `updatePrivacySettings` | Session required | Persists the current user privacy settings. |
+| `getUserContacts` | Session required | Returns the contacts linked to the current user. |
+
+
+### ++dnt++/api/workspace
+
+Workspace reads and mutations, including membership and ownership changes.
+
+| Field | Value |
+| --- | --- |
+| Methods | `POST` |
+| Auth | Mixed |
+| Body | JSON payload with an `action` field |
+| Notes | Also reachable through `/api` with the same `action` payload. |
+
+
+**Actions**
+
+| Action | Auth | Description |
+| --- | --- | --- |
+| `getWorkspace` | Public or session-aware access | Loads a workspace by id when the caller is allowed to see it. |
+| `getWorkspaceBySlug` | Public or session-aware access | Loads a workspace by slug when the caller is allowed to see it. |
+| `createWorkspace` | Session required | Creates a new personal or organization workspace for the current user. |
+| `updateWorkspace` | Session required | Updates workspace details. |
+| `deleteWorkspace` | Session required | Deletes a workspace. |
+| `removeUserFromWorkspace` | Session required | Removes a member from a workspace. |
+| `editUserRoleInWorkspace` | Session required | Changes a member role inside a workspace. |
+| `transferWorkspaceOwnership` | Session required | Transfers workspace ownership to an organization. |
+
+
+### ++dnt++/api/organigram
+
+Organigram, organ, procedure, entry, and asset mutations for authenticated users.
+
+| Field | Value |
+| --- | --- |
+| Methods | `POST` |
+| Auth | Session required |
+| Body | JSON payload with an `action` field |
+| Notes | Also reachable through `/api` with the same `action` payload. |
+
+
+**Actions**
+
+| Action | Auth | Description |
+| --- | --- | --- |
+| `createOrganigramFromTemplate` | Session required | Creates an organigram from template data and options. |
+| `getOrganigram` | Session required | Fetches an organigram by id. |
+| `updateOrganigram` | Session required | Persists organigram changes. |
+| `mergeOrganigramJson` | Session required | Merges imported organigram JSON into an existing organigram. |
+| `deleteOrganigram` | Session required | Deletes an organigram. |
+| `saveDeployedOrganigram` | Session required | Stores deployment results for an organigram. |
+| `createOrgan` | Session required | Creates an organ. |
+| `updateOrgan` | Session required | Updates an organ. |
+| `deleteOrgan` | Session required | Deletes an organ. |
+| `createProcedure` | Session required | Creates a procedure and its target permissions. |
+| `updateProcedure` | Session required | Updates a procedure and its target permissions. |
+| `deleteProcedure` | Session required | Deletes a procedure. |
+| `getPrivateReference` | Session required | Resolves a private entry reference for the authenticated user. |
+| `deleteEntry` | Session required | Deletes an entry. |
+| `createAsset` | Session required | Creates an asset. |
+| `updateAsset` | Session required | Updates an asset. |
+| `getAsset` | Session required | Fetches an asset by address. |
+| `addAssetToOrganigram` | Session required | Links an asset to an organigram. |
+| `deleteAsset` | Session required | Removes an asset from an organigram. |
+
+
+### ++dnt++/api/organization
+
+Organization lookups plus authenticated organization mutations.
+
+| Field | Value |
+| --- | --- |
+| Methods | `POST` |
+| Auth | Mixed |
+| Body | JSON payload with an `action` field |
+| Notes | Also reachable through `/api` with the same `action` payload. |
+
+
+**Actions**
+
+| Action | Auth | Description |
+| --- | --- | --- |
+| `getPublicOrganizations` | Public | Lists public organizations. |
+| `getInseeInfoBySiren` | Public | Looks up INSEE company information from a SIREN. |
+| `createOrganization` | Session required | Creates an organization for the current user. |
+| `updateOrganization` | Session required | Updates organization metadata. |
+| `getOrganizationById` | Session required | Fetches an organization by id. |
+| `getUserOrganizations` | Session required | Lists the organizations linked to the current user. |
+
+
+### ++dnt++/api/subscription
+
+Subscription updates and invoice lookups for the current user or sponsor.
+
+| Field | Value |
+| --- | --- |
+| Methods | `POST` |
+| Auth | Session required |
+| Body | JSON payload with an `action` field |
+| Notes | Also reachable through `/api` with the same `action` payload. |
+
+
+**Actions**
+
+| Action | Auth | Description |
+| --- | --- | --- |
+| `updateSubscription` | Session required | Updates subscription settings. |
+| `getIncomingInvoice` | Session required | Returns the next Stripe invoice for the provided customer id. |
+| `getPastInvoices` | Session required | Lists the past invoices for the current user Stripe customer. |
+| `deleteSubscription` | Session required | Cancels or deletes a sponsor subscription for the current user. |
+
+
+
+## Uploads and generated assets
+
+### ++dnt++/api/ipfs/[...workspaceId]
+
+Uploads a workspace file to Web3.Storage and tracks billable storage usage.
+
+| Field | Value |
+| --- | --- |
+| Methods | `POST` |
+| Auth | Session with workspace access required |
+| Body | `multipart/form-data` |
+| Notes | The default Next.js body parser is disabled for this route. |
+
+
+**Operations**
+
+| Operation | Trigger | Auth | Description |
+| --- | --- | --- | --- |
+| `upload` |   | Session with workspace access required | Uploads the first file from the multipart payload and returns its filename and CID. |
+
+
+### ++dnt++/api/certifiedProof/[...workspaceId]
+
+Generates, signs, stores, and bills a certified proof PDF for a workspace transaction.
+
+| Field | Value |
+| --- | --- |
+| Methods | `POST` |
+| Auth | Session with workspace access required |
+| Body | JSON body containing transaction proof data |
+
+
+**Operations**
+
+| Operation | Trigger | Auth | Description |
+| --- | --- | --- | --- |
+| `create certified proof` |   | Session with workspace access required | Creates a certified proof, uploads the signed PDF, and records the related usage. |
+
+
+### ++dnt++/api/nlp/[...workspaceId]
+
+Builds an organigram draft from plain text or uploaded documents.
+
+| Field | Value |
+| --- | --- |
+| Methods | `POST` |
+| Auth | Session with workspace access required |
+| Body | `application/json` with a `text` field or `multipart/form-data` with text fields and files |
+| Notes | The default Next.js body parser is disabled for this route. |
+
+
+**Operations**
+
+| Operation | Trigger | Auth | Description |
+| --- | --- | --- | --- |
+| `infer organigram` |   | Session with workspace access required | Extracts usable text from the request and sends it to the inference service. |
+
+
+
+## Authentication, billing, and integrations
+
+### ++dnt++/api/auth/[...nextauth]
+
+NextAuth endpoint used for SIWE sign-in, session resolution, and auth callbacks.
+
+| Field | Value |
+| --- | --- |
+| Methods | `GET`, `POST` |
+| Auth | Managed by NextAuth |
+| Body | Provider-specific query parameters or form data |
+| Notes | Backed by the SIWE credentials provider in `lib/auth/server.ts`. |
+
+
+
+### ++dnt++/api/gasStation
+
+Relays a transaction through the gas station after verifying signer and workspace access.
+
+| Field | Value |
+| --- | --- |
+| Methods | `POST` |
+| Auth | Session required |
+| Body | JSON body with `txRequest`, `chainId`, and `workspaceId` |
+
+
+

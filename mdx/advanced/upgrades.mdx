@@ -1,0 +1,57 @@
+import { Organigram } from '@organigram/js'
+import Grid from '@mui/material/Grid'
+import Minimap from '../../../../stack/components/Organigram/Minimap'
+
+export const metadata = { title: '🔁 Upgradeability', order: 3.1 }
+
+# Upgradeability 🔁
+
+From the ground up, the Organigram Protocol was designed to be fully upgradeable.
+This means that any organization can be upgraded entirely without any downtime or loss of functionality.
+This is achieved by making some procedures capable of adding or removing other procedures from a given organ, to give them "constitutional" powers.
+
+## Upgradeability in practice
+
+This model makes it possible to have upgrades that have been approved by a due-process established beforehand. In legal companies, this is usually done in the Articles of incorporation, where the process for amending the articles is described.
+In this case, a modification could target any article, which means potentially any aspect of the company rules.
+
+In the Organigram Protocol, this is done by making a single procedure the permissions to add or remove other procedures from all the organs of an organigram.
+
+This special procedure serves as a "constitutional" procedure (usually called "System upgrade", "Amend Articles of incorporation" or the like), that can be used to modify any aspect of the system.
+
+For example, the organigram below has a System Upgrade proedure that can replace the Nomination procedure by any other procedure if needed, or change the vote parameters of the Majority Vote.
+
+To do the latter, a new procedure with the new vote parameters is deployed, and its adress then replaces the old one in the President organ.
+
+So not only we can change any aspect of the organigram, but we can do it following any procedure that we want. Let's see the organigram below to see more complex examples of constitutional upgradeability:
+
+<Grid sx={{ height: '400px' }}>
+  <Minimap organigram={new Organigram('none')} />
+</Grid>
+
+In this organigram, which is a template for new projects in the app, the "Update permissions" procedure can replace "Elect executive team" by any procedure with new parameters. In practice, this means that the organization can change its decision making process and overall structure at any time by following the rules of the Update permissions procedure.
+
+## Extensibility with typed data signatures and external execution
+
+The Organigram Protocol also allows for extensibility through the use of `EIP-712` typed data signatures, and through the organs' ability to execute calls against external contracts.
+
+### Upgrading an organ's external execution surface
+
+An organ can act as a controlled execution account for third-party protocols. In the current contracts this happens through `executeWhitelisted(...)`, which lets the organ forward a call to another contract once that call has been approved by governance.
+
+The scope of that power is defined by whitelist policies. A policy is attached to a `target + selector` pair and can restrict individual arguments with exact-value, range, self-address, or whitelist-based constraints. This makes the external execution surface itself upgradeable:
+- a constitutional process can authorize a brand new integration;
+- it can later tighten the allowed parameters;
+- it can revoke an integration entirely by removing its policy.
+
+So the organization is not forced into an all-or-nothing arbitrary execution. It can progressively open carefully bounded capabilities on top of external protocols while keeping them reviewable and reversible. Governance can also separate who is allowed to manage whitelist policies from who is allowed to use approved call paths.
+
+### Upgrading authorization models with EIP-712
+
+Upgradeability also applies to how decisions and permissions are expressed. The protocol supports typed-data authorization in two complementary ways.
+
+First, organs and procedures can trust an `ERC-2771` forwarder. A participant signs structured `EIP-712` data, the forwarder verifies it through its `execute(...)` function, and the relayed call reaches the organigram with the original signer preserved.
+
+Second, core procedures expose native signature-based entrypoints such as `proposeBySig`, `blockProposalBySig`, `presentProposalBySig`, `applyProposalBySig`, `voteBySig`, and `nominateBySig`.
+
+Taken together, this means an upgrade can change not only what the organization is allowed to do, but also how that authorization is collected. See the [technical reference](/docs/reference/js#++dnt++Procedure.proposeBySig) for more details on how to implement these mechanics in your organigram.

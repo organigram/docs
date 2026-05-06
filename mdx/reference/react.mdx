@@ -1,0 +1,881 @@
+export const metadata = { title: "⚛️ React", order: 4.3 }
+
+# React reference ⚛️
+
+The official React documentation for the hooks, components, theme helpers, and utilities exposed by the Organigram.ai stack.
+
+## @organigram/react
+
+### Install
+
+```bash
+pnpm add @organigram/react
+```
+
+### Quick start
+
+```tsx
+import { Diagram, useOrganigramClient } from '@organigram/react'
+```
+
+### Exports
+
+### Components
+
+- [AssetNode](/docs/reference/react#component_AssetNode)
+- [DecidersActions](/docs/reference/react#component_DecidersActions)
+- [defaultNodeTypes](/docs/reference/react#constant_defaultNodeTypes)
+- [Diagram](/docs/reference/react#component_Diagram)
+- [DiagramNode](/docs/reference/react#component_DiagramNode)
+- [ElectionComponent](/docs/reference/react#component_ElectionComponent)
+- [EntryCount](/docs/reference/react#component_EntryCount)
+- [OrganNode](/docs/reference/react#component_OrganNode)
+- [ProcedureIcon](/docs/reference/react#component_ProcedureIcon)
+- [ProcedureNode](/docs/reference/react#component_ProcedureNode)
+- [Summit](/docs/reference/react#component_Summit)
+- [TimeLeft](/docs/reference/react#component_TimeLeft)
+- [Token](/docs/reference/react#component_Token)
+- [VetoProposal](/docs/reference/react#component_VetoProposal)
+- [VoteEnded](/docs/reference/react#component_VoteEnded)
+
+### Hooks
+
+- [useLayers](/docs/reference/react#hook_useLayers)
+- [useModal](/docs/reference/react#hook_useModal)
+- [useOrganigramClient](/docs/reference/react#hook_useOrganigramClient)
+- [useSetModal](/docs/reference/react#hook_useSetModal)
+
+### State
+
+- [layersState](/docs/reference/react#state_layersState)
+- [modalState](/docs/reference/react#state_modalState)
+- [organigramIdState](/docs/reference/react#state_organigramIdState)
+- [useModalState](/docs/reference/react#state_useModalState)
+
+### Theme
+
+- [breakpoints](/docs/reference/react#constant_breakpoints)
+- [components](/docs/reference/react#export_components)
+- [mobileNavHeight](/docs/reference/react#constant_mobileNavHeight)
+- [navHeight](/docs/reference/react#constant_navHeight)
+- [palette](/docs/reference/react#constant_palette)
+- [theme](/docs/reference/react#constant_theme)
+- [typography](/docs/reference/react#constant_typography)
+- [workspaceNavHeight](/docs/reference/react#constant_workspaceNavHeight)
+
+### Utilities
+
+- [filterProposals](/docs/reference/react#constant_filterProposals)
+- [isUserInSourceOrgan](/docs/reference/react#constant_isUserInSourceOrgan)
+- [secondsToHms](/docs/reference/react#constant_secondsToHms)
+
+### Types
+
+- [AssetNodeProps](/docs/reference/react#interface_AssetNodeProps)
+- [CreateProcedure](/docs/reference/react#type_CreateProcedure)
+- [DecidersActionsProps](/docs/reference/react#interface_DecidersActionsProps)
+- [DeployOrganInput](/docs/reference/react#type_DeployOrganInput)
+- [DiagramProps](/docs/reference/react#interface_DiagramProps)
+- [ElectionComponentProps](/docs/reference/react#interface_ElectionComponentProps)
+- [Layer](/docs/reference/react#interface_Layer)
+- [ModalType](/docs/reference/react#type_ModalType)
+- [OrganNodeProps](/docs/reference/react#interface_OrganNodeProps)
+- [ProcedureNodeProps](/docs/reference/react#interface_ProcedureNodeProps)
+- [ProposalFilter](/docs/reference/react#type_ProposalFilter)
+- [SetModal](/docs/reference/react#type_SetModal)
+
+### Namespaces
+
+- [procedures](/docs/reference/react#export_procedures)
+
+
+## Components
+
+### component ++dnt++AssetNode
+
+Default React Flow node used to display one asset inside a diagram.
+
+```tsx
+export const AssetNode: React.FC<NodeProps & AssetNodeProps>
+```
+
+
+
+### component ++dnt++DecidersActions
+
+```tsx
+export const DecidersActions: React.FC<ElectionComponentProps>
+```
+
+
+
+### constant ++dnt++defaultNodeTypes
+
+Default React Flow node registry used by the diagram component.
+
+```tsx
+export const defaultNodeTypes = {
+  procedure: ProcedureNode as React.FC<NodeProps<{ procedure: Procedure }>>,
+  organ: OrganNode as React.FC<NodeProps<{ organ: Organ }>>,
+  asset: AssetNode as React.FC<NodeProps<{ asset: Asset }>>
+}
+```
+
+
+
+### component ++dnt++Diagram
+
+Render an organigram as a React Flow diagram with automatic layout.
+
+```tsx
+export const Diagram: React.FC<DiagramProps>
+```
+
+**Parameters**
+
+| Name | Description |
+| --- | --- |
+| `props` | Diagram configuration, callbacks, and the serialized organigram to render. |
+
+
+### component ++dnt++DiagramNode
+
+Shared visual shell used by organ, procedure, and asset nodes.
+
+```tsx
+export const DiagramNode: React.FC<{
+  onClick?: () => void
+  label?: string
+  id?: string
+  icon: React.ReactNode
+}>
+```
+
+
+
+### component ++dnt++ElectionComponent
+
+```tsx
+export const ElectionComponent: React.FC<ElectionComponentProps>
+```
+
+
+
+### component ++dnt++EntryCount
+
+Small helper that renders the current entry count for an organ.
+
+```tsx
+export const EntryCount: React.FC<{
+  organ: OrganJson
+}>
+```
+
+
+
+### component ++dnt++OrganNode
+
+Default React Flow node used to display one organ inside a diagram.
+
+```tsx
+export const OrganNode: React.FC<Partial<NodeProps> & OrganNodeProps>
+```
+
+
+
+### component ++dnt++ProcedureIcon
+
+```tsx
+export const Procedure: (props: React.SVGProps<SVGSVGElement>) => JSX.Element
+```
+
+
+
+### component ++dnt++ProcedureNode
+
+Default React Flow node used to display one procedure inside a diagram.
+
+```tsx
+export const ProcedureNode: React.FC<
+  Partial<
+    NodeProps<{
+      procedure: ProcedureJson
+      onClick?: (procedure: ProcedureJson) => void
+      organigram?: OrganigramJson
+    }>
+  > &
+    ProcedureNodeProps
+>
+```
+
+
+
+### component ++dnt++Summit
+
+```tsx
+export const Summit: (props: React.SVGProps<SVGSVGElement>) => JSX.Element
+```
+
+
+
+### component ++dnt++TimeLeft
+
+```tsx
+export const TimeLeft: ({ election, procedure }: {    election: Election | undefined;    procedure: ERC20VoteProcedure | VoteProcedure;}) => JSX.Element | null
+```
+
+
+
+### component ++dnt++Token
+
+```tsx
+export const Token: (props: React.SVGProps<SVGSVGElement>) => JSX.Element
+```
+
+
+
+### component ++dnt++VetoProposal
+
+```tsx
+export const VetoProposal: React.FC<ElectionComponentProps>
+```
+
+
+
+### component ++dnt++VoteEnded
+
+```tsx
+export const VoteEnded: React.FC<ElectionComponentProps>
+```
+
+
+
+
+## Hooks
+
+### hook ++dnt++useLayers
+
+Read and update the current diagram layer configuration.
+
+```tsx
+export const useLayers: () => [Layer[], SetterOrUpdater<Layer[]>]
+```
+
+
+
+### hook ++dnt++useModal
+
+Read the current modal content.
+
+```tsx
+export const useModal: () => ModalType
+```
+
+
+
+### hook ++dnt++useOrganigramClient
+
+Create an \{@link OrganigramClient\} tied to the provided viem clients.
+
+The hook returns `null` until a public client is available.
+
+```tsx
+export const useOrganigramClient: (publicClient?: PublicClient | null, walletClient?: WalletClient | null) => OrganigramClient | null
+```
+
+**Parameters**
+
+| Name | Description |
+| --- | --- |
+| `publicClient` | Read-only viem client used for chain queries. |
+| `walletClient` | Optional wallet client used for write operations. |
+
+
+### hook ++dnt++useSetModal
+
+Update the current modal content.
+
+```tsx
+export const useSetModal: () => SetterOrUpdater<ModalType>
+```
+
+
+
+
+## State
+
+### state ++dnt++layersState
+
+Global recoil state storing the active diagram layers.
+
+```tsx
+export const layersState: RecoilState<Layer[]>
+```
+
+
+
+### state ++dnt++modalState
+
+Global recoil state storing the currently opened modal.
+
+```tsx
+export const modalState: RecoilState<JSX.Element | null>
+```
+
+
+
+### state ++dnt++organigramIdState
+
+Global recoil state storing the active organigram identifier.
+
+```tsx
+export const organigramIdState: RecoilState<string>
+```
+
+
+
+### state ++dnt++useModalState
+
+Read and update the current modal content.
+
+```tsx
+export const useModalState: () => [
+  ModalType,
+  SetterOrUpdater<ModalType>
+]
+```
+
+
+
+
+## Theme
+
+### constant ++dnt++breakpoints
+
+```tsx
+export const breakpoints = {
+  values: {
+    xs: 0,
+    sm: 600,
+    md: 900,
+    lg: 1200,
+    xl: 1536
+  }
+}
+```
+
+
+
+### export ++dnt++components
+
+```tsx
+export { MuiAccordion } from './MuiAccordion'
+export { MuiAccordionSummary } from './MuiAccordionSummary'
+export { MuiAutocomplete } from './MuiAutocomplete'
+export { MuiButton } from './MuiButton'
+export { MuiCard } from './MuiCard'
+export { MuiContainer } from './MuiContainer'
+export { MuiCssBaseline } from './MuiCssBaseline'
+export { MuiGrid } from './MuiGrid'
+export { MuiMenu } from './MuiMenu'
+export { MuiMenuItem } from './MuiMenuItem'
+export { MuiModal } from './MuiModal'
+export { MuiOutlinedInput } from './MuiOutlinedInput'
+export { MuiSelect } from './MuiSelect'
+export { MuiSpeedDial } from './MuiSpeedDial'
+export { MuiSpeedDialAction } from './MuiSpeedDialAction'
+export { MuiTab } from './MuiTab'
+export { MuiTextField } from './MuiTextField'
+export { MuiToggleButton } from './MuiToggleButton'
+export { MuiTooltip } from './MuiTooltip'
+
+```
+
+
+
+### constant ++dnt++mobileNavHeight
+
+Mobile navigation height used by the hosted Organigram UI.
+
+```tsx
+export const mobileNavHeight = 50
+```
+
+
+
+### constant ++dnt++navHeight
+
+Desktop navigation height used by the hosted Organigram UI.
+
+```tsx
+export const navHeight = 100
+```
+
+
+
+### constant ++dnt++palette
+
+```tsx
+export const palette = {
+  primary: {
+    main: '#3E85DE',
+    light: '#659DE5',
+    light2: '#8BB6EB',
+    light3: '#B2CEF2',
+    light4: '#D8E7F8'
+  },
+  secondary: {
+    main: '#F58FD3',
+    light: '#F7A5DC',
+    light2: '#F9BCE5',
+    light3: '#FBD2ED'
+  },
+  error: {
+    main: '#FF5555'
+  },
+  white: '#fff',
+  grey: {
+    main: '#5A5673',
+    light: '#AAA7BD',
+    light2: '#D2D5DD',
+    light3: '#DEE2EC',
+    light4: '#E4E8F2',
+    light5: '#66637C'
+  },
+  violet: {
+    main: '#B9ACF6',
+    light: '#C7BDF8',
+    light2: '#D5CDFA',
+    light3: '#E3DEFB',
+    light4: '#F1EEFD'
+  },
+  text: {
+    primary: '#0C052F',
+    disabled: '#aaa'
+  },
+  background: {
+    default: '#F7F8FB',
+    paper: '#F7F8FB',
+    secondary: '#0C052F'
+  },
+  brickRed: {
+    main: '#DB585F'
+  },
+  gradient: {
+    main: 'radial-gradient(101.53% 183.39% at 100.00% -0.00%, #FDE9F6 0%, #D8E7F8 62.85%, #F7F8FB 100%), #F1EEFD;',
+    secondary:
+      'background: radial-gradient(154.19% 141.42% at 100.00% -0.00%, #F7F8FB 0%, #D8E7F8 48.23%, #FBD2ED 100%, #FBD2ED 100%), radial-gradient(50% 50.00% at 50% 50.00%, #F7F8FB 0%, rgba(247, 248, 251, 0.00) 100%), #F7F8FB;',
+    red: 'radial-gradient(81.36% 141.42% at 100.00% -0.00%, #F7F8FB 0%, #FDE9F6 52.40%, #FBD2ED 100%), radial-gradient(50% 50.00% at 50% 50.00%, #F7F8FB 0%, rgba(247, 248, 251, 0.00) 100%), #F7F8FB;',
+    blue: 'radial-gradient(94.27% 141.42% at 100.00% -0.00%, #F7F8FB 0%, #D8E7F8 52.40%, #B2CEF2 100%), radial-gradient(50% 50.00% at 50% 50.00%, #F7F8FB 0%, rgba(247, 248, 251, 0.00) 100%), #F7F8FB;',
+    violet:
+      'radial-gradient(70.86% 141.42% at 100.00% -0.00%, #F7F8FB 0%, #F1EEFD 52.40%, #E3DEFB 100%), radial-gradient(50% 50.00% at 50% 50.00%, #F7F8FB 0%, rgba(247, 248, 251, 0.00) 100%), #F7F8FB;'
+  }
+}
+```
+
+
+
+### constant ++dnt++theme
+
+Default MUI theme primitives shared by Organigram React components.
+
+```tsx
+export const theme = {
+  palette,
+  components,
+  shape: {
+    borderRadius: 16
+  },
+  typography,
+  breakpoints
+}
+```
+
+
+
+### constant ++dnt++typography
+
+```tsx
+export const typography = {
+  color: palette.text.primary,
+  fontFamily: 'RobotoRegular',
+  lineHeight: '132%',
+  h1: {
+    fontFamily: 'Aspekta500',
+    lineHeight: '100%',
+    fontSize: '60px',
+    letterSpacing: '-1.2px'
+    // [mediaQueries.smUp]: {
+    //   fontSize: '210px'
+    // }
+  },
+  h2: {
+    fontSize: '40px',
+    lineHeight: '110%',
+    fontFamily: 'Aspekta400',
+    letterSpacing: '-0.4px'
+  },
+  h3: {
+    fontFamily: 'Aspekta550',
+    textTransform: 'uppercase',
+    letterSpacing: '1px',
+    lineHeight: '130%'
+  },
+  subtitle1: {
+    fontSize: '13px',
+    fontWeight: 600,
+    lineHeight: '25px',
+    letterSpacing: '0.08em',
+    textTransform: 'uppercase',
+    color: palette.primary.main
+  },
+  button: {
+    textTransform: 'none',
+    fontSize: '13px'
+  },
+  body1: {
+    fontSize: '13px'
+  }
+}
+```
+
+
+
+### constant ++dnt++workspaceNavHeight
+
+Workspace navigation height used inside authenticated screens.
+
+```tsx
+export const workspaceNavHeight = 60
+```
+
+
+
+
+## Utilities
+
+### constant ++dnt++filterProposals
+
+Filter hydrated proposals according to their workflow status.
+
+```tsx
+export const filterProposals: (
+  filter: ProposalFilter,
+  proposals: ProcedureProposal[]
+) => ProcedureProposal[]
+```
+
+**Parameters**
+
+| Name | Description |
+| --- | --- |
+| `filter` | Filter label selected by the UI. |
+| `proposals` | Proposals to filter. |
+
+
+### constant ++dnt++isUserInSourceOrgan
+
+Check whether the current user belongs to the organ assigned to one procedure role.
+
+```tsx
+export const isUserInSourceOrgan: (
+  roleType: ProcedureRoleTypeName,
+  organs: OrganJson[],
+  deployedProcedure?: ProcedureJson,
+  userAddress?: string
+) => boolean
+```
+
+**Parameters**
+
+| Name | Description |
+| --- | --- |
+| `roleType` | Procedure role to inspect. |
+| `organs` | Hydrated organs available in the current organigram. |
+| `deployedProcedure` | Procedure whose role organ should be checked. |
+| `userAddress` | Connected user address. |
+
+
+### constant ++dnt++secondsToHms
+
+Convert a duration in seconds into a human-readable string.
+
+```tsx
+export const secondsToHms: (d: number) => string
+```
+
+
+
+
+## Types
+
+### interface ++dnt++AssetNodeProps
+
+Props accepted by the default asset node renderer.
+
+```tsx
+export interface AssetNodeProps {
+  Token: React.FC<{ style: any }>
+  data: { asset: Asset; onClick?: (asset: Asset) => void }
+  hideHandles?: boolean
+}
+```
+
+**Members**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| `Token` | `React.FC<{ style: any }>` |   |
+| `data` | `{ asset: Asset; onClick?: (asset: Asset) => void }` |   |
+| `hideHandles` | `boolean` |   |
+
+
+### type ++dnt++CreateProcedure
+
+Helper signature used by flows that deploy one procedure from the UI.
+
+```tsx
+export type CreateProcedure = (
+  type: string,
+  options: TransactionOptions,
+  metadataCid: string,
+  proposers: string,
+  moderators: string,
+  deciders: string,
+  withModeration: boolean,
+  forwarder: string,
+  salt: string,
+  ...args: unknown[]
+) => Promise<Procedure & { type: ProcedureType }>
+```
+
+
+
+### interface ++dnt++DecidersActionsProps
+
+```tsx
+export interface DecidersActionsProps {
+  procedure: ERC20VoteProcedure | VoteProcedure
+  accountInOrgans: AccountInOrgans
+  proposal: ProcedureProposal
+  wrapTransaction: () => void
+}
+```
+
+**Members**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| `procedure` | `ERC20VoteProcedure \| VoteProcedure` |   |
+| `accountInOrgans` | `AccountInOrgans` |   |
+| `proposal` | `ProcedureProposal` |   |
+| `wrapTransaction` | `() => void` |   |
+
+
+### type ++dnt++DeployOrganInput
+
+Helper signature used by flows that deploy one organ from the UI.
+
+```tsx
+export type DeployOrganInput = (
+  metadataCid: string,
+  salt: string,
+  index?: number
+) => Promise<Organ>
+```
+
+
+
+### interface ++dnt++DiagramProps
+
+Props accepted by the default `Diagram` component.
+
+```tsx
+export interface DiagramProps {
+  nodeTypes?: NodeTypes
+  direction?: string
+  organigram: OrganigramJson | null
+  style?: Record<string, unknown>
+  controls?: boolean
+  options?: ReactFlowProps
+  isTabletOrAbove?: boolean
+  onClickOrgan?: (organ: OrganJson) => void
+  onClickAsset?: (asset: AssetJson) => void
+  onClickProcedure?: (procedure: ProcedureJson) => void
+  onOrganDeployed?: (organ: OrganJson) => void
+  onAssetDeployed?: (asset: AssetJson) => void
+  onProcedureDeployed?: (procedure: ProcedureJson) => void
+}
+```
+
+**Members**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| `nodeTypes` | `NodeTypes` |   |
+| `direction` | `string` |   |
+| `organigram` | `OrganigramJson \| null` |   |
+| `style` | `Record<string, unknown>` |   |
+| `controls` | `boolean` |   |
+| `options` | `ReactFlowProps` |   |
+| `isTabletOrAbove` | `boolean` |   |
+| `onClickOrgan` | `(organ: OrganJson) => void` |   |
+| `onClickAsset` | `(asset: AssetJson) => void` |   |
+| `onClickProcedure` | `(procedure: ProcedureJson) => void` |   |
+| `onOrganDeployed` | `(organ: OrganJson) => void` |   |
+| `onAssetDeployed` | `(asset: AssetJson) => void` |   |
+| `onProcedureDeployed` | `(procedure: ProcedureJson) => void` |   |
+
+
+### interface ++dnt++ElectionComponentProps
+
+```tsx
+export interface ElectionComponentProps {
+  procedure: ERC20VoteProcedure | VoteProcedure
+  proposal: ProcedureProposal
+  accountInOrgans: {
+    proposers?: boolean
+    moderators?: boolean
+    deciders?: boolean
+  }
+  wrapTransaction: TransactionOptions['onTransaction']
+  t: (key: string) => string
+  publicClient?: PublicClient | null
+  walletClient?: WalletClient | null
+}
+```
+
+**Members**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| `procedure` | `ERC20VoteProcedure \| VoteProcedure` |   |
+| `proposal` | `ProcedureProposal` |   |
+| `accountInOrgans` | `{ proposers?: boolean; moderators?: boolean; deciders?: boolean }` |   |
+| `wrapTransaction` | `TransactionOptions['onTransaction']` |   |
+| `t` | `(key: string) => string` |   |
+| `publicClient` | `PublicClient \| null` |   |
+| `walletClient` | `WalletClient \| null` |   |
+
+
+### interface ++dnt++Layer
+
+Visual layer configuration applied to the diagram.
+
+```tsx
+export interface Layer {
+  name: string
+  organAddresses: string[]
+  procedureIds: string[]
+  showAdminPermissions: boolean
+  showEntriesPermissions: boolean
+  showAssetsPermissions: boolean
+  isPublic: boolean
+  isHidden: boolean
+}
+```
+
+**Members**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| `name` | `string` |   |
+| `organAddresses` | `string[]` |   |
+| `procedureIds` | `string[]` |   |
+| `showAdminPermissions` | `boolean` |   |
+| `showEntriesPermissions` | `boolean` |   |
+| `showAssetsPermissions` | `boolean` |   |
+| `isPublic` | `boolean` |   |
+| `isHidden` | `boolean` |   |
+
+
+### type ++dnt++ModalType
+
+React element currently mounted inside the shared modal slot.
+
+```tsx
+export type ModalType = null | JSX.Element
+```
+
+
+
+### interface ++dnt++OrganNodeProps
+
+Props accepted by the default organ node renderer.
+
+```tsx
+export interface OrganNodeProps {
+  data: {
+    organ: Organ
+    position?: { x: number; y: number }
+    onClick?: () => void
+  }
+  hideHandles?: boolean
+}
+```
+
+**Members**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| `data` | `{ organ: Organ; position?: { x: number; y: number }; onClick?: () => void }` |   |
+| `hideHandles` | `boolean` |   |
+
+
+### interface ++dnt++ProcedureNodeProps
+
+Props accepted by the default procedure node renderer.
+
+```tsx
+export interface ProcedureNodeProps {
+  hideHandles?: boolean
+  organigram?: OrganigramJson
+}
+```
+
+**Members**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| `hideHandles` | `boolean` |   |
+| `organigram` | `OrganigramJson` |   |
+
+
+### type ++dnt++ProposalFilter
+
+Named filters used by proposal list UIs.
+
+```tsx
+export type ProposalFilter = 'current' | 'drafts' | 'passed' | 'blocked' | ''
+```
+
+
+
+### type ++dnt++SetModal
+
+React state setter signature for the shared modal slot.
+
+```tsx
+export type SetModal = Dispatch<SetStateAction<ModalType>>
+```
+
+
+
+
+## Namespaces
+
+### export ++dnt++procedures
+
+```tsx
+import nomination from './nomination'
+import vote from './vote'
+import erc20Vote from './erc20Vote'
+
+const procedures = { nomination, vote, erc20Vote }
+
+export default procedures
+
+```
+
+
+

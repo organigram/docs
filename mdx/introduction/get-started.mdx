@@ -1,0 +1,110 @@
+
+import WalletButton from '../../../../stack/components/Nav/AccountButton'
+import Alert from '@mui/material/Alert'
+import Grid from '@mui/material/Grid'
+import Button from '@mui/material/Button'
+
+import Link from '../../../../stack/components/Link'
+export const metadata = { title: '⬇ Getting started', order: 1.2 }
+
+# Getting started ⬇
+
+## Installation
+
+Organigram's technical stack is composed of 5 layers:
+
+- The [Organigram Protocol](/docs/introduction/get-started#Organigram_Protocol): A suite of [Ethereum smart contracts](/docs/introduction/get-started#Smart_contracts_suite) serving as the backbone of the system;
+- [Organigram JS](/docs/introduction/get-started#Organigram_JS): A [TypeScript library](/docs/reference/js) to interact with the protocol in any JavaScript environment;
+- [Organigram React](/docs/introduction/get-started#Organigram_React): A set of [hooks and components](/docs/reference/react) to build React apps on top of the protocol and JS client;
+- [Organigram Web API](/docs/introduction/get-started#Web_API): A [REST API](/docs/reference/rest-api) serving public data and [hosted services](/docs/advanced/certified);
+- [Organigram.ai](/docs/introduction/get-started#Organigram.ai): A no-code platform using NLP techniques to create and manage organigrams easily from legal documentation;
+
+### Organigram.ai
+
+The easiest way to get started is to use the web application. You can dive right in and unlock your wallet on the top right corner to automatically create an account.
+
+<Grid container my={3} justifyContent='center'>
+  <Grid item>
+    <Link href={'/workspace'} target='_blank'>
+      <Button variant='contained'>Launch app</Button>
+    </Link>
+  </Grid>
+</Grid>
+
+You can also follow our [guide to create a legal organization in under 5 minutes](/docs/guides/for-profit), to have a more complete overview of the platform.
+
+### Organigram Protocol
+
+The [Organigram Protocol](https://github.com/organigram/protocol) is the core of the Organigram stack: a suite of smart contracts implementing the basic building blocks for cryptographic organizations. It is designed to be modular and extensible, allowing developers to build on top of it and create their own custom logic.
+
+To install the [Organigram Protocol NPM Package](https://www.npmjs.com/package/@organigram/protocol):
+
+```bash
+# Using npm
+npm install @organigram/protocol
+# Using pnpm
+pnpm add @organigram/protocol
+```
+
+The main concepts are covered in the [Protocol](/docs/protocol) section, and the complete reference is available in the [contracts section](/docs/reference/contracts) of this documentation.
+
+### Organigram JS
+
+[Organigram JS](https://github.com/organigram/js) is the JavaScript/TypeScript client for the Organigram Protocol, providing tools to interact with the protocol easily and safely from any JavaScript environment, both client-side and server-side. It is used under the hood at [Organigram.ai](https://www.organigram.ai) and is the recommended way to interact with the protocol for most use cases.
+
+To install [Organigram JS NPM Package](https://www.npmjs.com/package/@organigram/js):
+
+```bash
+pnpm add @organigram/js
+```
+
+The complete reference can be found in the [corresponding section](/docs/reference/js) of the documentation.
+
+### Organigram React
+
+[Organigram React](https://github.com/organigram/react) is a set of components and hooks for building web applications on top of the Organigram Protocol. It is used in the [Organigram web application](/workspace) to provide a seamless user experience when creating and managing cryptographic organizations.
+
+To install [Organigram React NPM Package](https://www.npmjs.com/package/@organigram/react):
+
+```bash
+pnpm add @organigram/react
+```
+
+You can refer to the [corresponding section](/docs/reference/react) of the documentation for a complete reference of the available components and hooks, as well as usage examples.
+
+### Web API
+
+[⚡️ Organigram Transactions](/docs/advanced/transactions) facilitate the use of decentralized networks for any non-financial operations.
+
+Organigram Web API can be accessed at:
+
+```bash
+https://organigram.ai/api
+```
+
+See [REST API Reference](/docs/reference/rest-api) for more details.
+
+## Basic Usage
+### Initialization
+
+To initialize Organigram in your app, you need to load a client:
+
+```js init.js
+// from ../../code-examples/initOrganigramClient.ts
+```
+
+### Deploy an organ
+Then, to deploy an organ, you can do:
+
+```js newOrgan.js
+// from ../../code-examples/newOrgan.ts
+```
+
+### Deploy a procedure
+To create a new procedure, it's not much harder:
+
+```js newProcedure.js
+// from ../../code-examples/newProcedure.ts
+```
+
+To know what you can do with these, head to [Protocol ](/docs/protocol) for a general overview, or dive into the [clients API](/docs/reference) for an in-depth exploration of the library.

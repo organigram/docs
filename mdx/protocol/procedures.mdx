@@ -1,0 +1,126 @@
+import Grid from '@mui/material/Grid'
+import Minimap from '../../../../stack/components/Organigram/Minimap'
+
+export const metadata = { title: '🤖 Procedures', order: 2.3 }
+
+export const organigram = {
+  "name": "Blank project",
+  "organs": [
+    {
+      "salt": "board-salt",
+      "address": "board-address",
+      "name": "Board of directors",
+      "entries": [],
+      "permissions": [
+        {
+          "permissionAddress": "update-permissions-address",
+          "permissionValue": 19
+        }
+      ]
+    },
+    {
+      "salt": "executive-team-salt",
+      "address": "executive-team-address",
+      "name": "Executive team",
+      "entries": [],
+      "permissions": [
+        {
+          "permissionAddress": "update-permissions-address",
+          "permissionValue": 19
+        },
+        {
+          "permissionAddress": "elect-executive-team-address",
+          "permissionValue": 12
+        }
+      ]
+    }
+  ],
+  "procedures": [
+    {
+      "salt": "elect-executive-team-salt",
+      "address": "elect-executive-team-address",
+      "name": "Elect executive team",
+      "typeName": "vote",
+      "data": "{\"quorumSize\":\"20001\",\"voteDuration\":\"3600\",\"majoritySize\":\"50001\"}",
+      "deciders": "board-address",
+      "proposers": "board-address"
+    }
+  ],
+  "assets": []
+}
+
+
+# Procedures 🤖
+
+Now that we have a core unit for governing things, we can start combining them to create complex systems.
+
+That's what the [Organigram protocol](/docs/protocol) is for. Organizations are a network of organs talking to each others, and procedures are the grammar they use to communicate.
+
+## What is a procedure?
+
+In a nutshell, procedures are standardized ways to interact with an organ. They automate and formalize how anybody can interact with an organ's registry, assets, or permissions.
+
+Their main purpose is to allow members of a given organ (the source) to modify the content of another organ (the target).
+
+Each action mentioned in an organ's [permissions list](/docs/protocol/organs#access_control) can be attached to a procedure. For example, a procedure could only add entries to a registry, while another could target multiple organs, accessing one's assets, another's registry and yet another's permissions.
+
+The way that procedures modify a target organ is described by the procedure itself.
+
+For example, the following procedure allows members of the Board of directors to add new entries to the Executive team's registry, by a simple majority vote:
+
+<Grid sx={{ height: '700px' }}>
+  <Minimap organigram={organigram} />
+</Grid>
+
+This is the simplest example of what an organigram is: two organs connected by a procedure.
+
+## Procedure types
+
+For now, there are three types of supported procedures:
+
+- [Simple majority vote](/docs/protocol/procedures#Simple_majority_Vote);
+- [Nomination](/docs/protocol/procedures#Nominatioon)
+- [Token voting](/docs/protocol/procedures#Token_voting).
+
+But anybody can make this list grow by adding their own procedure, in order for example to integrate a web service, an oracle, a web3 protocol, or introduce new types of revolutionary voting systems!
+
+Who knows what amazing things you'll create! 🌈
+
+There can be infinite types of procedures, each with their own internal logic and way of functioning. All will all share certain features:
+
+- They modify the destination by performing operations that are submitted via a proposal;
+- They can approve or reject single or multiple operations at once;
+- The way the approve or reject operations is set internally by the procedure, using a [specific vocabulary](/docs/protocol/procedures#Roles);
+- They have types, allowing some form of standardisation.
+
+Below are the most common procedure types. More will be added as contributions grow to the platform.
+
+### Nomination
+
+Each entry in the adopter organ can unilaterally adopt or reject the proposal. The nomination procedure has no additional roles.
+
+### Simple majority Vote
+
+Each entry in the adopter organ is an individual voter to adopt or reject the proposal, following election parameters set in the procedure.
+
+Additionally, a "Submitters" organ can be optionally set to take proposals and manually put them to vote, and a "Vetoers" organ can veto a proposal at any time.
+
+### Token voting
+
+Each token holder of a given ERC20Votes-compatible contract can vote to adopt or reject the proposal, relative to their delegated voting power at the proposal snapshot.
+
+So if a voter has 10% of the delegated voting power at the snapshot, their vote accounts for 10% of the final result.
+
+## Roles
+
+All procedures can use at least three roles: proposers, deciders, and moderators. Each role is attributed to the members of a specific organ.
+
+- Proposers can have the initiative to create proposals: they submit a set of actions to the deciders;
+- Deciders say whether they approve or reject the proposal. If approved, the action is automatically performed to the destination organ. The logic of how the deciders take their decision follows the procedure's internal code.
+- Moderators can filter out a proposal before it is submitted and decide which proposal is submitted to deciders. This can be useful if proposers are an open, and potentially large list of public, anonymous individuals.
+
+Additionally to these three roles shared by all procedures, each procedure type can add their own roles and logic.
+
+Each permission can be combined, so a single procedure can add and replace entries, deposit tokens, withdraw collectibles and remove procedures at the same time.
+
+Each organ can be both the origin and the destination of the same procedure, and each procedure can have multiple origins and multiple destinations.

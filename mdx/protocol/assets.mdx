@@ -1,0 +1,44 @@
+export const metadata = { title: '💎 Assets', order: 2.1 }
+
+# Assets 💎
+
+One thing organizations do very well is to collectively manage resources, such as money, tokens, physical goods, or any other asset.
+
+These resources are represented on {process.env.NEXT_PUBLIC_COMPANY_URL} as 💎 Assets, which can be [ERC20](https://eips.ethereum.org/EIPS/eip-20) or [ERC721 tokens](https://eips.ethereum.org/EIPS/eip-721). These tokens can be owned by any [wallet supported](/docs/introduction/connect-wallet).
+
+### Create an Asset
+
+To create an asset, you need to go on [Create](/workspace) section and click the + on the bottom right of your screen. There, select 'Add an Asset' and fill the form.
+
+Once ready, deploy this asset by clicking on the 'Deploy' button. This will create a transaction on the public network of your choice, which should be validated in a few seconds.
+Confirm the transaction in your wallet and the asset will be deployed on the selected network.
+
+### Transfer an Asset
+
+To transfer an asset, click on the asset you want to transfer. There, click on the 'Transfer' button and fill the form. Confirm the transaction in your wallet and the asset will be transferred to the new owner.
+
+### Burn an Asset
+
+To burn an asset, click on the asset you want to burn. There, click on the 'Burn' button and confirm the transaction in your wallet. The asset will be burned and removed from the blockchain if you are the one that deployed it.
+
+### Mint an Asset
+
+To mint an asset, click on the asset you want to mint. There, click on the 'Mint' button and fill the form. Confirm the transaction in your wallet and the asset will be minted to the new owner.
+
+### Edit an Asset
+
+To edit an asset, click on the asset you want to edit. There, click on the 'Edit' button and fill the form. Confirm the transaction in your wallet and the asset will be updated.
+
+### Delete an Asset
+
+To delete an asset, click on the asset you want to delete. There, click on the 'Delete' button and confirm the pop up window. The asset will be deleted and removed from your organigram, but not from the blockchain.
+
+### Asset Details
+
+To see the details of an asset, click on the asset you want to see. There, see the details of the asset, such as the owner, the minting date, the last update date, some ownership data, and the asset's metadata.
+
+### Use an Asset in a Procedure
+
+Assets can be used by some procedures as an input. For example, some user have a right to vote relative to the amount of tokens that they own for a given token.
+To do so, create a [🤖 Procedure](/docs/protocol/procedures) and select 'Token voting procedure'.
+Select the 'Asset' as a 'Source'. You can then use this asset in your procedure. Note that you need to add this asset to your organigram before use it.

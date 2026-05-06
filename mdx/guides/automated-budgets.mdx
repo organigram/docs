@@ -1,0 +1,50 @@
+import Grid from '@mui/material/Grid'
+import Minimap from '../../../../stack/components/Organigram/Minimap'
+import { templates } from '@organigram/js'
+
+export const metadata = {
+  title: '💰 Manage automated budgets and funds',
+  order: 8.6
+}
+
+# Manage automated budgets and funds 💰
+
+On {process.env.NEXT_PUBLIC_COMPANY_URL}, it is incridibely easy to automate the authorizations of funds and budgets in a transparent and accountable way.
+
+## Create a new budget
+
+Creating a participatory budget is as easy as creating a new organigram. You can create a new organigram by clicking on the "Add new" button on the workspace sidebar, and select "Budget" as the organigram type.
+
+It will create an organigram like this:
+
+<Grid sx={{ height: '400px' }} mb={3}>
+  <Minimap organigram={templates.participatoryBudget} />
+</Grid>
+
+You can click on the link on the link on the top right corner to open the organigram in the editor and inspect how it works in detail. In a nutshell, we made a participatory budget:
+
+- there is only one organ, the "treasury", that will store the funds, as well as a list of admins
+- three procedures are attached to it:
+  - one procedure to manage deposits and withdrawals to and from the treasury. Anyone can deposit funds to the treasury, and anyone can submit a proposal to widthdraw funds, but only admins can vote to adopt or reject proposals.
+  - one procedure to manage the list of admins. Only admins can add or remove other admins, by a vote.
+  - one procedure to change the rules if needed. Admins can change any of the three procedures of the system, but only by a vote of a supermajority of the 3/5th.
+
+### Absolute flexibility
+
+Of course, all these rules are configurable. Whether all these rules are decided by a vote or an individual decision, the majority required, quorum but also the source (only the admins, or anybody, or nobody at all) can be configured.
+
+Depending on how the procedures are configured, we could have made it a budget where only the members can deposit funds, or only the members can submit proposals, or anybody in the world can adopt them. It is up to you.
+
+It can be surprising how simply it can manage all these complex rules with as little as one organ and three procedures.
+
+And yet, we made it three distinct procedures for the sake of the example! They could have been only one, with all the permissions combined. Or it could have been six, to lay all the permissions down with the highest possible granularity (add or remove members or funds or procedures).
+
+### Recurrence
+
+You can also configure the rules to have recurrence, for example admins could approve a budget for the next year, and then automatically trigger a vote at the end of that time. Or approve a recurring expense to be paid every month to a given address.
+
+## Create a new fund
+
+You can apply this logic and add it to a wider organization to combine the [🛰️ automation features](docs/advanced) of {process.env.NEXT_PUBLIC_COMPANY_URL} with the legal status of your organization. For example, you could create a new organigram for an open source software project, and later decide to add a procedure to manage the funds of that entity collaboratively with the contributors or the users of the software.
+
+This is the scenario we cover our guide [🕊️ Create an open source collective or non-profit association](/docs/guides/non-profit), but it could also work very well with a [for-profit company](/docs/guides/for-profit)!

@@ -1,0 +1,64 @@
+import Grid from '@mui/material/Grid'
+import NoSsr from '@mui/material/NoSsr'
+import MoreVertIcon from '@mui/icons-material/MoreVert'
+import { OrganNode } from '@organigram/react'
+
+export const metadata = { title: '🫀 Organs', order: 2.2 }
+
+# Organs 🫀
+
+As mentioned before, Organigram allows you to easily represent an organization as different groups. Groups of people, groups of files, groups of assets, or a mix of all.
+
+On the platform, these groups are called 🫀 Organs, and they are represented as follows:
+
+<Grid container my={3} justifyContent='center'>
+  <Grid item>
+    <NoSsr>
+      <OrganNode
+        hideHandles
+        data={{
+          organ: {
+            name: 'Organ name',
+            address: '0x1234',
+            entries: [],
+            deployed: { entries: [] }
+          }
+        }}
+      />
+    </NoSsr>{' '}
+  </Grid>
+</Grid>
+
+If you click on the organ's expand button <MoreVertIcon sx={{ mb: -1 }} /> in the app, you will see that organs can store three things:
+
+- [A data registry](/docs/protocol/organs/#Data)
+- [A bank for crypto assets](/docs/protocol/organs/#Assets)
+- [A list of access permissions](/docs/protocol/organs/#Permissions)
+
+They are the core unit of any organization, and they are built in a way where you can assemble them to create larger structures, like lego bricks.
+
+### Data
+
+Organs can be used to store any kind of data. This data is listed as individual entries, and can represent virtually anything. On our platform, they can alternatively represent users, wallets, or files.
+
+Internally, each entry is saved as an IPFS CID and/or an Ethereum address.
+
+### Assets
+
+Organs can also store assets, in the form of cryptocurrency, tokens, or NFTs. On our web platform, once they are deployed, organs can store Ether (Ethereum's native cryptocurrency), Ethereum tokens (ERC20), and also any type of NFTs (ERC777 or ERC1155). They can do so on the Ethereum network, but also on any EVM-compatible blockchain on which it has been deployed.
+
+### Permissions
+
+Lastly, organs can store the list of who can access its data and assets, as well as who can edit these permissions. This list stores every possible type of permission and maps it to Ethereum addresses that can be owned either by a human or by a smart contract:
+
+- Who can add, remove or replace entries in the data registry;
+- Who can withdraw or deposit assets;
+- Who can add, remove or replace Ethereum addresses in the current list.
+
+### Extensibility
+
+To extend further the functionality of organs, you can configure them to interact with third-party protocols and with relayed signature-based flows.
+
+Those mechanics are intentionally documented in the technical reference rather than in this overview page, because they rely on low-level concepts such as call policies, calldata constraints, trusted forwarders, and signature-based procedure entrypoints.
+
+If you want the implementation details, see the Solidity reference for the `Organ` and `IOrgan` contracts.

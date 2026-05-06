@@ -1,0 +1,86 @@
+import { templates } from '@organigram/js'
+import Grid from '@mui/material/Grid'
+import Button from '@mui/material/Button'
+
+import Minimap from '../../../../stack/components/Organigram/Minimap'
+import Link from '../../../../stack/components/Link'
+
+export const metadata = { title: '📝 Create a legal company in 5mn', order: 8.2 }
+
+# Create an incorruptible legal company in less than 5 minutes 📝
+
+To create and deploy incorruptible organizations and services, only a few minutes and less than a euro are required. This tutorial will guide you through the process of creating your first organigram and deploying it on the blockchain in less than 5 minutes.
+
+## Sign up
+
+Too use our web platform, you first need to create an account. Nothing simpler, you just need to unlock your wallet on the top right of this page.
+
+<Grid container my={3} justifyContent='center'>
+  <Grid item>
+    <Link href={'/workspace'} target='_blank'>
+      <Button variant='contained'>Launch app</Button>
+    </Link>
+  </Grid>
+</Grid>
+
+Click "Add new" to create a new organigram. When asked if we should start with a template, chose 'For-profit company' and click next. Finish the sign up process and head up to our editor to start using your organization:
+
+Your organization will automatically be configured with the elements you provided. It can then benefit from all Organigram's features, such as automated [📂 legal registries management](/docs/guides/corporate-registries), embedded [⚖️ digital signatures](/docs/advanced/binding-actions), [⚡️ sponsored transactions](/docs/advanced/transactions), and much more.
+
+## What's included in this template?
+
+<Grid sx={{ height: '400px' }} mb={3}>
+  <Minimap organigram={templates.forProfit} />
+</Grid>
+
+The template you just created includes the following elements:
+
+- A **board of directors**
+- A **shareholders assembly**
+- A **CEO**
+- A **share capital** of 10 000 000 shares sent to your address
+- All the **legal registries** required to run a company in the EU
+- A **digital signature certificate** to sign documents with binding force
+- **Sponsored transactions** to pay for the deployment of your organization
+- A **public workspace** to collaborate with others
+
+## What's next?
+
+You are now ready to invite members to your organization, and start collaborating with them. You can also start editing your organization to add new elements, or even delete them. You can also change the name of your organization, its logo, and its description.
+
+Once you are satisfied with your organigram, you can deploy it. This will create immutable records that will be used to store the data of your organization.
+
+All the transactions made to and from this organigram will present enough security guarantees to be used as evidence in court. You can also use the digital signature certificate to prove the correctness of the data.
+
+You can see [Managing corporate registries](/docs/guides/corporate-registries) for more information on how to manage the legal registries of your organization on a day-to-day basis.
+
+## How does it work?
+
+Organigram is a web platform that allows you to create and deploy incorruptible organizations and services. It is built on top of the [Ethereum](https://ethereum.org/) blockchain, and uses [IPFS](https://ipfs.io/) to store the data of your organization.
+
+Organigram is a **decentralized application**, which means that it is not owned by any entity. It is a **public good** that is available to everyone, and that can be used by anyone. It is **open-source**, which means that anyone can contribute to its development.
+
+## What is a blockchain?
+
+A blockchain is a decentralized database that is shared by a network of computers. It is a public ledger that can be used to store data in a secure and immutable way. It is a public good that is available to everyone, and that can be used by anyone.
+
+## What is IPFS?
+
+IPFS is a decentralized file storage system that is used to store the data of your organization.
+
+## How much does it cost?
+
+To use Organigram, you need to pay for the transactions of your organization on the blockchain. This fee is paid by you (or your organization) directly to the network.
+
+The price of the fees depends on the blockchain network being used. {process.env.NEXT_PUBLIC_HOST_NAME} is currently deployed on the [](https://polygon.technology/polygon-pos) network, which is a sidechain of the Ethereum network. This means that the fees are much lower than on the Ethereum network.
+
+Deploying an organization on the Ethereum network instead would cost about a hundred times more.
+
+Most organizations will only need to pay for the deployment of their organization on the blockchain. Then, once deployed, everyday operations will vary on usage, but only cost a fraction of deployment cost.
+
+We have put in place a [sponsoring system](/docs/advanced/transactions) to facilitate the payment of these fees. We charge a small fee for operating this optional service.
+
+
+## What if I want to create a non-profit organization?
+
+If you want to create a non-profit organization, the simplest way would be to start from the [Non-profit association](/docs/guides/nonp-profit) template. 

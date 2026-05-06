@@ -1,0 +1,37 @@
+import Grid from '@mui/material/Grid'
+import Minimap from '../../../../stack/components/Organigram/Minimap'
+import { templates } from '@organigram/js'
+
+export const metadata = { title: '🕊️ Create an open source collective or association', order: 8.3 }
+
+# Create an open source collective or non-profit association 🕊️ 
+
+You just had the best idea. You figured a new way to solve a really hard problem, and you would like to share it with the world. You considered [📝 opening a corporate entity](/docs/guides/for-profit), but feel it should rather be an open source project, trying to gather a community of likeminded people around it.
+
+Fortunately, whether you know exactly how everything should work, or would prefer starting with something more flexible because you're just starting to figure it out, {process.env.NEXT_PUBLIC_COMPANY_URL} has you covered.
+
+We'll see here how to start collaborating on a very simple project, and how to make it grow into a full-fledged non-profit association bearing legal and financial responsibility.
+
+## Starting a new open source project
+
+To create a new project, you can simply [create a new organigram](/workspace) and select the **Open Source Project** template. It will output the following:
+
+<Grid sx={{ height: '400px' }} mb={3}>
+  <Minimap organigram={templates.openSource} />
+</Grid>
+
+In this very simple project, a team of Founders can manage the project by welcoming Contributors to contribute to the code of the project. We take the code as an example, and the organ "Codebase" could very well store something else than code, like files or data for example.
+
+## Growing into a non-profit association
+
+As the project grows, you might want to start accepting donations to fund the project, and maybe even hire people to work on it full-time. That'ss great news! To do so, you can simply edit your organigram to add a [💰 Treasury](/docs/guides/automated-budgets). If you want to make it a commercial entity, you could add an [💎 Asset](/docs/protocol/assets) to represent the shares in the company; but since we want to make it a non-profit, we'll skip this part!
+
+At this point, you made your organigram [🔁 evolve](/docs/advanced/upgradeability) to take the shape you finally want. This evolution can happen progressively, but if you want to directly get to that point when you start your project, you can also choose the **Non-profit Association** template when creating your organigram. It will natively include everything we discussed, and outputs the following:
+
+<Grid sx={{ height: '400px' }} mb={3}>
+  <Minimap organigram={templates.nonProfit} />
+</Grid>
+
+With this structure, responsibilities are clearly defined, and we are ready to add a legal entity to the organigram. To do so, we can simply add [⚖️ binding actions](/docs/advanced/binding-actions) to the organigram. This will allow the organigram to receive donations, and the company to be in charge of spending the money. The association's [📂 registries](/docs/guides/corporate-registries#Non-profits) will be updated automatically.
+
+We worked hard to make this process as simple and easy as possible, but we can also help you set up your project in person! Need any help or resources? [Get in touch!](mailto:hello@organigram.ai)

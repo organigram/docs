@@ -1,0 +1,2333 @@
+export const metadata = { title: "⛓️ Solidity", order: 4.1 }
+
+# Solidity reference ⛓️
+
+The official Solidity documentation for the contracts and types used in the Organigram.ai stack.
+
+## @organigram/protocol
+
+Solidity smart contracts for the [Organigram protocol](/docs/protocol).
+
+### Install
+
+```bash
+pnpm add @organigram/protocol
+```
+
+### Contracts
+
+- [OrganigramClient](/docs/reference/solidity#contract_OrganigramClient)
+- [Organ](/docs/reference/solidity#contract_Organ)
+- [Procedure](/docs/reference/solidity#contract_Procedure)
+- [NominationProcedure](/docs/reference/solidity#contract_NominationProcedure)
+- [ERC20VoteProcedure](/docs/reference/solidity#contract_ERC20VoteProcedure)
+- [VoteProcedure](/docs/reference/solidity#contract_VoteProcedure)
+- [IOrgan](/docs/reference/solidity#contract_IOrgan)
+- [OrganLibrary](/docs/reference/solidity#contract_OrganLibrary)
+- [ProcedureLibrary](/docs/reference/solidity#contract_ProcedureLibrary)
+
+## ++dnt++contract OrganigramClient
+
+### Constructor
+
+```solidity
+constructor(string cid, address trustedForwarder, bytes32 salt);
+```
+### Events
+
+#### ++dnt++OrganigramClient.assetDeployed
+
+```solidity
+event assetDeployed(address asset);
+```
+
+
+
+#### ++dnt++OrganigramClient.organDeployed
+
+```solidity
+event organDeployed(address organ);
+```
+
+
+
+#### ++dnt++OrganigramClient.procedureDeployed
+
+```solidity
+event procedureDeployed(address procedureType, address procedure);
+```
+
+
+
+### Functions
+
+#### ++dnt++OrganigramClient.asset
+
+```solidity
+function asset() view returns (address);
+```
+
+
+
+#### ++dnt++OrganigramClient.deployAsset
+
+Deploy a single asset clone and initialize it as an ERC-20 token.
+
+```solidity
+function deployAsset(string name, string symbol, uint256 initialSupply, bytes32 salt) returns (address clone);
+```
+
+**Parameters**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| `name` | `string` | Token name. |
+| `symbol` | `string` | Token symbol. |
+| `initialSupply` | `uint256` | Initial token supply minted to the caller. |
+| `salt` | `bytes32` | Deterministic clone salt. |
+**Returns**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| `clone` | `address` | Address of the deployed asset clone. |
+
+
+#### ++dnt++OrganigramClient.deployAssets
+
+```solidity
+function deployAssets((string, string, uint256, bytes32)[] batch) returns (address[] clones);
+```
+
+
+
+#### ++dnt++OrganigramClient.deployOrgan
+
+```solidity
+function deployOrgan(address[] _permissionAddresses, bytes2[] _permissionValues, string cid, (address, string)[] entries, bytes32 salt) returns (address clone);
+```
+
+
+
+#### ++dnt++OrganigramClient.deployOrganigram
+
+```solidity
+function deployOrganigram((address[], bytes2[], string, (address, string)[], bytes32)[] organBatch, (string, string, uint256, bytes32)[] assetBatch, (address, bytes, bytes32)[] procedureBatch) returns (address[] organsDeployed, address[] assetsDeployed, address[] proceduresDeployed);
+```
+
+
+
+#### ++dnt++OrganigramClient.deployOrgans
+
+```solidity
+function deployOrgans((address[], bytes2[], string, (address, string)[], bytes32)[] batch) returns (address[] clones);
+```
+
+
+
+#### ++dnt++OrganigramClient.deployProcedure
+
+Deploy one procedure clone from a registered procedure implementation.
+
+```solidity
+function deployProcedure(address procedureType, bytes data, bytes32 salt) returns (address procedure);
+```
+
+**Parameters**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| `procedureType` | `address` | Registered procedure implementation to clone. |
+| `data` | `bytes` | Optional initialization calldata executed immediately after deployment. |
+| `salt` | `bytes32` | Deterministic clone salt. |
+**Returns**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| `procedure` | `address` | Address of the deployed procedure clone. |
+
+
+#### ++dnt++OrganigramClient.deployProcedures
+
+```solidity
+function deployProcedures((address, bytes, bytes32)[] batch) returns (address[] created);
+```
+
+
+
+#### ++dnt++OrganigramClient.isTrustedForwarder
+
+Return whether an address is the trusted ERC-2771 forwarder.
+
+```solidity
+function isTrustedForwarder(address forwarder) view returns (bool);
+```
+
+**Parameters**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| `forwarder` | `address` | The forwarder address to test. |
+
+
+#### ++dnt++OrganigramClient.organ
+
+```solidity
+function organ() view returns (address);
+```
+
+
+
+#### ++dnt++OrganigramClient.owner
+
+```solidity
+function owner() view returns (address);
+```
+
+
+
+#### ++dnt++OrganigramClient.proceduresRegistry
+
+```solidity
+function proceduresRegistry() view returns (address);
+```
+
+
+
+#### ++dnt++OrganigramClient.registerProcedures
+
+```solidity
+function registerProcedures((address, string)[] entries);
+```
+
+
+
+#### ++dnt++OrganigramClient.trustedForwarder
+
+Return the trusted ERC-2771 forwarder used by this contract.
+
+```solidity
+function trustedForwarder() view returns (address);
+```
+
+
+
+
+
+## ++dnt++contract Organ
+
+### Constructor
+
+```solidity
+constructor();
+```
+### Events
+
+#### ++dnt++Organ.Initialized
+
+```solidity
+event Initialized(uint64 version);
+```
+
+
+
+#### ++dnt++Organ.etherTransferred
+
+```solidity
+event etherTransferred(address from, address to, uint256 amount);
+```
+
+
+
+### Functions
+
+#### ++dnt++Organ.addEntries
+
+```solidity
+function addEntries((address, string)[] entries) returns (uint256[] indexes);
+```
+
+
+
+#### ++dnt++Organ.addPermission
+
+Grant permissions to one address or procedure.
+
+```solidity
+function addPermission(address permissionAddress, bytes2 permissionValue);
+```
+
+**Parameters**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| `permissionAddress` | `address` | Address receiving the permission bitmask. |
+| `permissionValue` | `bytes2` | Permission bitmask to grant. |
+
+
+#### ++dnt++Organ.executeWhitelisted
+
+Execute an external call that has been approved by a whitelist policy.
+
+> The organ validates the call against the policy configured for `target + selector` before forwarding the call. Every configured constraint must pass.
+
+```solidity
+function executeWhitelisted(address target, uint256 value, bytes data) returns (bytes result);
+```
+
+**Parameters**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| `target` | `address` | The external contract to call. |
+| `value` | `uint256` | The amount of native token to forward with the call. |
+| `data` | `bytes` | The encoded calldata forwarded to `target`. |
+**Returns**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| `result` | `bytes` | The raw return data produced by the external call. |
+
+
+#### ++dnt++Organ.getCallPolicy
+
+Return summary information about a call policy.
+
+```solidity
+function getCallPolicy(address target, bytes4 selector) view returns (bool enabled, uint256 constraintsLength, uint256 whitelistedAddressesLength);
+```
+
+**Parameters**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| `target` | `address` | The external contract keyed by the policy. |
+| `selector` | `bytes4` | The function selector keyed by the policy. |
+**Returns**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| `enabled` | `bool` | Whether the policy exists and is active. |
+| `constraintsLength` | `uint256` | The number of parameter constraints configured on the policy. |
+| `whitelistedAddressesLength` | `uint256` | The number of addresses stored in the policy whitelist. |
+
+
+#### ++dnt++Organ.getCallPolicyConstraint
+
+Return one parameter constraint of a call policy.
+
+```solidity
+function getCallPolicyConstraint(address target, bytes4 selector, uint256 index) view returns (uint8 paramIndex, uint8 constraintType, bytes32 minValue, bytes32 maxValue, bytes32 exactValue);
+```
+
+**Parameters**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| `target` | `address` | The external contract keyed by the policy. |
+| `selector` | `bytes4` | The function selector keyed by the policy. |
+| `index` | `uint256` | The position of the constraint inside the policy. |
+**Returns**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| `paramIndex` | `uint8` | The zero-based calldata argument index constrained by this rule. |
+| `constraintType` | `uint8` | The type of validation applied to that argument. |
+| `minValue` | `bytes32` | The lower bound used by range constraints. |
+| `maxValue` | `bytes32` | The upper bound used by range constraints. |
+| `exactValue` | `bytes32` | The exact value used by exact-match constraints. |
+
+
+#### ++dnt++Organ.getEntry
+
+Return one stored entry.
+
+```solidity
+function getEntry(uint256 index) view returns ((address, string) entry);
+```
+
+**Parameters**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| `index` | `uint256` | Index of the entry to read. |
+**Returns**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| `entry` | `(address, string)` | Entry payload stored at `index`. |
+
+
+#### ++dnt++Organ.getEntryIndexForAddress
+
+Find the index of one entry address.
+
+```solidity
+function getEntryIndexForAddress(address addr) view returns (uint256 index);
+```
+
+**Parameters**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| `addr` | `address` | Address stored in the entry. |
+**Returns**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| `index` | `uint256` | Index of the entry associated with `addr`. |
+
+
+#### ++dnt++Organ.getOrgan
+
+Return the core summary of the organ.
+
+```solidity
+function getOrgan() view returns (string cid, uint256 permissionsLength, uint256 entriesLength, uint256 entriesCount, bytes4 interfaceId);
+```
+
+**Returns**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| `cid` | `string` | Metadata CID currently attached to the organ. |
+| `permissionsLength` | `uint256` | Number of permission entries configured on the organ. |
+| `entriesLength` | `uint256` | Number of allocated entry slots. |
+| `entriesCount` | `uint256` | Number of active entries. |
+| `interfaceId` | `bytes4` | ERC-165 interface id implemented by the organ. |
+
+
+#### ++dnt++Organ.getPermission
+
+Return one permission entry by index.
+
+```solidity
+function getPermission(uint256 index) view returns (address addr, bytes2 perms);
+```
+
+**Parameters**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| `index` | `uint256` | Index of the permission entry to read. |
+**Returns**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| `addr` | `address` | Address holding the permission. |
+| `perms` | `bytes2` | Permission bitmask held by `addr`. |
+
+
+#### ++dnt++Organ.getPermissions
+
+Return the permission bitmask assigned to one address.
+
+```solidity
+function getPermissions(address addr) view returns (bytes2 perms);
+```
+
+**Parameters**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| `addr` | `address` | Address to inspect. |
+**Returns**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| `perms` | `bytes2` | Permission bitmask currently assigned to `addr`. |
+
+
+#### ++dnt++Organ.initialize
+
+```solidity
+function initialize(address[] permissionAddresses, bytes2[] permissionValues, string cid, (address, string)[] entries, address forwarder);
+```
+
+
+
+#### ++dnt++Organ.isCallPolicyWhitelistedAddress
+
+Check whether an address is present in a call policy whitelist.
+
+```solidity
+function isCallPolicyWhitelistedAddress(address target, bytes4 selector, address candidate) view returns (bool);
+```
+
+**Parameters**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| `target` | `address` | The external contract keyed by the policy. |
+| `selector` | `bytes4` | The function selector keyed by the policy. |
+| `candidate` | `address` | The address to test against the whitelist. |
+
+
+#### ++dnt++Organ.isTrustedForwarder
+
+Return whether an address is the trusted ERC-2771 forwarder.
+
+```solidity
+function isTrustedForwarder(address forwarder) view returns (bool);
+```
+
+**Parameters**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| `forwarder` | `address` | The forwarder address to test. |
+
+
+#### ++dnt++Organ.onERC1155BatchReceived
+
+```solidity
+function onERC1155BatchReceived(address arg0, address arg1, uint256[] arg2, uint256[] arg3, bytes arg4) returns (bytes4);
+```
+
+
+
+#### ++dnt++Organ.onERC1155Received
+
+```solidity
+function onERC1155Received(address arg0, address arg1, uint256 arg2, uint256 arg3, bytes arg4) returns (bytes4);
+```
+
+
+
+#### ++dnt++Organ.onERC721Received
+
+```solidity
+function onERC721Received(address operator, address from, uint256 tokenId, bytes arg3) returns (bytes4);
+```
+
+
+
+#### ++dnt++Organ.removeCallPolicy
+
+Remove a previously configured external call policy.
+
+```solidity
+function removeCallPolicy(address target, bytes4 selector);
+```
+
+**Parameters**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| `target` | `address` | The external contract whose policy should be removed. |
+| `selector` | `bytes4` | The function selector whose policy should be removed. |
+
+
+#### ++dnt++Organ.removeEntries
+
+Remove entries from the organ directory.
+
+```solidity
+function removeEntries(uint256[] indexes);
+```
+
+**Parameters**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| `indexes` | `uint256[]` | Indexes to remove. |
+
+
+#### ++dnt++Organ.removePermission
+
+Remove every permission bit from one address or procedure.
+
+```solidity
+function removePermission(address permissionAddress);
+```
+
+**Parameters**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| `permissionAddress` | `address` | Address whose permissions should be removed. |
+
+
+#### ++dnt++Organ.replaceEntry
+
+```solidity
+function replaceEntry(uint256 index, (address, string) entry);
+```
+
+
+
+#### ++dnt++Organ.replacePermission
+
+Replace one permission holder with another.
+
+```solidity
+function replacePermission(address oldPermissionAddress, address newPermissionAddress, bytes2 newPermissionValue);
+```
+
+**Parameters**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| `oldPermissionAddress` | `address` |   |
+| `newPermissionAddress` | `address` |   |
+| `newPermissionValue` | `bytes2` | Permission bitmask assigned to `newPermission`. |
+
+
+#### ++dnt++Organ.setCallPolicy
+
+```solidity
+function setCallPolicy(address target, bytes4 selector, (uint8, uint8, bytes32, bytes32, bytes32)[] constraints, address[] whitelistedAddresses);
+```
+
+
+
+#### ++dnt++Organ.supportsInterface
+
+```solidity
+function supportsInterface(bytes4 interfaceId) view returns (bool);
+```
+
+
+
+#### ++dnt++Organ.tokensReceived
+
+```solidity
+function tokensReceived(address operator, address from, address to, uint256 amount, bytes arg4, bytes arg5);
+```
+
+
+
+#### ++dnt++Organ.tokensToSend
+
+```solidity
+function tokensToSend(address operator, address arg1, address to, uint256 amount, bytes arg4, bytes arg5);
+```
+
+
+
+#### ++dnt++Organ.transferCoins
+
+```solidity
+function transferCoins(address token, address arg1, address to, uint256 amount);
+```
+
+
+
+#### ++dnt++Organ.transferCollectible
+
+```solidity
+function transferCollectible(address token, address arg1, address to, uint256 tokenId);
+```
+
+
+
+#### ++dnt++Organ.transferEther
+
+```solidity
+function transferEther(address to, uint256 value);
+```
+
+
+
+#### ++dnt++Organ.trustedForwarder
+
+Return the trusted ERC-2771 forwarder used by this contract.
+
+```solidity
+function trustedForwarder() view returns (address);
+```
+
+
+
+#### ++dnt++Organ.updateCid
+
+Update the metadata CID of the organ.
+
+```solidity
+function updateCid(string cid);
+```
+
+**Parameters**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| `cid` | `string` | New content identifier describing the organ. |
+
+
+
+
+## ++dnt++contract Procedure
+
+### Constructor
+
+```solidity
+constructor();
+```
+### Events
+
+#### ++dnt++Procedure.EIP712DomainChanged
+
+```solidity
+event EIP712DomainChanged();
+```
+
+
+
+#### ++dnt++Procedure.Initialized
+
+```solidity
+event Initialized(uint64 version);
+```
+
+
+
+### Functions
+
+#### ++dnt++Procedure.INTERFACE_ID
+
+```solidity
+function INTERFACE_ID() view returns (bytes4);
+```
+
+
+
+#### ++dnt++Procedure.applyProposal
+
+Apply proposal.
+
+```solidity
+function applyProposal(uint256 proposalKey);
+```
+
+
+
+#### ++dnt++Procedure.applyProposalBySig
+
+```solidity
+function applyProposalBySig(uint256 proposalKey, uint256 nonce, uint256 deadline, bytes signature);
+```
+
+
+
+#### ++dnt++Procedure.blockProposal
+
+The procedure can override this method.
+
+```solidity
+function blockProposal(uint256 proposalKey, string reason);
+```
+
+
+
+#### ++dnt++Procedure.blockProposalBySig
+
+```solidity
+function blockProposalBySig(uint256 proposalKey, string reason, uint256 nonce, uint256 deadline, bytes signature);
+```
+
+
+
+#### ++dnt++Procedure.eip712Domain
+
+> returns the fields and values that describe the domain separator used by this contract for EIP-712 signature.
+
+```solidity
+function eip712Domain() view returns (bytes1 fields, string name, string version, uint256 chainId, address verifyingContract, bytes32 salt, uint256[] extensions);
+```
+
+
+
+#### ++dnt++Procedure.getNonce
+
+```solidity
+function getNonce(address account) view returns (uint256);
+```
+
+
+
+#### ++dnt++Procedure.getProcedure
+
+```solidity
+function getProcedure() view returns (string cid, address proposers, address moderators, address deciders, bool withModeration, uint256 proposalsLength, bytes4 interfaceId);
+```
+
+
+
+#### ++dnt++Procedure.getProposal
+
+```solidity
+function getProposal(uint256 proposalKey) view returns ((address, string, string, bool, bool, bool, bool, (uint256, address, bytes, uint256, bool)[]));
+```
+
+
+
+#### ++dnt++Procedure.initialize
+
+```solidity
+function initialize(string _cid, address _proposers, address _moderators, address _deciders, bool _withModeration, address _trustedForwarder);
+```
+
+
+
+#### ++dnt++Procedure.isTrustedForwarder
+
+Return whether an address is the trusted ERC-2771 forwarder.
+
+```solidity
+function isTrustedForwarder(address forwarder) view returns (bool);
+```
+
+**Parameters**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| `forwarder` | `address` | The forwarder address to test. |
+
+
+#### ++dnt++Procedure.presentProposal
+
+When moderation is enabled, moderators must accept the proposal.
+
+```solidity
+function presentProposal(uint256 proposalKey);
+```
+
+
+
+#### ++dnt++Procedure.presentProposalBySig
+
+```solidity
+function presentProposalBySig(uint256 proposalKey, uint256 nonce, uint256 deadline, bytes signature);
+```
+
+
+
+#### ++dnt++Procedure.propose
+
+```solidity
+function propose(string cid, (uint256, address, bytes, uint256, bool)[] operations) returns (uint256 proposalKey);
+```
+
+
+
+#### ++dnt++Procedure.proposeBySig
+
+```solidity
+function proposeBySig(string cid, (uint256, address, bytes, uint256, bool)[] operations, uint256 nonce, uint256 deadline, bytes signature) returns (uint256 proposalKey);
+```
+
+
+
+#### ++dnt++Procedure.supportsInterface
+
+> Returns true if this contract implements the interface defined by `interfaceId`. See the corresponding https://eips.ethereum.org/EIPS/eip-165#how-interfaces-are-identified[ERC section] to learn more about how these ids are created. This function call must use less than 30 000 gas.
+
+```solidity
+function supportsInterface(bytes4 interfaceId) view returns (bool);
+```
+
+
+
+#### ++dnt++Procedure.trustedForwarder
+
+Return the trusted ERC-2771 forwarder used by this contract.
+
+```solidity
+function trustedForwarder() view returns (address);
+```
+
+
+
+#### ++dnt++Procedure.updateAdmin
+
+```solidity
+function updateAdmin(address admin);
+```
+
+
+
+#### ++dnt++Procedure.updateCid
+
+Public API : Procedure Cid and Admin.
+
+```solidity
+function updateCid(string cid);
+```
+
+
+
+
+
+## ++dnt++contract NominationProcedure
+
+### Events
+
+#### ++dnt++NominationProcedure.EIP712DomainChanged
+
+```solidity
+event EIP712DomainChanged();
+```
+
+
+
+#### ++dnt++NominationProcedure.Initialized
+
+```solidity
+event Initialized(uint64 version);
+```
+
+
+
+#### ++dnt++NominationProcedure.ProposalApplied
+
+```solidity
+event ProposalApplied(uint256 indexed proposalKey);
+```
+
+
+
+### Functions
+
+#### ++dnt++NominationProcedure.INTERFACE_ID
+
+```solidity
+function INTERFACE_ID() view returns (bytes4);
+```
+
+
+
+#### ++dnt++NominationProcedure.applyProposal
+
+Apply proposal.
+
+```solidity
+function applyProposal(uint256 proposalKey);
+```
+
+
+
+#### ++dnt++NominationProcedure.applyProposalBySig
+
+```solidity
+function applyProposalBySig(uint256 proposalKey, uint256 nonce, uint256 deadline, bytes signature);
+```
+
+
+
+#### ++dnt++NominationProcedure.blockProposal
+
+The procedure can override this method.
+
+```solidity
+function blockProposal(uint256 proposalKey, string reason);
+```
+
+
+
+#### ++dnt++NominationProcedure.blockProposalBySig
+
+```solidity
+function blockProposalBySig(uint256 proposalKey, string reason, uint256 nonce, uint256 deadline, bytes signature);
+```
+
+
+
+#### ++dnt++NominationProcedure.eip712Domain
+
+> returns the fields and values that describe the domain separator used by this contract for EIP-712 signature.
+
+```solidity
+function eip712Domain() view returns (bytes1 fields, string name, string version, uint256 chainId, address verifyingContract, bytes32 salt, uint256[] extensions);
+```
+
+
+
+#### ++dnt++NominationProcedure.getNonce
+
+```solidity
+function getNonce(address account) view returns (uint256);
+```
+
+
+
+#### ++dnt++NominationProcedure.getProcedure
+
+```solidity
+function getProcedure() view returns (string cid, address proposers, address moderators, address deciders, bool withModeration, uint256 proposalsLength, bytes4 interfaceId);
+```
+
+
+
+#### ++dnt++NominationProcedure.getProposal
+
+```solidity
+function getProposal(uint256 proposalKey) view returns ((address, string, string, bool, bool, bool, bool, (uint256, address, bytes, uint256, bool)[]));
+```
+
+
+
+#### ++dnt++NominationProcedure.initialize
+
+```solidity
+function initialize(string _cid, address _proposers, address _moderators, address _deciders, bool _withModeration, address _trustedForwarder);
+```
+
+
+
+#### ++dnt++NominationProcedure.isTrustedForwarder
+
+Return whether an address is the trusted ERC-2771 forwarder.
+
+```solidity
+function isTrustedForwarder(address forwarder) view returns (bool);
+```
+
+**Parameters**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| `forwarder` | `address` | The forwarder address to test. |
+
+
+#### ++dnt++NominationProcedure.nominate
+
+Apply the nomination.
+
+```solidity
+function nominate(uint256 proposalKey);
+```
+
+**Parameters**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| `proposalKey` | `uint256` | The key used to identify the proposal. |
+
+
+#### ++dnt++NominationProcedure.nominateBySig
+
+```solidity
+function nominateBySig(uint256 proposalKey, uint256 nonce, uint256 deadline, bytes signature);
+```
+
+
+
+#### ++dnt++NominationProcedure.presentProposal
+
+When moderation is enabled, moderators must accept the proposal.
+
+```solidity
+function presentProposal(uint256 proposalKey);
+```
+
+
+
+#### ++dnt++NominationProcedure.presentProposalBySig
+
+```solidity
+function presentProposalBySig(uint256 proposalKey, uint256 nonce, uint256 deadline, bytes signature);
+```
+
+
+
+#### ++dnt++NominationProcedure.propose
+
+```solidity
+function propose(string cid, (uint256, address, bytes, uint256, bool)[] operations) returns (uint256 proposalKey);
+```
+
+
+
+#### ++dnt++NominationProcedure.proposeBySig
+
+```solidity
+function proposeBySig(string cid, (uint256, address, bytes, uint256, bool)[] operations, uint256 nonce, uint256 deadline, bytes signature) returns (uint256 proposalKey);
+```
+
+
+
+#### ++dnt++NominationProcedure.supportsInterface
+
+Register EIP165 interfaces for introspection.
+
+```solidity
+function supportsInterface(bytes4 interfaceId) view returns (bool);
+```
+
+**Parameters**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| `interfaceId` | `bytes4` | The interface identifier. |
+
+
+#### ++dnt++NominationProcedure.trustedForwarder
+
+Return the trusted ERC-2771 forwarder used by this contract.
+
+```solidity
+function trustedForwarder() view returns (address);
+```
+
+
+
+#### ++dnt++NominationProcedure.updateAdmin
+
+```solidity
+function updateAdmin(address admin);
+```
+
+
+
+#### ++dnt++NominationProcedure.updateCid
+
+Public API : Procedure Cid and Admin.
+
+```solidity
+function updateCid(string cid);
+```
+
+
+
+
+
+## ++dnt++contract ERC20VoteProcedure
+
+### Events
+
+#### ++dnt++ERC20VoteProcedure.EIP712DomainChanged
+
+```solidity
+event EIP712DomainChanged();
+```
+
+
+
+#### ++dnt++ERC20VoteProcedure.Initialized
+
+```solidity
+event Initialized(uint64 version);
+```
+
+
+
+#### ++dnt++ERC20VoteProcedure.ProposalApplied
+
+```solidity
+event ProposalApplied(uint256 indexed proposalKey);
+```
+
+
+
+### Functions
+
+#### ++dnt++ERC20VoteProcedure.INTERFACE_ID
+
+```solidity
+function INTERFACE_ID() view returns (bytes4);
+```
+
+
+
+#### ++dnt++ERC20VoteProcedure.applyProposal
+
+Finalize a vote once the election has ended.
+
+> Anyone can trigger the settlement transaction once voting is over.
+
+```solidity
+function applyProposal(uint256 proposalKey);
+```
+
+
+
+#### ++dnt++ERC20VoteProcedure.applyProposalBySig
+
+```solidity
+function applyProposalBySig(uint256 proposalKey, uint256 nonce, uint256 deadline, bytes signature);
+```
+
+
+
+#### ++dnt++ERC20VoteProcedure.blockProposal
+
+A veto accepts arguments which defines a motivation as a IPFS multihash.
+
+> Overrides Procedure.blockProposal.
+
+```solidity
+function blockProposal(uint256 proposalKey, string reason);
+```
+
+
+
+#### ++dnt++ERC20VoteProcedure.blockProposalBySig
+
+```solidity
+function blockProposalBySig(uint256 proposalKey, string reason, uint256 nonce, uint256 deadline, bytes signature);
+```
+
+
+
+#### ++dnt++ERC20VoteProcedure.count
+
+Count votes after election has ended.
+
+```solidity
+function count(uint256 proposalKey) view returns (bool approved);
+```
+
+**Parameters**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| `proposalKey` | `uint256` | The key used to identify the proposal. |
+**Returns**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| `approved` | `bool` | True if the election has been approved. |
+
+
+#### ++dnt++ERC20VoteProcedure.eip712Domain
+
+> returns the fields and values that describe the domain separator used by this contract for EIP-712 signature.
+
+```solidity
+function eip712Domain() view returns (bytes1 fields, string name, string version, uint256 chainId, address verifyingContract, bytes32 salt, uint256[] extensions);
+```
+
+
+
+#### ++dnt++ERC20VoteProcedure.getElection
+
+Get information about a current election
+
+```solidity
+function getElection(uint256 _proposalKey) view returns (uint256 start, bool hasVoted, uint256 votesCount);
+```
+
+**Returns**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| `start` | `uint256` | The UNIX time when the election started. |
+| `hasVoted` | `bool` | True if the voter has voted. |
+| `votesCount` | `uint256` | The number of votes cast so far. |
+
+
+#### ++dnt++ERC20VoteProcedure.getNonce
+
+```solidity
+function getNonce(address account) view returns (uint256);
+```
+
+
+
+#### ++dnt++ERC20VoteProcedure.getProcedure
+
+```solidity
+function getProcedure() view returns (string cid, address proposers, address moderators, address deciders, bool withModeration, uint256 proposalsLength, bytes4 interfaceId);
+```
+
+
+
+#### ++dnt++ERC20VoteProcedure.getProposal
+
+```solidity
+function getProposal(uint256 proposalKey) view returns ((address, string, string, bool, bool, bool, bool, (uint256, address, bytes, uint256, bool)[]));
+```
+
+
+
+#### ++dnt++ERC20VoteProcedure.initialize
+
+Initialize the procedure.
+
+```solidity
+function initialize(string _metadata, address _proposers, address _moderators, address _deciders, bool _withModeration, address _trustedForwarder, uint32 _quorumSize, uint32 _voteDuration, uint32 _majoritySize, address _tokenContract);
+```
+
+**Parameters**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| `_metadata` | `string` | The procedure metadata. |
+| `_proposers` | `address` | The organ whose entries will be allowed to propose proposals. |
+| `_moderators` | `address` | The organ whose entries will be allowed to moderate proposals. |
+| `_deciders` | `address` | The organ whose entries will be allowed to adopt or refect proposals. |
+| `_withModeration` | `bool` | Whether or not the procedure requires moderation. |
+| `_trustedForwarder` | `address` | The trusted forwarder contract. |
+| `_quorumSize` | `uint32` | The minimum percentage of votes required to validate a election. |
+| `_voteDuration` | `uint32` | Duration of vote in seconds. |
+| `_majoritySize` | `uint32` | The minimum percentage of votes required to validate a election. |
+| `_tokenContract` | `address` | The ERC20 token contract representing the rights to vote. |
+
+
+#### ++dnt++ERC20VoteProcedure.isTrustedForwarder
+
+Return whether an address is the trusted ERC-2771 forwarder.
+
+```solidity
+function isTrustedForwarder(address forwarder) view returns (bool);
+```
+
+**Parameters**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| `forwarder` | `address` | The forwarder address to test. |
+
+
+#### ++dnt++ERC20VoteProcedure.majoritySize
+
+```solidity
+function majoritySize() view returns (uint32);
+```
+
+
+
+#### ++dnt++ERC20VoteProcedure.presentProposal
+
+Present a proposal.
+
+> Overrides Procedure.
+
+```solidity
+function presentProposal(uint256 proposalKey);
+```
+
+
+
+#### ++dnt++ERC20VoteProcedure.presentProposalBySig
+
+```solidity
+function presentProposalBySig(uint256 proposalKey, uint256 nonce, uint256 deadline, bytes signature);
+```
+
+
+
+#### ++dnt++ERC20VoteProcedure.propose
+
+```solidity
+function propose(string _cid, (uint256, address, bytes, uint256, bool)[] _operations) returns (uint256 proposalKey);
+```
+
+
+
+#### ++dnt++ERC20VoteProcedure.proposeBySig
+
+```solidity
+function proposeBySig(string cid, (uint256, address, bytes, uint256, bool)[] operations, uint256 nonce, uint256 deadline, bytes signature) returns (uint256 proposalKey);
+```
+
+
+
+#### ++dnt++ERC20VoteProcedure.quorumSize
+
+```solidity
+function quorumSize() view returns (uint32);
+```
+
+
+
+#### ++dnt++ERC20VoteProcedure.supportsInterface
+
+> Register EIP165 interfaces for introspection.
+
+```solidity
+function supportsInterface(bytes4 interfaceId) view returns (bool);
+```
+
+
+
+#### ++dnt++ERC20VoteProcedure.tokenContract
+
+tokenContract is an ERC20Votes-compatible token representing the rights to vote.
+
+```solidity
+function tokenContract() view returns (address);
+```
+
+
+
+#### ++dnt++ERC20VoteProcedure.trustedForwarder
+
+Return the trusted ERC-2771 forwarder used by this contract.
+
+```solidity
+function trustedForwarder() view returns (address);
+```
+
+
+
+#### ++dnt++ERC20VoteProcedure.updateAdmin
+
+```solidity
+function updateAdmin(address admin);
+```
+
+
+
+#### ++dnt++ERC20VoteProcedure.updateCid
+
+Public API : Procedure Cid and Admin.
+
+```solidity
+function updateCid(string cid);
+```
+
+
+
+#### ++dnt++ERC20VoteProcedure.vote
+
+Create a election.
+
+```solidity
+function vote(uint256 proposalKey, bool approval);
+```
+
+
+
+#### ++dnt++ERC20VoteProcedure.voteBySig
+
+```solidity
+function voteBySig(uint256 proposalKey, bool approval, uint256 nonce, uint256 deadline, bytes signature);
+```
+
+
+
+#### ++dnt++ERC20VoteProcedure.voteDuration
+
+```solidity
+function voteDuration() view returns (uint32);
+```
+
+
+
+
+
+## ++dnt++contract VoteProcedure
+
+### Events
+
+#### ++dnt++VoteProcedure.EIP712DomainChanged
+
+```solidity
+event EIP712DomainChanged();
+```
+
+
+
+#### ++dnt++VoteProcedure.Initialized
+
+```solidity
+event Initialized(uint64 version);
+```
+
+
+
+#### ++dnt++VoteProcedure.ProposalApplied
+
+```solidity
+event ProposalApplied(uint256 indexed proposalKey);
+```
+
+
+
+### Functions
+
+#### ++dnt++VoteProcedure.INTERFACE_ID
+
+```solidity
+function INTERFACE_ID() view returns (bytes4);
+```
+
+
+
+#### ++dnt++VoteProcedure.applyProposal
+
+Finalize a vote once the election has ended.
+
+> Anyone can trigger the settlement transaction once voting is over.
+
+```solidity
+function applyProposal(uint256 proposalKey);
+```
+
+
+
+#### ++dnt++VoteProcedure.applyProposalBySig
+
+```solidity
+function applyProposalBySig(uint256 proposalKey, uint256 nonce, uint256 deadline, bytes signature);
+```
+
+
+
+#### ++dnt++VoteProcedure.blockProposal
+
+A veto accepts arguments which defines a motivation as a IPFS multihash.
+
+> Overrides Procedure.blockProposal.
+
+```solidity
+function blockProposal(uint256 proposalKey, string reason);
+```
+
+
+
+#### ++dnt++VoteProcedure.blockProposalBySig
+
+```solidity
+function blockProposalBySig(uint256 proposalKey, string reason, uint256 nonce, uint256 deadline, bytes signature);
+```
+
+
+
+#### ++dnt++VoteProcedure.count
+
+Count votes when election is ended.
+
+> @todo Handle delegation of Votes.
+
+```solidity
+function count(uint256 proposalKey) view returns (bool approved);
+```
+
+**Returns**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| `approved` | `bool` | True if the proposal is adopted. |
+
+
+#### ++dnt++VoteProcedure.eip712Domain
+
+> returns the fields and values that describe the domain separator used by this contract for EIP-712 signature.
+
+```solidity
+function eip712Domain() view returns (bytes1 fields, string name, string version, uint256 chainId, address verifyingContract, bytes32 salt, uint256[] extensions);
+```
+
+
+
+#### ++dnt++VoteProcedure.getElection
+
+Get information about a current election
+
+```solidity
+function getElection(uint256 _proposalKey) view returns (uint256 start, bool hasVoted, uint256 votesCount);
+```
+
+**Returns**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| `start` | `uint256` | The UNIX time when the election started. |
+| `hasVoted` | `bool` | True if the voter has voted. |
+| `votesCount` | `uint256` | The number of votes cast so far. |
+
+
+#### ++dnt++VoteProcedure.getNonce
+
+```solidity
+function getNonce(address account) view returns (uint256);
+```
+
+
+
+#### ++dnt++VoteProcedure.getProcedure
+
+```solidity
+function getProcedure() view returns (string cid, address proposers, address moderators, address deciders, bool withModeration, uint256 proposalsLength, bytes4 interfaceId);
+```
+
+
+
+#### ++dnt++VoteProcedure.getProposal
+
+```solidity
+function getProposal(uint256 proposalKey) view returns ((address, string, string, bool, bool, bool, bool, (uint256, address, bytes, uint256, bool)[]));
+```
+
+
+
+#### ++dnt++VoteProcedure.initialize
+
+Initialize the procedure.
+
+```solidity
+function initialize(string _cid, address _proposers, address _moderators, address _deciders, bool _withModeration, address _trustedForwarder, uint32 _quorumSize, uint32 _voteDuration, uint32 _majoritySize);
+```
+
+
+
+#### ++dnt++VoteProcedure.isTrustedForwarder
+
+Return whether an address is the trusted ERC-2771 forwarder.
+
+```solidity
+function isTrustedForwarder(address forwarder) view returns (bool);
+```
+
+**Parameters**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| `forwarder` | `address` | The forwarder address to test. |
+
+
+#### ++dnt++VoteProcedure.majoritySize
+
+```solidity
+function majoritySize() view returns (uint32);
+```
+
+
+
+#### ++dnt++VoteProcedure.presentProposal
+
+Present a proposal.
+
+> Overrides Procedure.
+
+```solidity
+function presentProposal(uint256 proposalKey);
+```
+
+
+
+#### ++dnt++VoteProcedure.presentProposalBySig
+
+```solidity
+function presentProposalBySig(uint256 proposalKey, uint256 nonce, uint256 deadline, bytes signature);
+```
+
+
+
+#### ++dnt++VoteProcedure.propose
+
+```solidity
+function propose(string _cid, (uint256, address, bytes, uint256, bool)[] _operations) returns (uint256 proposalKey);
+```
+
+
+
+#### ++dnt++VoteProcedure.proposeBySig
+
+```solidity
+function proposeBySig(string cid, (uint256, address, bytes, uint256, bool)[] operations, uint256 nonce, uint256 deadline, bytes signature) returns (uint256 proposalKey);
+```
+
+
+
+#### ++dnt++VoteProcedure.quorumSize
+
+```solidity
+function quorumSize() view returns (uint32);
+```
+
+
+
+#### ++dnt++VoteProcedure.supportsInterface
+
+> Register EIP165 interfaces for introspection.
+
+```solidity
+function supportsInterface(bytes4 interfaceId) view returns (bool);
+```
+
+
+
+#### ++dnt++VoteProcedure.trustedForwarder
+
+Return the trusted ERC-2771 forwarder used by this contract.
+
+```solidity
+function trustedForwarder() view returns (address);
+```
+
+
+
+#### ++dnt++VoteProcedure.updateAdmin
+
+```solidity
+function updateAdmin(address admin);
+```
+
+
+
+#### ++dnt++VoteProcedure.updateCid
+
+Public API : Procedure Cid and Admin.
+
+```solidity
+function updateCid(string cid);
+```
+
+
+
+#### ++dnt++VoteProcedure.vote
+
+Create a election.
+
+```solidity
+function vote(uint256 proposalKey, bool approval);
+```
+
+
+
+#### ++dnt++VoteProcedure.voteBySig
+
+```solidity
+function voteBySig(uint256 proposalKey, bool approval, uint256 nonce, uint256 deadline, bytes signature);
+```
+
+
+
+#### ++dnt++VoteProcedure.voteDuration
+
+```solidity
+function voteDuration() view returns (uint32);
+```
+
+
+
+
+
+## ++dnt++contract IOrgan
+
+### Functions
+
+#### ++dnt++IOrgan.addEntries
+
+```solidity
+function addEntries((address, string)[] entries) returns (uint256[] indexes);
+```
+
+
+
+#### ++dnt++IOrgan.addPermission
+
+Grant permissions to one address or procedure.
+
+```solidity
+function addPermission(address permissionAddress, bytes2 permissionValue);
+```
+
+**Parameters**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| `permissionAddress` | `address` | Address receiving the permission bitmask. |
+| `permissionValue` | `bytes2` | Permission bitmask to grant. |
+
+
+#### ++dnt++IOrgan.executeWhitelisted
+
+Execute an external call that has been approved by a whitelist policy.
+
+> The organ validates the call against the policy configured for `target + selector` before forwarding the call. Every configured constraint must pass.
+
+```solidity
+function executeWhitelisted(address target, uint256 value, bytes data) returns (bytes result);
+```
+
+**Parameters**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| `target` | `address` | The external contract to call. |
+| `value` | `uint256` | The amount of native token to forward with the call. |
+| `data` | `bytes` | The encoded calldata forwarded to `target`. |
+**Returns**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| `result` | `bytes` | The raw return data produced by the external call. |
+
+
+#### ++dnt++IOrgan.getCallPolicy
+
+Return summary information about a call policy.
+
+```solidity
+function getCallPolicy(address target, bytes4 selector) view returns (bool enabled, uint256 constraintsLength, uint256 whitelistedAddressesLength);
+```
+
+**Parameters**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| `target` | `address` | The external contract keyed by the policy. |
+| `selector` | `bytes4` | The function selector keyed by the policy. |
+**Returns**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| `enabled` | `bool` | Whether the policy exists and is active. |
+| `constraintsLength` | `uint256` | The number of parameter constraints configured on the policy. |
+| `whitelistedAddressesLength` | `uint256` | The number of addresses stored in the policy whitelist. |
+
+
+#### ++dnt++IOrgan.getCallPolicyConstraint
+
+Return one parameter constraint of a call policy.
+
+```solidity
+function getCallPolicyConstraint(address target, bytes4 selector, uint256 index) view returns (uint8 paramIndex, uint8 constraintType, bytes32 minValue, bytes32 maxValue, bytes32 exactValue);
+```
+
+**Parameters**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| `target` | `address` | The external contract keyed by the policy. |
+| `selector` | `bytes4` | The function selector keyed by the policy. |
+| `index` | `uint256` | The position of the constraint inside the policy. |
+**Returns**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| `paramIndex` | `uint8` | The zero-based calldata argument index constrained by this rule. |
+| `constraintType` | `uint8` | The type of validation applied to that argument. |
+| `minValue` | `bytes32` | The lower bound used by range constraints. |
+| `maxValue` | `bytes32` | The upper bound used by range constraints. |
+| `exactValue` | `bytes32` | The exact value used by exact-match constraints. |
+
+
+#### ++dnt++IOrgan.getEntry
+
+Return one stored entry.
+
+```solidity
+function getEntry(uint256 index) view returns ((address, string) entry);
+```
+
+**Parameters**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| `index` | `uint256` | Index of the entry to read. |
+**Returns**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| `entry` | `(address, string)` | Entry payload stored at `index`. |
+
+
+#### ++dnt++IOrgan.getEntryIndexForAddress
+
+Find the index of one entry address.
+
+```solidity
+function getEntryIndexForAddress(address addr) view returns (uint256 index);
+```
+
+**Parameters**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| `addr` | `address` | Address stored in the entry. |
+**Returns**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| `index` | `uint256` | Index of the entry associated with `addr`. |
+
+
+#### ++dnt++IOrgan.getOrgan
+
+Return the core summary of the organ.
+
+```solidity
+function getOrgan() view returns (string cid, uint256 permissionsLength, uint256 entriesLength, uint256 entriesCount, bytes4 interfaceId);
+```
+
+**Returns**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| `cid` | `string` | Metadata CID currently attached to the organ. |
+| `permissionsLength` | `uint256` | Number of permission entries configured on the organ. |
+| `entriesLength` | `uint256` | Number of allocated entry slots. |
+| `entriesCount` | `uint256` | Number of active entries. |
+| `interfaceId` | `bytes4` | ERC-165 interface id implemented by the organ. |
+
+
+#### ++dnt++IOrgan.getPermission
+
+Return one permission entry by index.
+
+```solidity
+function getPermission(uint256 index) view returns (address addr, bytes2 perms);
+```
+
+**Parameters**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| `index` | `uint256` | Index of the permission entry to read. |
+**Returns**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| `addr` | `address` | Address holding the permission. |
+| `perms` | `bytes2` | Permission bitmask held by `addr`. |
+
+
+#### ++dnt++IOrgan.getPermissions
+
+Return the permission bitmask assigned to one address.
+
+```solidity
+function getPermissions(address addr) view returns (bytes2 perms);
+```
+
+**Parameters**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| `addr` | `address` | Address to inspect. |
+**Returns**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| `perms` | `bytes2` | Permission bitmask currently assigned to `addr`. |
+
+
+#### ++dnt++IOrgan.initialize
+
+```solidity
+function initialize(address[] procedures, bytes2[] permissions, string cid, (address, string)[] entries, address trustedForwarder);
+```
+
+
+
+#### ++dnt++IOrgan.isCallPolicyWhitelistedAddress
+
+Check whether an address is present in a call policy whitelist.
+
+```solidity
+function isCallPolicyWhitelistedAddress(address target, bytes4 selector, address candidate) view returns (bool);
+```
+
+**Parameters**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| `target` | `address` | The external contract keyed by the policy. |
+| `selector` | `bytes4` | The function selector keyed by the policy. |
+| `candidate` | `address` | The address to test against the whitelist. |
+
+
+#### ++dnt++IOrgan.removeCallPolicy
+
+Remove a previously configured external call policy.
+
+```solidity
+function removeCallPolicy(address target, bytes4 selector);
+```
+
+**Parameters**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| `target` | `address` | The external contract whose policy should be removed. |
+| `selector` | `bytes4` | The function selector whose policy should be removed. |
+
+
+#### ++dnt++IOrgan.removeEntries
+
+Remove entries from the organ directory.
+
+```solidity
+function removeEntries(uint256[] indexes);
+```
+
+**Parameters**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| `indexes` | `uint256[]` | Indexes to remove. |
+
+
+#### ++dnt++IOrgan.removePermission
+
+Remove every permission bit from one address or procedure.
+
+```solidity
+function removePermission(address permissionAddress);
+```
+
+**Parameters**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| `permissionAddress` | `address` | Address whose permissions should be removed. |
+
+
+#### ++dnt++IOrgan.replaceEntry
+
+```solidity
+function replaceEntry(uint256 index, (address, string) entry);
+```
+
+
+
+#### ++dnt++IOrgan.replacePermission
+
+Replace one permission holder with another.
+
+```solidity
+function replacePermission(address oldPermission, address newPermission, bytes2 newPermissionValue);
+```
+
+**Parameters**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| `oldPermission` | `address` | Address currently holding the permission. |
+| `newPermission` | `address` | Address that should receive the permission instead. |
+| `newPermissionValue` | `bytes2` | Permission bitmask assigned to `newPermission`. |
+
+
+#### ++dnt++IOrgan.setCallPolicy
+
+```solidity
+function setCallPolicy(address target, bytes4 selector, (uint8, uint8, bytes32, bytes32, bytes32)[] constraints, address[] whitelistedAddresses);
+```
+
+
+
+#### ++dnt++IOrgan.updateCid
+
+Update the metadata CID of the organ.
+
+```solidity
+function updateCid(string cid);
+```
+
+**Parameters**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| `cid` | `string` | New content identifier describing the organ. |
+
+
+
+
+## ++dnt++contract OrganLibrary
+
+### Events
+
+#### ++dnt++OrganLibrary.adminUpdated
+
+```solidity
+event adminUpdated(address from, address admin);
+```
+
+
+
+#### ++dnt++OrganLibrary.callPolicyRemoved
+
+```solidity
+event callPolicyRemoved(address indexed caller, address indexed target, bytes4 indexed selector);
+```
+
+
+
+#### ++dnt++OrganLibrary.callPolicySet
+
+```solidity
+event callPolicySet(address indexed caller, address indexed target, bytes4 indexed selector);
+```
+
+
+
+#### ++dnt++OrganLibrary.callPolicyWhitelistedAddressAdded
+
+```solidity
+event callPolicyWhitelistedAddressAdded(bytes32 indexed policyKey, address indexed candidate);
+```
+
+
+
+#### ++dnt++OrganLibrary.callPolicyWhitelistedAddressRemoved
+
+```solidity
+event callPolicyWhitelistedAddressRemoved(bytes32 indexed policyKey, address indexed candidate);
+```
+
+
+
+#### ++dnt++OrganLibrary.cidUpdated
+
+```solidity
+event cidUpdated(address from, string cid);
+```
+
+
+
+#### ++dnt++OrganLibrary.coinsReceived
+
+```solidity
+event coinsReceived(address operator, address from, address to, uint256 amount);
+```
+
+
+
+#### ++dnt++OrganLibrary.coinsTransferred
+
+```solidity
+event coinsTransferred(address operator, address from, address to, uint256 amount);
+```
+
+
+
+#### ++dnt++OrganLibrary.collectibleReceived
+
+```solidity
+event collectibleReceived(address operator, address from, uint256 tokenId);
+```
+
+
+
+#### ++dnt++OrganLibrary.collectibleTransferred
+
+```solidity
+event collectibleTransferred(address operator, address to, uint256 tokenId);
+```
+
+
+
+#### ++dnt++OrganLibrary.entryAdded
+
+```solidity
+event entryAdded(address from, uint256 index, address addr, string cid);
+```
+
+
+
+#### ++dnt++OrganLibrary.entryRemoved
+
+```solidity
+event entryRemoved(address from, uint256 index);
+```
+
+
+
+#### ++dnt++OrganLibrary.etherReceived
+
+```solidity
+event etherReceived(address from, uint256 amount);
+```
+
+
+
+#### ++dnt++OrganLibrary.etherTransferred
+
+```solidity
+event etherTransferred(address from, address to, uint256 amount);
+```
+
+
+
+#### ++dnt++OrganLibrary.permissionAdded
+
+```solidity
+event permissionAdded(address from, address permissionAddress, bytes2 permissionValue);
+```
+
+
+
+#### ++dnt++OrganLibrary.permissionRemoved
+
+```solidity
+event permissionRemoved(address from, address permissionAddress);
+```
+
+
+
+#### ++dnt++OrganLibrary.whitelistedExecution
+
+```solidity
+event whitelistedExecution(address indexed caller, address indexed target, bytes4 indexed selector, uint256 value);
+```
+
+
+
+### Functions
+
+#### ++dnt++OrganLibrary.PERMISSION_ADD_ENTRIES
+
+```solidity
+function PERMISSION_ADD_ENTRIES() view returns (bytes2);
+```
+
+
+
+#### ++dnt++OrganLibrary.PERMISSION_ADD_PERMISSIONS
+
+```solidity
+function PERMISSION_ADD_PERMISSIONS() view returns (bytes2);
+```
+
+
+
+#### ++dnt++OrganLibrary.PERMISSION_DEPOSIT_COINS
+
+```solidity
+function PERMISSION_DEPOSIT_COINS() view returns (bytes2);
+```
+
+
+
+#### ++dnt++OrganLibrary.PERMISSION_DEPOSIT_COLLECTIBLES
+
+```solidity
+function PERMISSION_DEPOSIT_COLLECTIBLES() view returns (bytes2);
+```
+
+
+
+#### ++dnt++OrganLibrary.PERMISSION_DEPOSIT_ETHER
+
+```solidity
+function PERMISSION_DEPOSIT_ETHER() view returns (bytes2);
+```
+
+
+
+#### ++dnt++OrganLibrary.PERMISSION_EXECUTE_WHITELISTED
+
+```solidity
+function PERMISSION_EXECUTE_WHITELISTED() view returns (bytes2);
+```
+
+
+
+#### ++dnt++OrganLibrary.PERMISSION_MANAGE_EXECUTION_WHITELIST
+
+```solidity
+function PERMISSION_MANAGE_EXECUTION_WHITELIST() view returns (bytes2);
+```
+
+
+
+#### ++dnt++OrganLibrary.PERMISSION_REMOVE_ENTRIES
+
+```solidity
+function PERMISSION_REMOVE_ENTRIES() view returns (bytes2);
+```
+
+
+
+#### ++dnt++OrganLibrary.PERMISSION_REMOVE_PERMISSIONS
+
+```solidity
+function PERMISSION_REMOVE_PERMISSIONS() view returns (bytes2);
+```
+
+
+
+#### ++dnt++OrganLibrary.PERMISSION_UPDATE_METADATA
+
+```solidity
+function PERMISSION_UPDATE_METADATA() view returns (bytes2);
+```
+
+
+
+#### ++dnt++OrganLibrary.PERMISSION_WITHDRAW_COINS
+
+```solidity
+function PERMISSION_WITHDRAW_COINS() view returns (bytes2);
+```
+
+
+
+#### ++dnt++OrganLibrary.PERMISSION_WITHDRAW_COLLECTIBLES
+
+```solidity
+function PERMISSION_WITHDRAW_COLLECTIBLES() view returns (bytes2);
+```
+
+
+
+#### ++dnt++OrganLibrary.PERMISSION_WITHDRAW_ETHER
+
+```solidity
+function PERMISSION_WITHDRAW_ETHER() view returns (bytes2);
+```
+
+
+
+
+
+## ++dnt++contract ProcedureLibrary
+
+### Events
+
+#### ++dnt++ProcedureLibrary.AdminUpdated
+
+```solidity
+event AdminUpdated(address from, address admin);
+```
+
+
+
+#### ++dnt++ProcedureLibrary.CidUpdated
+
+```solidity
+event CidUpdated(address from, string cid);
+```
+
+
+
+#### ++dnt++ProcedureLibrary.ProposalApplied
+
+```solidity
+event ProposalApplied(uint256 indexed proposalKey);
+```
+
+
+
+#### ++dnt++ProcedureLibrary.ProposalBlocked
+
+```solidity
+event ProposalBlocked(address indexed moderator, uint256 indexed proposalKey, string reason);
+```
+
+
+
+#### ++dnt++ProcedureLibrary.ProposalCreated
+
+```solidity
+event ProposalCreated(address indexed creator, uint256 indexed proposalKey);
+```
+
+
+
+#### ++dnt++ProcedureLibrary.ProposalPresented
+
+```solidity
+event ProposalPresented(address indexed presenter, uint256 indexed proposalKey);
+```
+
+
+
+### Functions
+
+#### ++dnt++ProcedureLibrary.isInOrgan
+
+Utils.
+
+```solidity
+function isInOrgan(address organ, address caller) view returns (bool);
+```
+
+
+
+
+

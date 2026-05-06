@@ -1,0 +1,4055 @@
+export const metadata = { title: "⚙️ Typescript", order: 4.2 }
+
+# Typescript reference ⚙️
+
+The official Javascript/Typescript documentation for the contracts and types used in the Organigram.ai stack.
+
+
+## @organigram/js
+
+### Install
+
+```bash
+pnpm add @organigram/js
+```
+
+### Init
+
+```ts
+import { OrganigramClient } from '@organigram/js'
+```
+
+### Classes
+
+- [Asset](/docs/reference/js#class_Asset)
+- [ERC20VoteProcedure](/docs/reference/js#class_ERC20VoteProcedure)
+- [NominationProcedure](/docs/reference/js#class_NominationProcedure)
+- [Organ](/docs/reference/js#class_Organ)
+- [Organigram](/docs/reference/js#class_Organigram)
+- [OrganigramClient](/docs/reference/js#class_OrganigramClient)
+- [Procedure](/docs/reference/js#class_Procedure)
+- [VoteProcedure](/docs/reference/js#class_VoteProcedure)
+
+### Interfaces
+
+- [AssetInput](/docs/reference/js#interface_AssetInput)
+- [AssetJson](/docs/reference/js#interface_AssetJson)
+- [DeployAssetInput](/docs/reference/js#interface_DeployAssetInput)
+- [DeployOrganigramInput](/docs/reference/js#interface_DeployOrganigramInput)
+- [DeployOrganInput](/docs/reference/js#interface_DeployOrganInput)
+- [DeployProceduresInput](/docs/reference/js#interface_DeployProceduresInput)
+- [ExternalCallOperationInput](/docs/reference/js#interface_ExternalCallOperationInput)
+- [File_2](/docs/reference/js#interface_File_2)
+- [IOrganEntry](/docs/reference/js#interface_IOrganEntry)
+- [OperationParam](/docs/reference/js#interface_OperationParam)
+- [OrganEntry](/docs/reference/js#interface_OrganEntry)
+- [OrganInput](/docs/reference/js#interface_OrganInput)
+- [OrganJson](/docs/reference/js#interface_OrganJson)
+- [OrganPermission](/docs/reference/js#interface_OrganPermission)
+- [PopulateInitializeInput](/docs/reference/js#interface_PopulateInitializeInput)
+- [ProcedureInput](/docs/reference/js#interface_ProcedureInput)
+- [ProcedureProposal](/docs/reference/js#interface_ProcedureProposal)
+- [ProcedureProposalOperation](/docs/reference/js#interface_ProcedureProposalOperation)
+- [ProcedureProposalOperationFunction](/docs/reference/js#interface_ProcedureProposalOperationFunction)
+- [ProcedureType](/docs/reference/js#interface_ProcedureType)
+- [ProcedureTypeField](/docs/reference/js#interface_ProcedureTypeField)
+- [ProposalMetadata](/docs/reference/js#interface_ProposalMetadata)
+- [SignedBlockProposalInput](/docs/reference/js#interface_SignedBlockProposalInput)
+- [SignedProposalActionInput](/docs/reference/js#interface_SignedProposalActionInput)
+- [SignedProposalInput](/docs/reference/js#interface_SignedProposalInput)
+- [TransactionOptions](/docs/reference/js#interface_TransactionOptions)
+
+### Types
+
+- [AccountInOrgans](/docs/reference/js#type_AccountInOrgans)
+- [ContractClients](/docs/reference/js#type_ContractClients)
+- [ContractName](/docs/reference/js#type_ContractName)
+- [Election](/docs/reference/js#type_Election)
+- [ERC20VoteProcedureInput](/docs/reference/js#type_ERC20VoteProcedureInput)
+- [OperationParamAction](/docs/reference/js#type_OperationParamAction)
+- [OperationParamType](/docs/reference/js#type_OperationParamType)
+- [OperationTag](/docs/reference/js#type_OperationTag)
+- [OrganigramInput](/docs/reference/js#type_OrganigramInput)
+- [OrganigramJson](/docs/reference/js#type_OrganigramJson)
+- [OrganigramTransaction](/docs/reference/js#type_OrganigramTransaction)
+- [OrganigramTransactionReceipt](/docs/reference/js#type_OrganigramTransactionReceipt)
+- [PopulatedTransactionData](/docs/reference/js#type_PopulatedTransactionData)
+- [ProcedureJson](/docs/reference/js#type_ProcedureJson)
+- [ProcedureRoleTypeName](/docs/reference/js#type_ProcedureRoleTypeName)
+- [ProcedureTypeName](/docs/reference/js#type_ProcedureTypeName)
+- [ProposalKey](/docs/reference/js#type_ProposalKey)
+- [TemplateName](/docs/reference/js#type_TemplateName)
+- [VoteProcedureInput](/docs/reference/js#type_VoteProcedureInput)
+
+### Enums
+
+- [OrganFunctionName](/docs/reference/js#enum_OrganFunctionName)
+- [ProcedureTypeNameEnum](/docs/reference/js#enum_ProcedureTypeNameEnum)
+
+### Functions
+
+- [bufferEstimatedGas](/docs/reference/js#function_bufferEstimatedGas)
+- [capitalize](/docs/reference/js#function_capitalize)
+- [cloneInitCodeHash](/docs/reference/js#function_cloneInitCodeHash)
+- [createContractWriteTransaction](/docs/reference/js#function_createContractWriteTransaction)
+- [createDeployTransaction](/docs/reference/js#function_createDeployTransaction)
+- [createRandom32BytesHexId](/docs/reference/js#function_createRandom32BytesHexId)
+- [encodeProcedureInitialization](/docs/reference/js#function_encodeProcedureInitialization)
+- [formatSalt](/docs/reference/js#function_formatSalt)
+- [getChainExplorerBaseUrl](/docs/reference/js#function_getChainExplorerBaseUrl)
+- [getConfiguredChain](/docs/reference/js#function_getConfiguredChain)
+- [getContractInstance](/docs/reference/js#function_getContractInstance)
+- [getDefaultChainId](/docs/reference/js#function_getDefaultChainId)
+- [getDeployment](/docs/reference/js#function_getDeployment)
+- [getHostUrl](/docs/reference/js#function_getHostUrl)
+- [getPermissionsSet](/docs/reference/js#function_getPermissionsSet)
+- [getProcedureClass](/docs/reference/js#function_getProcedureClass)
+- [getProcedureType](/docs/reference/js#function_getProcedureType)
+- [getProcedureTypes](/docs/reference/js#function_getProcedureTypes)
+- [getSupportedChainIds](/docs/reference/js#function_getSupportedChainIds)
+- [getSupportedChains](/docs/reference/js#function_getSupportedChains)
+- [getTemplate](/docs/reference/js#function_getTemplate)
+- [getWalletAccount](/docs/reference/js#function_getWalletAccount)
+- [getWalletAddress](/docs/reference/js#function_getWalletAddress)
+- [handleJsonBigInt](/docs/reference/js#function_handleJsonBigInt)
+- [isLocalHost](/docs/reference/js#function_isLocalHost)
+- [isSupportedChainId](/docs/reference/js#function_isSupportedChainId)
+- [populateInitializeProcedure](/docs/reference/js#function_populateInitializeProcedure)
+- [predictContractAddress](/docs/reference/js#function_predictContractAddress)
+- [prepareDeployOrgansInput](/docs/reference/js#function_prepareDeployOrgansInput)
+- [prepareDeployProceduresInput](/docs/reference/js#function_prepareDeployProceduresInput)
+- [renewSaltsAndAddresses](/docs/reference/js#function_renewSaltsAndAddresses)
+- [resolveDeployment](/docs/reference/js#function_resolveDeployment)
+
+
+## Utility functions
+
+## function ++dnt++bufferEstimatedGas
+
+```typescript
+bufferEstimatedGas: (estimatedGas: bigint) => bigint
+```
+
+
+## function ++dnt++capitalize
+
+```typescript
+capitalize: (s: string) => string
+```
+
+
+## function ++dnt++cloneInitCodeHash
+
+```typescript
+export declare function cloneInitCodeHash(implementation: string): string;
+```
+
+
+## function ++dnt++createContractWriteTransaction
+
+```typescript
+createContractWriteTransaction: <TAbi extends Abi | readonly unknown[]>(input: {
+    address: string;
+    abi: TAbi;
+    functionName: string;
+    args?: unknown[];
+    clients: ContractClients;
+    nonce?: number;
+    value?: bigint;
+}) => Promise<OrganigramTransaction>
+```
+
+
+## function ++dnt++createDeployTransaction
+
+```typescript
+createDeployTransaction: <TAbi extends Abi | readonly unknown[]>(input: {
+    abi: TAbi;
+    bytecode: string;
+    args?: unknown[];
+    clients: ContractClients;
+    nonce?: number;
+    value?: bigint;
+}) => Promise<OrganigramTransaction>
+```
+
+
+## function ++dnt++createRandom32BytesHexId
+
+```typescript
+createRandom32BytesHexId: () => `0x${string}`
+```
+
+
+## function ++dnt++encodeProcedureInitialization
+
+```typescript
+encodeProcedureInitialization: (abi: unknown, functionName: string, args: unknown[]) => PopulatedTransactionData
+```
+
+
+## function ++dnt++formatSalt
+
+```typescript
+formatSalt: (salt?: string | null) => string
+```
+
+
+## function ++dnt++getChainExplorerBaseUrl
+
+```typescript
+getChainExplorerBaseUrl: (chainId: string) => string | undefined
+```
+
+
+## function ++dnt++getConfiguredChain
+
+```typescript
+getConfiguredChain: (chainId: string, hostUrl?: string, preferLocalHost?: boolean) => Chain | undefined
+```
+
+
+## function ++dnt++getContractInstance
+
+```typescript
+getContractInstance: <TAbi extends Abi | readonly unknown[]>(input: {
+    address: string;
+    abi: TAbi;
+} & ContractClients) => {
+    read: {
+        [x: string]: (...parameters: [options?: import("viem").Prettify<import("viem").UnionOmit<import("viem").ReadContractParameters<Abi, string, readonly unknown[]>, "address" | "abi" | "functionName" | "args">> | undefined] | [args: readonly unknown[], options?: import("viem").Prettify<import("viem").UnionOmit<import("viem").ReadContractParameters<Abi, string, readonly unknown[]>, "address" | "abi" | "functionName" | "args">> | undefined]) => Promise<import("viem").ReadContractReturnType>;
+    };
+    estimateGas: {
+        [x: string]: (...parameters: [options: import("viem").Prettify<import("viem").UnionOmit<import("viem").EstimateContractGasParameters<Abi, string, readonly unknown[], import("viem").Chain | undefined>, "address" | "abi" | "functionName" | "args">>] | [args: readonly unknown[], options: import("viem").Prettify<import("viem").UnionOmit<import("viem").EstimateContractGasParameters<Abi, string, readonly unknown[], import("viem").Chain | undefined>, "address" | "abi" | "functionName" | "args">>]) => Promise<import("viem").EstimateContractGasReturnType>;
+    } & {
+        [x: string]: (...parameters: [options: import("viem").Prettify<import("viem").UnionOmit<import("viem").EstimateContractGasParameters<Abi, string, readonly unknown[], import("viem").Chain | undefined>, "address" | "abi" | "functionName" | "args">>] | [args: readonly unknown[], options: import("viem").Prettify<import("viem").UnionOmit<import("viem").EstimateContractGasParameters<Abi, string, readonly unknown[], import("viem").Chain | undefined>, "address" | "abi" | "functionName" | "args">>]) => Promise<import("viem").EstimateContractGasReturnType>;
+    };
+    simulate: {
+        [x: string]: <chainOverride extends import("viem").Chain | undefined = undefined, accountOverride extends Account | Address | undefined = undefined>(...parameters: [options?: Omit<import("viem").SimulateContractParameters<Abi, string, readonly unknown[], import("viem").Chain | undefined, chainOverride, accountOverride>, "address" | "abi" | "functionName" | "args"> | undefined] | [args: readonly unknown[], options?: Omit<import("viem").SimulateContractParameters<Abi, string, readonly unknown[], import("viem").Chain | undefined, chainOverride, accountOverride>, "address" | "abi" | "functionName" | "args"> | undefined]) => Promise<import("viem").SimulateContractReturnType>;
+    };
+    createEventFilter: {
+        [x: string]: <strict extends boolean | undefined = undefined>(...parameters: [options?: ({
+            fromBlock?: bigint | import("viem").BlockTag | undefined;
+            toBlock?: bigint | import("viem").BlockTag | undefined;
+        } & {
+            strict?: strict | undefined;
+        }) | undefined] | [args: readonly unknown[] | {
+            [x: string]: unknown;
+            address?: undefined;
+            abi?: undefined;
+            eventName?: undefined;
+            fromBlock?: undefined;
+            strict?: undefined;
+            toBlock?: undefined;
+            args?: undefined;
+        }, options?: ({
+            fromBlock?: bigint | import("viem").BlockTag | undefined;
+            toBlock?: bigint | import("viem").BlockTag | undefined;
+        } & {
+            strict?: strict | undefined;
+        }) | undefined]) => Promise<import("viem").CreateContractEventFilterReturnType>;
+    };
+    getEvents: {
+        [x: string]: (...parameters: [options?: {
+            blockHash?: `0x${string}` | undefined;
+            strict?: boolean | undefined;
+            fromBlock?: bigint | import("viem").BlockTag | undefined;
+            toBlock?: bigint | import("viem").BlockTag | undefined;
+        } | undefined] | [args?: readonly unknown[] | {
+            [x: string]: unknown;
+            address?: undefined;
+            abi?: undefined;
+            args?: undefined;
+            eventName?: undefined;
+            fromBlock?: undefined;
+            onError?: undefined;
+            onLogs?: undefined;
+            strict?: undefined;
+            poll?: undefined;
+            batch?: undefined;
+            pollingInterval?: undefined;
+        } | undefined, options?: {
+            blockHash?: `0x${string}` | undefined;
+            strict?: boolean | undefined;
+            fromBlock?: bigint | import("viem").BlockTag | undefined;
+            toBlock?: bigint | import("viem").BlockTag | undefined;
+        } | undefined]) => Promise<import("viem").GetContractEventsReturnType<Abi, string>>;
+    };
+    watchEvent: {
+        [x: string]: (...parameters: [options?: {
+            batch?: boolean | undefined | undefined;
+            pollingInterval?: number | undefined | undefined;
+            strict?: boolean | undefined;
+            fromBlock?: bigint | undefined;
+            onError?: ((error: Error) => void) | undefined | undefined;
+            onLogs: import("viem").WatchContractEventOnLogsFn<Abi, string, undefined>;
+            poll?: true | undefined | undefined;
+        } | undefined] | [args: readonly unknown[] | {
+            [x: string]: unknown;
+            address?: undefined;
+            abi?: undefined;
+            args?: undefined;
+            eventName?: undefined;
+            fromBlock?: undefined;
+            onError?: undefined;
+            onLogs?: undefined;
+            strict?: undefined;
+            poll?: undefined;
+            batch?: undefined;
+            pollingInterval?: undefined;
+        }, options?: {
+            batch?: boolean | undefined | undefined;
+            pollingInterval?: number | undefined | undefined;
+            strict?: boolean | undefined;
+            fromBlock?: bigint | undefined;
+            onError?: ((error: Error) => void) | undefined | undefined;
+            onLogs: import("viem").WatchContractEventOnLogsFn<Abi, string, undefined>;
+            poll?: true | undefined | undefined;
+        } | undefined]) => import("viem").WatchContractEventReturnType;
+    };
+    write: {
+        [x: string]: <chainOverride extends import("viem").Chain | undefined, options extends import("viem").UnionOmit<import("viem").WriteContractParameters<Abi, string, readonly unknown[], import("viem").Chain | undefined, undefined, chainOverride>, "address" | "abi" | "functionName" | "args"> extends infer T ? { [K in keyof T]: T[K]; } : never, Rest extends unknown[] = [options: options]>(...parameters: Rest | [args: readonly unknown[], ...parameters: Rest]) => Promise<import("viem").WriteContractReturnType>;
+    };
+    address: `0x${string}`;
+    abi: Abi;
+} | {
+    read: {
+        [x: string]: (...parameters: [options?: import("viem").Prettify<import("viem").UnionOmit<import("viem").ReadContractParameters<Abi, string, readonly unknown[]>, "address" | "abi" | "functionName" | "args">> | undefined] | [args: readonly unknown[], options?: import("viem").Prettify<import("viem").UnionOmit<import("viem").ReadContractParameters<Abi, string, readonly unknown[]>, "address" | "abi" | "functionName" | "args">> | undefined]) => Promise<import("viem").ReadContractReturnType>;
+    };
+    estimateGas: {
+        [x: string]: (...parameters: [options: import("viem").Prettify<import("viem").UnionOmit<import("viem").EstimateContractGasParameters<Abi, string, readonly unknown[], import("viem").Chain | undefined>, "address" | "abi" | "functionName" | "args">>] | [args: readonly unknown[], options: import("viem").Prettify<import("viem").UnionOmit<import("viem").EstimateContractGasParameters<Abi, string, readonly unknown[], import("viem").Chain | undefined>, "address" | "abi" | "functionName" | "args">>]) => Promise<import("viem").EstimateContractGasReturnType>;
+    } & {
+        [x: string]: (...parameters: [options: import("viem").Prettify<import("viem").UnionOmit<import("viem").EstimateContractGasParameters<Abi, string, readonly unknown[], import("viem").Chain | undefined>, "address" | "abi" | "functionName" | "args">>] | [args: readonly unknown[], options: import("viem").Prettify<import("viem").UnionOmit<import("viem").EstimateContractGasParameters<Abi, string, readonly unknown[], import("viem").Chain | undefined>, "address" | "abi" | "functionName" | "args">>]) => Promise<import("viem").EstimateContractGasReturnType>;
+    };
+    simulate: {
+        [x: string]: <chainOverride extends import("viem").Chain | undefined = undefined, accountOverride extends Account | Address | undefined = undefined>(...parameters: [options?: Omit<import("viem").SimulateContractParameters<Abi, string, readonly unknown[], import("viem").Chain | undefined, chainOverride, accountOverride>, "address" | "abi" | "functionName" | "args"> | undefined] | [args: readonly unknown[], options?: Omit<import("viem").SimulateContractParameters<Abi, string, readonly unknown[], import("viem").Chain | undefined, chainOverride, accountOverride>, "address" | "abi" | "functionName" | "args"> | undefined]) => Promise<import("viem").SimulateContractReturnType>;
+    };
+    createEventFilter: {
+        [x: string]: <strict extends boolean | undefined = undefined>(...parameters: [options?: ({
+            fromBlock?: bigint | import("viem").BlockTag | undefined;
+            toBlock?: bigint | import("viem").BlockTag | undefined;
+        } & {
+            strict?: strict | undefined;
+        }) | undefined] | [args: readonly unknown[] | {
+            [x: string]: unknown;
+            address?: undefined;
+            abi?: undefined;
+            eventName?: undefined;
+            fromBlock?: undefined;
+            strict?: undefined;
+            toBlock?: undefined;
+            args?: undefined;
+        }, options?: ({
+            fromBlock?: bigint | import("viem").BlockTag | undefined;
+            toBlock?: bigint | import("viem").BlockTag | undefined;
+        } & {
+            strict?: strict | undefined;
+        }) | undefined]) => Promise<import("viem").CreateContractEventFilterReturnType>;
+    };
+    getEvents: {
+        [x: string]: (...parameters: [options?: {
+            blockHash?: `0x${string}` | undefined;
+            strict?: boolean | undefined;
+            fromBlock?: bigint | import("viem").BlockTag | undefined;
+            toBlock?: bigint | import("viem").BlockTag | undefined;
+        } | undefined] | [args?: readonly unknown[] | {
+            [x: string]: unknown;
+            address?: undefined;
+            abi?: undefined;
+            args?: undefined;
+            eventName?: undefined;
+            fromBlock?: undefined;
+            onError?: undefined;
+            onLogs?: undefined;
+            strict?: undefined;
+            poll?: undefined;
+            batch?: undefined;
+            pollingInterval?: undefined;
+        } | undefined, options?: {
+            blockHash?: `0x${string}` | undefined;
+            strict?: boolean | undefined;
+            fromBlock?: bigint | import("viem").BlockTag | undefined;
+            toBlock?: bigint | import("viem").BlockTag | undefined;
+        } | undefined]) => Promise<import("viem").GetContractEventsReturnType<Abi, string>>;
+    };
+    watchEvent: {
+        [x: string]: (...parameters: [options?: {
+            batch?: boolean | undefined | undefined;
+            pollingInterval?: number | undefined | undefined;
+            strict?: boolean | undefined;
+            fromBlock?: bigint | undefined;
+            onError?: ((error: Error) => void) | undefined | undefined;
+            onLogs: import("viem").WatchContractEventOnLogsFn<Abi, string, undefined>;
+            poll?: true | undefined | undefined;
+        } | undefined] | [args: readonly unknown[] | {
+            [x: string]: unknown;
+            address?: undefined;
+            abi?: undefined;
+            args?: undefined;
+            eventName?: undefined;
+            fromBlock?: undefined;
+            onError?: undefined;
+            onLogs?: undefined;
+            strict?: undefined;
+            poll?: undefined;
+            batch?: undefined;
+            pollingInterval?: undefined;
+        }, options?: {
+            batch?: boolean | undefined | undefined;
+            pollingInterval?: number | undefined | undefined;
+            strict?: boolean | undefined;
+            fromBlock?: bigint | undefined;
+            onError?: ((error: Error) => void) | undefined | undefined;
+            onLogs: import("viem").WatchContractEventOnLogsFn<Abi, string, undefined>;
+            poll?: true | undefined | undefined;
+        } | undefined]) => import("viem").WatchContractEventReturnType;
+    };
+    write: {
+        [x: string]: <chainOverride extends import("viem").Chain | undefined, options extends import("viem").UnionOmit<import("viem").WriteContractParameters<Abi, string, readonly unknown[], import("viem").Chain | undefined, Account | undefined, chainOverride>, "address" | "abi" | "functionName" | "args"> extends infer T ? { [K in keyof T]: T[K]; } : never, Rest extends unknown[] = [options: options]>(...parameters: Rest | [args: readonly unknown[], ...parameters: Rest]) => Promise<import("viem").WriteContractReturnType>;
+    };
+    address: `0x${string}`;
+    abi: Abi;
+}
+```
+
+
+## function ++dnt++getDefaultChainId
+
+```typescript
+getDefaultChainId: () => string
+```
+
+
+## function ++dnt++getDeployment
+
+```typescript
+getDeployment: (chainId: string | number | bigint | null | undefined, deploymentName: ProtocolDeploymentName) => string
+```
+
+
+## function ++dnt++getHostUrl
+
+```typescript
+getHostUrl: (hostUrl?: string | undefined) => URL | null
+```
+
+
+## function ++dnt++getPermissionsSet
+
+```typescript
+getPermissionsSet: (permissions: number) => string[]
+```
+
+
+## function ++dnt++getProcedureClass
+
+```typescript
+getProcedureClass: (typeName: string) => Promise<typeof import("./vote").VoteProcedure | typeof import("./erc20Vote").ERC20VoteProcedure | typeof import("./nomination").NominationProcedure>
+```
+
+
+## function ++dnt++getProcedureType
+
+```typescript
+getProcedureType: (chainId: string, typeName: ProcedureTypeName) => ProcedureType
+```
+
+
+## function ++dnt++getProcedureTypes
+
+```typescript
+getProcedureTypes: (chainId?: string) => {
+    erc20Vote: ProcedureType;
+    nomination: ProcedureType;
+    vote: ProcedureType;
+}
+```
+
+
+## function ++dnt++getSupportedChainIds
+
+```typescript
+getSupportedChainIds: () => string[]
+```
+
+
+## function ++dnt++getSupportedChains
+
+```typescript
+getSupportedChains: (hostUrl?: string, preferLocalHost?: boolean) => Chain[]
+```
+
+
+## function ++dnt++getTemplate
+
+```typescript
+getTemplate: (templateName: TemplateName, chainId: string) => {
+    chainId: string;
+    organs: {
+        salt: string;
+        address: string;
+        chainId: string;
+        isDeployed: boolean;
+        permissions: {
+            permissionAddress: string;
+            permissionValue: number;
+        }[] | undefined;
+        publicClient?: import("viem").PublicClient | null;
+        walletClient?: import("viem").WalletClient | null;
+        balance?: string | null;
+        cid?: string | null;
+        entries?: Array<{
+            index: string;
+            address: string;
+            cid: string;
+        }> | null;
+        name?: string | null;
+        description?: string | null;
+        organigramId?: string | null;
+        forwarder?: string | null;
+    }[];
+    procedures: {
+        salt: string;
+        chainId: string;
+        data: string;
+        isDeployed: boolean;
+        address: string;
+        deciders: string;
+        proposers: string;
+        moderators: string | undefined;
+        typeName: string;
+        type?: import("..").ProcedureType;
+        name?: string | null;
+        description?: string | null;
+        cid?: string | null;
+        publicClient?: import("viem").PublicClient | null;
+        walletClient?: import("viem").WalletClient | null;
+        metadata?: string | null;
+        withModeration?: boolean | null;
+        forwarder?: string | null;
+        proposals?: import("..").ProcedureProposal[] | null;
+        organigramId?: string | null;
+    }[];
+    assets: {
+        chainId: string;
+        isDeployed: boolean;
+        salt: string;
+        address: string;
+        name?: string | null;
+        description?: string | null;
+        symbol?: string | null;
+        initialSupply?: number | null;
+        image?: string | null;
+        userBalance?: string | null;
+        organigramId?: string | null;
+    }[];
+    id?: string | null;
+    slug?: string | null;
+    name?: string | null;
+    description?: string | null;
+    organigramClient?: import("..").OrganigramClient | null;
+    walletClient?: import("viem").WalletClient | null;
+    publicClient?: import("viem").PublicClient | null;
+    contractAddresses?: string[] | null;
+    workspaceId?: string | null;
+}
+```
+
+
+## function ++dnt++getWalletAccount
+
+```typescript
+getWalletAccount: (walletClient: WalletClient) => Promise<Account | Address>
+```
+
+
+## function ++dnt++getWalletAddress
+
+```typescript
+getWalletAddress: (walletClient: WalletClient) => Promise<Address>
+```
+
+
+## function ++dnt++handleJsonBigInt
+
+```typescript
+handleJsonBigInt: (key: string, value: any) => any
+```
+
+
+## function ++dnt++isLocalHost
+
+```typescript
+isLocalHost: (hostUrl?: string) => boolean
+```
+
+
+## function ++dnt++isSupportedChainId
+
+```typescript
+isSupportedChainId: (chainId: string | number | bigint | null | undefined) => boolean
+```
+
+
+## function ++dnt++populateInitializeProcedure
+
+```typescript
+populateInitializeProcedure: (input: PopulateInitializeInput, clients: ContractClients) => Promise<PopulatedTransactionData>
+```
+
+
+## function ++dnt++predictContractAddress
+
+```typescript
+predictContractAddress: (input: {
+    type: Omit<ContractName, "OrganigramClient">;
+    chainId: string;
+    salt: string;
+}) => string
+```
+
+
+## function ++dnt++prepareDeployOrgansInput
+
+```typescript
+prepareDeployOrgansInput: (deployOrgansInput: DeployOrganInput[]) => {
+    permissionAddresses: string[];
+    permissionValues: string[];
+    cid: string;
+    entries: {
+        addr: string;
+        cid: string;
+    }[];
+    salt: string;
+}[]
+```
+
+
+## function ++dnt++prepareDeployProceduresInput
+
+```typescript
+prepareDeployProceduresInput: (deployProceduresInput: DeployProceduresInput[], clients: ContractClients) => Promise<{
+    procedureType: string;
+    data: string;
+    salt: string;
+    options: TransactionOptions | undefined;
+}[]>
+```
+
+
+## function ++dnt++renewSaltsAndAddresses
+
+```typescript
+renewSaltsAndAddresses: (organigram: OrganigramInput, chainId: string) => {
+    chainId: string;
+    organs: {
+        salt: string;
+        address: string;
+        chainId: string;
+        isDeployed: boolean;
+        permissions: {
+            permissionAddress: string;
+            permissionValue: number;
+        }[] | undefined;
+        publicClient?: import("viem").PublicClient | null;
+        walletClient?: import("viem").WalletClient | null;
+        balance?: string | null;
+        cid?: string | null;
+        entries?: Array<{
+            index: string;
+            address: string;
+            cid: string;
+        }> | null;
+        name?: string | null;
+        description?: string | null;
+        organigramId?: string | null;
+        forwarder?: string | null;
+    }[];
+    procedures: {
+        salt: string;
+        chainId: string;
+        data: string;
+        isDeployed: boolean;
+        address: string;
+        deciders: string;
+        proposers: string;
+        moderators: string | undefined;
+        typeName: string;
+        type?: import("..").ProcedureType;
+        name?: string | null;
+        description?: string | null;
+        cid?: string | null;
+        publicClient?: import("viem").PublicClient | null;
+        walletClient?: import("viem").WalletClient | null;
+        metadata?: string | null;
+        withModeration?: boolean | null;
+        forwarder?: string | null;
+        proposals?: import("..").ProcedureProposal[] | null;
+        organigramId?: string | null;
+    }[];
+    assets: {
+        chainId: string;
+        isDeployed: boolean;
+        salt: string;
+        address: string;
+        name?: string | null;
+        description?: string | null;
+        symbol?: string | null;
+        initialSupply?: number | null;
+        image?: string | null;
+        userBalance?: string | null;
+        organigramId?: string | null;
+    }[];
+    id?: string | null;
+    slug?: string | null;
+    name?: string | null;
+    description?: string | null;
+    organigramClient?: import("..").OrganigramClient | null;
+    walletClient?: import("viem").WalletClient | null;
+    publicClient?: import("viem").PublicClient | null;
+    contractAddresses?: string[] | null;
+    workspaceId?: string | null;
+}
+```
+
+
+## function ++dnt++resolveDeployment
+
+```typescript
+resolveDeployment: (chainId: string | number | bigint | null | undefined, deploymentName: ProtocolDeploymentName) => string | undefined
+```
+
+
+## class ++dnt++OrganigramClient
+
+Main SDK entry point used to deploy and hydrate Organigram protocol objects.
+
+It keeps a public client, an optional wallet client, the registered procedure types for the current chain, and small in-memory caches for loaded organs, procedures, and assets.
+
+### Constructors
+
+#### ++dnt++constructor
+
+Constructs a new instance of the `OrganigramClient` class
+
+```typescript
+constructor(input: {
+        publicClient: PublicClient;
+        address?: string;
+        chainId?: string;
+        procedureTypes?: ProcedureType[];
+        contract?: any;
+        walletClient?: WalletClient;
+    });
+```
+
+### Properties
+
+#### ++dnt++OrganigramClient.address
+
+```typescript
+address: string;
+```
+
+
+#### ++dnt++OrganigramClient.assets
+
+```typescript
+assets: Asset[];
+```
+
+
+#### ++dnt++OrganigramClient.chainId
+
+```typescript
+chainId: string;
+```
+
+
+#### ++dnt++OrganigramClient.cids
+
+```typescript
+cids: File[];
+```
+
+
+#### ++dnt++OrganigramClient.contract
+
+```typescript
+contract: any;
+```
+
+
+#### ++dnt++OrganigramClient.organs
+
+```typescript
+organs: Organ[];
+```
+
+
+#### ++dnt++OrganigramClient.procedures
+
+```typescript
+procedures: Procedure[];
+```
+
+
+#### ++dnt++OrganigramClient.procedureTypes
+
+```typescript
+procedureTypes: ProcedureType[];
+```
+
+
+#### ++dnt++OrganigramClient.publicClient
+
+```typescript
+publicClient: PublicClient;
+```
+
+
+#### ++dnt++OrganigramClient.walletClient
+
+```typescript
+walletClient?: WalletClient;
+```
+
+### Methods
+
+#### ++dnt++OrganigramClient.deployAsset
+
+Deploy a single ERC-20 asset clone.
+
+```typescript
+deployAsset(name: string, symbol: string, initialSupply: number, salt?: string, options?: TransactionOptions): Promise<string>;
+```
+**Parameters**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| `name` | `string` | Token name exposed by the deployed contract. |
+| `symbol` | `string` | Token symbol exposed by the deployed contract. |
+| `initialSupply` | `number` | Human-readable token supply before conversion to wei. |
+| `salt` | `string` | Optional deterministic clone salt. |
+| `options` | `TransactionOptions` | Optional transaction controls. |
+**Returns**
+
+| Type | Description |
+| --- | --- |
+| `Promise<string>` | The address of the deployed asset contract. |
+
+
+#### ++dnt++OrganigramClient.deployAssets
+
+Deploy several assets in one batch transaction.
+
+```typescript
+deployAssets(assets: DeployAssetInput[], options?: TransactionOptions): Promise<string[]>;
+```
+**Parameters**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| `assets` | `DeployAssetInput[]` | Assets to deploy. |
+| `options` | `TransactionOptions` | Optional transaction controls. |
+**Returns**
+
+| Type | Description |
+| --- | --- |
+| `Promise<string[]>` | The deployed asset addresses in deployment order. |
+
+
+#### ++dnt++OrganigramClient.deployClient
+
+Deploy a fresh Organigram client contract together with its linked library.
+
+```typescript
+static deployClient(input: {
+        publicClient: PublicClient;
+        walletClient: WalletClient;
+    }): Promise<OrganigramClient>;
+```
+**Parameters**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| `input` | `{ publicClient: PublicClient; walletClient: WalletClient; }` | Clients used to broadcast deployments and wait for receipts. |
+**Returns**
+
+| Type | Description |
+| --- | --- |
+| `Promise<OrganigramClient>` | A ready-to-use SDK instance pointing at the newly deployed client. |
+
+
+#### ++dnt++OrganigramClient.deployOrgan
+
+Deploy a single organ clone and hydrate the resulting SDK object.
+
+When no permissions are provided, the connected wallet is granted the full admin bitmask by default so the organ remains operable after deployment.
+
+```typescript
+deployOrgan(input?: DeployOrganInput): Promise<Organ>;
+```
+**Parameters**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| `input` | `DeployOrganInput` | Optional organ metadata, permissions, entries, and transaction options. |
+
+
+#### ++dnt++OrganigramClient.deployOrganigram
+
+Deploy a full organigram, including its organs, assets, and procedures.
+
+```typescript
+deployOrganigram(input: DeployOrganigramInput): Promise<readonly string[]>;
+```
+**Parameters**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| `input` | `DeployOrganigramInput` | Batch deployment input for the whole organigram. |
+**Returns**
+
+| Type | Description |
+| --- | --- |
+| `Promise<readonly string[]>` | The deployed organ, asset, and procedure addresses. |
+
+
+#### ++dnt++OrganigramClient.deployOrgans
+
+Deploy several organs in one batch transaction.
+
+```typescript
+deployOrgans(deployOrgansInput: DeployOrganInput[]): Promise<Organ[]>;
+```
+**Parameters**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| `deployOrgansInput` | `DeployOrganInput[]` | Organ definitions to deploy. |
+
+
+#### ++dnt++OrganigramClient.deployProcedure
+
+Deploy a single procedure clone from one registered procedure type.
+
+```typescript
+deployProcedure(input: DeployProceduresInput): Promise<Procedure>;
+```
+**Parameters**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| `input` | `DeployProceduresInput` | Procedure type, role organs, optional metadata, and initialization args. |
+
+
+#### ++dnt++OrganigramClient.deployProcedures
+
+Deploy several procedures in one batch transaction.
+
+```typescript
+deployProcedures(deployProceduresInput: DeployProceduresInput[]): Promise<Procedure[]>;
+```
+**Parameters**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| `deployProceduresInput` | `DeployProceduresInput[]` | Procedure definitions to deploy. |
+
+
+#### ++dnt++OrganigramClient.getDeployedAsset
+
+Load one deployed asset and memoize it in the client cache.
+
+```typescript
+getDeployedAsset(address: string, cached?: boolean, initialAsset?: Asset): Promise<Asset>;
+```
+**Parameters**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| `address` | `string` | Asset contract address. |
+| `cached` | `boolean` | Whether an already hydrated asset can be reused from memory. |
+| `initialAsset` | `Asset` | Optional fallback metadata merged into the loaded asset. |
+
+
+#### ++dnt++OrganigramClient.getDeployedOrgan
+
+Load one deployed organ and memoize it in the client cache.
+
+```typescript
+getDeployedOrgan(address: string, cached?: boolean, initialOrgan?: OrganInput): Promise<Organ>;
+```
+**Parameters**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| `address` | `string` | Organ contract address. |
+| `cached` | `boolean` | Whether an already hydrated organ can be reused from memory. |
+| `initialOrgan` | `OrganInput` | Optional fallback metadata merged into the loaded organ. |
+
+
+#### ++dnt++OrganigramClient.getDeployedProcedure
+
+Load one deployed procedure and memoize it in the client cache.
+
+```typescript
+getDeployedProcedure(address: string, cached?: boolean, initialProcedure?: ProcedureInput): Promise<Procedure>;
+```
+**Parameters**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| `address` | `string` | Procedure contract address. |
+| `cached` | `boolean` | Whether an already hydrated procedure can be reused from memory. |
+| `initialProcedure` | `ProcedureInput` | Optional fallback metadata merged into the loaded procedure. |
+
+
+#### ++dnt++OrganigramClient.getProcedureType
+
+Infer the registered procedure type of a deployed procedure clone.
+
+```typescript
+getProcedureType(procedureAddress: string): Promise<ProcedureType | null>;
+```
+**Parameters**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| `procedureAddress` | `string` | Address of the deployed procedure instance. |
+
+
+#### ++dnt++OrganigramClient.load
+
+Connect the SDK to an already deployed Organigram client contract.
+
+```typescript
+static load(input: {
+        address?: string;
+        publicClient: PublicClient;
+        walletClient?: WalletClient;
+    }): Promise<OrganigramClient>;
+```
+**Parameters**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| `input` | `{ address?: string; publicClient: PublicClient; walletClient?: WalletClient; }` | Address override plus the viem clients used for reads and writes. |
+
+
+#### ++dnt++OrganigramClient.loadContract
+
+Attempt to load one deployed contract as an organ or procedure.
+
+```typescript
+loadContract(address: string, cached?: boolean): Promise<Organ | Procedure | null>;
+```
+**Parameters**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| `address` | `string` | Contract address to inspect. |
+| `cached` | `boolean` | Whether cached instances may be reused. |
+
+
+#### ++dnt++OrganigramClient.loadContracts
+
+Load a heterogeneous list of deployed contract addresses into an organigram.
+
+```typescript
+loadContracts(contractAddresses: string[]): Promise<Organigram>;
+```
+**Parameters**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| `contractAddresses` | `string[]` | Addresses to resolve as organs, procedures, or assets. |
+
+
+#### ++dnt++OrganigramClient.loadOrganigram
+
+Hydrate every deployed object referenced by an organigram definition.
+
+Undeployed placeholders are preserved as-is, while deployed organs, procedures, and assets are refreshed from chain state.
+
+```typescript
+loadOrganigram(organigram: Organigram, cached?: boolean): Promise<Organigram>;
+```
+**Parameters**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| `organigram` | `Organigram` | Organigram definition to hydrate. |
+| `cached` | `boolean` | Whether previously cached instances may be reused. |
+
+
+#### ++dnt++OrganigramClient.loadProcedureType
+
+Load metadata for one deployed procedure implementation.
+
+```typescript
+static loadProcedureType(input: {
+        addr: string;
+        cid?: string;
+    }, publicClient: PublicClient): Promise<ProcedureType>;
+```
+**Parameters**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| `{ addr, cid }` | `` |   |
+| `input` | `{ addr: string; cid?: string; }` | Address and optional CID used to identify the procedure type. |
+| `publicClient` | `PublicClient` | Read-only client used for interface checks. |
+
+
+#### ++dnt++OrganigramClient.loadProcedureTypes
+
+Read the procedure registry and resolve every supported procedure type.
+
+```typescript
+static loadProcedureTypes(input: {
+        publicClient: PublicClient;
+        address?: string;
+    }): Promise<ProcedureType[]>;
+```
+**Parameters**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| `{ address, publicClient }` | `` |   |
+| `input` | `{ publicClient: PublicClient; address?: string; }` | Optional client contract address and the public client used to query it. |
+
+
+
+## class ++dnt++Organigram
+
+In-memory representation of an Organigram project.
+
+The class can be created from raw inputs, a built-in template name, or left blank to start from the default empty template.
+
+### Constructors
+
+#### ++dnt++constructor
+
+Constructs a new instance of the `Organigram` class
+
+```typescript
+constructor(input?: OrganigramInput | keyof typeof templates | string[]);
+```
+
+### Properties
+
+#### ++dnt++Organigram.assets
+
+```typescript
+assets: Asset[];
+```
+
+
+#### ++dnt++Organigram.chainId
+
+```typescript
+chainId: string;
+```
+
+
+#### ++dnt++Organigram.description
+
+```typescript
+description: string;
+```
+
+
+#### ++dnt++Organigram.id
+
+```typescript
+id: string;
+```
+
+
+#### ++dnt++Organigram.load
+
+Hydrate every deployed object referenced by this organigram.
+
+```typescript
+load: (input?: {
+        walletClient?: WalletClient | null;
+        publicClient?: PublicClient | null;
+    }) => Promise<Organigram>;
+```
+
+
+#### ++dnt++Organigram.name
+
+```typescript
+name: string;
+```
+
+
+#### ++dnt++Organigram.organigramClient
+
+```typescript
+organigramClient?: OrganigramClient | null;
+```
+
+
+#### ++dnt++Organigram.organs
+
+```typescript
+organs: Organ[];
+```
+
+
+#### ++dnt++Organigram.procedures
+
+```typescript
+procedures: Procedure[];
+```
+
+
+#### ++dnt++Organigram.publicClient
+
+```typescript
+publicClient?: PublicClient | null;
+```
+
+
+#### ++dnt++Organigram.slug
+
+```typescript
+slug: string;
+```
+
+
+#### ++dnt++Organigram.toJson
+
+Convert the organigram into a JSON-safe structure suitable for persistence or transport.
+
+```typescript
+toJson: () => OrganigramJson;
+```
+
+
+#### ++dnt++Organigram.walletClient
+
+```typescript
+walletClient?: WalletClient | null;
+```
+
+
+#### ++dnt++Organigram.workspaceId
+
+```typescript
+workspaceId?: string | null;
+```
+
+### Methods
+
+#### ++dnt++Organigram.deploy
+
+Deploy the full organigram through its attached client, then reload it from chain state.
+
+```typescript
+deploy(): Promise<Organigram>;
+```
+
+
+#### ++dnt++Organigram.editDetails
+
+```typescript
+editDetails(input: {
+        name?: string;
+        description?: string;
+        contractAddresses?: string[];
+    }): void;
+```
+
+
+#### ++dnt++Organigram.setAssets
+
+```typescript
+setAssets(assets: Asset[]): void;
+```
+
+
+#### ++dnt++Organigram.setOrgans
+
+```typescript
+setOrgans(organs: Organ[]): void;
+```
+
+
+#### ++dnt++Organigram.setProcedures
+
+```typescript
+setProcedures(procedures: Procedure[]): void;
+```
+
+
+
+## class ++dnt++Organ
+
+In-memory representation of one deployed or planned organ.
+
+### Constructors
+
+#### ++dnt++constructor
+
+Constructs a new instance of the `Organ` class
+
+```typescript
+constructor(input: OrganInput);
+```
+
+### Properties
+
+#### ++dnt++Organ.addEntries
+
+```typescript
+addEntries: (entries: IOrganEntry[], options?: TransactionOptions) => Promise<OrganigramTransactionReceipt>;
+```
+
+
+#### ++dnt++Organ.addPermission
+
+```typescript
+addPermission: (permission: OrganPermission, options?: TransactionOptions) => Promise<OrganigramTransactionReceipt>;
+```
+
+
+#### ++dnt++Organ.address
+
+```typescript
+address: string;
+```
+
+
+#### ++dnt++Organ.balance
+
+```typescript
+balance: string;
+```
+
+
+#### ++dnt++Organ.chainId
+
+```typescript
+chainId: string;
+```
+
+
+#### ++dnt++Organ.cid
+
+```typescript
+cid: string;
+```
+
+
+#### ++dnt++Organ.contract
+
+```typescript
+contract?: any;
+```
+
+
+#### ++dnt++Organ.description
+
+```typescript
+description: string;
+```
+
+
+#### ++dnt++Organ.entries
+
+```typescript
+entries: OrganEntry[];
+```
+
+
+#### ++dnt++Organ.forwarder
+
+```typescript
+forwarder: string;
+```
+
+
+#### ++dnt++Organ.INTERFACE
+
+```typescript
+static INTERFACE: string;
+```
+
+
+#### ++dnt++Organ.isDeployed
+
+```typescript
+isDeployed: boolean;
+```
+
+
+#### ++dnt++Organ.name
+
+```typescript
+name: string;
+```
+
+
+#### ++dnt++Organ.organigramId
+
+```typescript
+organigramId: string;
+```
+
+
+#### ++dnt++Organ.permissions
+
+```typescript
+permissions: OrganPermission[];
+```
+
+
+#### ++dnt++Organ.publicClient
+
+```typescript
+publicClient?: PublicClient;
+```
+
+
+#### ++dnt++Organ.removeEntries
+
+```typescript
+removeEntries: (indexes: string[], options?: TransactionOptions) => Promise<OrganigramTransactionReceipt>;
+```
+
+
+#### ++dnt++Organ.removePermission
+
+```typescript
+removePermission: (permission: string, options?: TransactionOptions) => Promise<OrganigramTransactionReceipt>;
+```
+
+
+#### ++dnt++Organ.replaceEntry
+
+```typescript
+replaceEntry: (index: number, entry: IOrganEntry, options?: TransactionOptions) => Promise<OrganigramTransactionReceipt>;
+```
+
+
+#### ++dnt++Organ.replacePermission
+
+```typescript
+replacePermission: (oldPermissionAddress: string, newOrganPermission: OrganPermission, options?: TransactionOptions) => Promise<OrganigramTransactionReceipt>;
+```
+
+
+#### ++dnt++Organ.salt
+
+```typescript
+salt: string | undefined;
+```
+
+
+#### ++dnt++Organ.toJson
+
+```typescript
+toJson: () => OrganJson;
+```
+
+
+#### ++dnt++Organ.updateCid
+
+```typescript
+updateCid: (cid: string, options?: TransactionOptions) => Promise<OrganigramTransactionReceipt>;
+```
+
+
+#### ++dnt++Organ.walletClient
+
+```typescript
+walletClient?: WalletClient;
+```
+
+
+#### ++dnt++Organ.withdrawERC20
+
+```typescript
+withdrawERC20: (token: string, to: string, amount: string | number | bigint, options?: TransactionOptions) => Promise<OrganigramTransactionReceipt>;
+```
+
+
+#### ++dnt++Organ.withdrawERC721
+
+```typescript
+withdrawERC721: (token: string, to: string, tokenId: string | number | bigint, options?: TransactionOptions) => Promise<OrganigramTransactionReceipt>;
+```
+
+
+#### ++dnt++Organ.withdrawEther
+
+```typescript
+withdrawEther: (to: string, value: string | number | bigint, options?: TransactionOptions) => Promise<OrganigramTransactionReceipt>;
+```
+
+### Methods
+
+#### ++dnt++Organ.checkAddressPermissions
+
+```typescript
+static checkAddressPermissions(organAddress: string, addressToCheck: string, clients: ContractClients): Promise<number>;
+```
+
+
+#### ++dnt++Organ.getBalance
+
+```typescript
+static getBalance(address: string, clients: ContractClients): Promise<bigint>;
+```
+
+
+#### ++dnt++Organ.isOrgan
+
+```typescript
+static isOrgan(address: string, clients: ContractClients): Promise<boolean>;
+```
+
+
+#### ++dnt++Organ.load
+
+```typescript
+static load(address: string, clients: ContractClients, initialOrgan?: OrganInput): Promise<Organ>;
+```
+
+
+#### ++dnt++Organ.loadData
+
+```typescript
+static loadData(address: string, clients: ContractClients): Promise<OrganContractData>;
+```
+
+
+#### ++dnt++Organ.loadEntries
+
+```typescript
+static loadEntries(address: string, clients: ContractClients, data?: OrganContractData): Promise<OrganEntry[]>;
+```
+
+
+#### ++dnt++Organ.loadEntry
+
+```typescript
+static loadEntry(address: string, index: string, clients: ContractClients): Promise<OrganEntry>;
+```
+
+
+#### ++dnt++Organ.loadEntryForAccount
+
+```typescript
+static loadEntryForAccount(address: string, account: string, clients: ContractClients): Promise<OrganEntry | undefined>;
+```
+
+
+#### ++dnt++Organ.loadPermission
+
+```typescript
+static loadPermission(address: string, index: string, clients: ContractClients): Promise<OrganPermission>;
+```
+
+
+#### ++dnt++Organ.loadPermissions
+
+```typescript
+static loadPermissions(address: string, clients: ContractClients, data?: OrganContractData): Promise<OrganPermission[]>;
+```
+
+
+#### ++dnt++Organ.populateTransaction
+
+```typescript
+static populateTransaction(address: string, walletClient: WalletClient, functionName: OrganFunctionName | string, ...args: unknown[]): Promise<{
+        to: string;
+        data: string;
+        functionName: string;
+    }>;
+```
+
+
+#### ++dnt++Organ.reload
+
+```typescript
+reload(): Promise<Organ>;
+```
+
+
+#### ++dnt++Organ.reloadData
+
+```typescript
+reloadData(): Promise<Organ>;
+```
+
+
+#### ++dnt++Organ.reloadEntries
+
+```typescript
+reloadEntries(): Promise<Organ>;
+```
+
+
+#### ++dnt++Organ.reloadPermissions
+
+```typescript
+reloadPermissions(): Promise<Organ>;
+```
+
+
+
+## class ++dnt++Asset
+
+In-memory representation of one ERC-20 asset managed by an organigram.
+
+### Constructors
+
+#### ++dnt++constructor
+
+Constructs a new instance of the `Asset` class
+
+```typescript
+constructor(input: AssetInput);
+```
+
+### Properties
+
+#### ++dnt++Asset.address
+
+```typescript
+address: string;
+```
+
+
+#### ++dnt++Asset.chainId
+
+```typescript
+chainId: string;
+```
+
+
+#### ++dnt++Asset.description
+
+```typescript
+description: string;
+```
+
+
+#### ++dnt++Asset.image
+
+```typescript
+image?: string | null;
+```
+
+
+#### ++dnt++Asset.initialSupply
+
+```typescript
+initialSupply: number;
+```
+
+
+#### ++dnt++Asset.isDeployed
+
+```typescript
+isDeployed: boolean;
+```
+
+
+#### ++dnt++Asset.load
+
+Hydrate an asset from chain state.
+
+```typescript
+static load: (address: string, clients: ContractClients, initialAsset?: AssetInput) => Promise<(Asset & {
+        userBalance: string;
+    }) | undefined>;
+```
+
+
+#### ++dnt++Asset.name
+
+```typescript
+name: string;
+```
+
+
+#### ++dnt++Asset.organigramId
+
+```typescript
+organigramId?: string | null;
+```
+
+
+#### ++dnt++Asset.salt
+
+```typescript
+salt?: string | null;
+```
+
+
+#### ++dnt++Asset.symbol
+
+```typescript
+symbol: string;
+```
+
+
+#### ++dnt++Asset.userBalance
+
+```typescript
+userBalance: string;
+```
+
+### Methods
+
+#### ++dnt++Asset.toJson
+
+Convert the asset into a JSON-safe structure.
+
+```typescript
+toJson(): AssetJson;
+```
+
+
+
+## class ++dnt++ERC20VoteProcedure
+
+### Constructors
+
+#### ++dnt++constructor
+
+Constructs a new instance of the `ERC20VoteProcedure` class
+
+```typescript
+constructor(input: ERC20VoteProcedureInput);
+```
+
+### Properties
+
+#### ++dnt++ERC20VoteProcedure.contract
+
+```typescript
+contract?: any;
+```
+
+
+#### ++dnt++ERC20VoteProcedure.erc20
+
+```typescript
+erc20: string;
+```
+
+
+#### ++dnt++ERC20VoteProcedure.INTERFACE
+
+```typescript
+static INTERFACE: string;
+```
+
+
+#### ++dnt++ERC20VoteProcedure.toJson
+
+```typescript
+toJson: () => ProcedureJson;
+```
+
+
+#### ++dnt++ERC20VoteProcedure.typeName
+
+```typescript
+typeName: ProcedureTypeName;
+```
+
+### Methods
+
+#### ++dnt++ERC20VoteProcedure._populateInitialize
+
+```typescript
+static _populateInitialize(input: PopulateInitializeInput, _clients: ContractClients): Promise<PopulatedTransactionData>;
+```
+
+
+#### ++dnt++ERC20VoteProcedure.erc20Balance
+
+```typescript
+erc20Balance(account?: string): Promise<bigint>;
+```
+
+
+#### ++dnt++ERC20VoteProcedure.load
+
+```typescript
+static load(address: string, clients: ContractClients, initialProcedure?: ProcedureInput): Promise<ERC20VoteProcedure>;
+```
+
+
+#### ++dnt++ERC20VoteProcedure.vote
+
+```typescript
+vote(proposalKey: string, approval: boolean, options: TransactionOptions): Promise<boolean>;
+```
+
+
+
+## class ++dnt++NominationProcedure
+
+### Constructors
+
+#### ++dnt++constructor
+
+Constructs a new instance of the `NominationProcedure` class
+
+```typescript
+constructor(procedureInput: ProcedureInput);
+```
+
+### Properties
+
+#### ++dnt++NominationProcedure.contract
+
+```typescript
+contract?: any;
+```
+
+
+#### ++dnt++NominationProcedure.INTERFACE
+
+```typescript
+static INTERFACE: string;
+```
+
+
+#### ++dnt++NominationProcedure.typeName
+
+```typescript
+typeName: ProcedureTypeName;
+```
+
+### Methods
+
+#### ++dnt++NominationProcedure._populateInitialize
+
+```typescript
+static _populateInitialize(input: PopulateInitializeInput, _clients: ContractClients): Promise<PopulatedTransactionData>;
+```
+
+
+#### ++dnt++NominationProcedure.load
+
+```typescript
+static load(address: string, clients: ContractClients, initialProcedure?: ProcedureInput): Promise<NominationProcedure>;
+```
+
+
+#### ++dnt++NominationProcedure.nominate
+
+```typescript
+nominate(proposalKey: string, options?: TransactionOptions): Promise<boolean>;
+```
+
+
+#### ++dnt++NominationProcedure.nominateBySig
+
+```typescript
+nominateBySig(input: {
+        proposalKey: string;
+        nonce: bigint;
+        deadline: bigint | number;
+        signature: string;
+    }): Promise<boolean>;
+```
+
+
+#### ++dnt++NominationProcedure.signNomination
+
+```typescript
+signNomination(input: {
+        proposalKey: string;
+        nonce: bigint;
+        deadline: bigint | number;
+    }): Promise<string>;
+```
+
+
+
+## class ++dnt++Procedure
+
+Base SDK model shared by every procedure implementation.
+
+### Constructors
+
+#### ++dnt++constructor
+
+Constructs a new instance of the `Procedure` class
+
+```typescript
+constructor(input: ProcedureInput);
+```
+
+### Properties
+
+#### ++dnt++Procedure.address
+
+```typescript
+address: string;
+```
+
+
+#### ++dnt++Procedure.chainId
+
+```typescript
+chainId: string;
+```
+
+
+#### ++dnt++Procedure.cid
+
+```typescript
+cid: string;
+```
+
+
+#### ++dnt++Procedure.contract
+
+```typescript
+contract?: any;
+```
+
+
+#### ++dnt++Procedure.data
+
+```typescript
+data: string;
+```
+
+
+#### ++dnt++Procedure.deciders
+
+```typescript
+deciders: string;
+```
+
+
+#### ++dnt++Procedure.description
+
+```typescript
+description: string;
+```
+
+
+#### ++dnt++Procedure.forwarder
+
+```typescript
+forwarder: string;
+```
+
+
+#### ++dnt++Procedure.INTERFACE
+
+```typescript
+static INTERFACE: string;
+```
+
+
+#### ++dnt++Procedure.isDeployed
+
+```typescript
+isDeployed: boolean;
+```
+
+
+#### ++dnt++Procedure.metadata
+
+```typescript
+metadata: string;
+```
+
+
+#### ++dnt++Procedure.moderators
+
+```typescript
+moderators: string;
+```
+
+
+#### ++dnt++Procedure.name
+
+```typescript
+name: string;
+```
+
+
+#### ++dnt++Procedure.OPERATIONS_FUNCTIONS
+
+```typescript
+static OPERATIONS_FUNCTIONS: ProcedureProposalOperationFunction[];
+```
+
+
+#### ++dnt++Procedure.organigramId
+
+```typescript
+organigramId: string;
+```
+
+
+#### ++dnt++Procedure.proposals
+
+```typescript
+proposals: ProcedureProposal[];
+```
+
+
+#### ++dnt++Procedure.proposers
+
+```typescript
+proposers: string;
+```
+
+
+#### ++dnt++Procedure.publicClient
+
+```typescript
+publicClient?: PublicClient;
+```
+
+
+#### ++dnt++Procedure.salt
+
+```typescript
+salt?: string;
+```
+
+
+#### ++dnt++Procedure.toJson
+
+```typescript
+toJson: () => ProcedureJson;
+```
+
+
+#### ++dnt++Procedure.type
+
+```typescript
+type: ProcedureType;
+```
+
+
+#### ++dnt++Procedure.typeName
+
+```typescript
+typeName: ProcedureTypeName;
+```
+
+
+#### ++dnt++Procedure.walletClient
+
+```typescript
+walletClient?: WalletClient;
+```
+
+
+#### ++dnt++Procedure.withModeration
+
+```typescript
+withModeration: boolean;
+```
+
+### Methods
+
+#### ++dnt++Procedure._extractParams
+
+```typescript
+static _extractParams(types: OperationParamType[], operation?: ProcedureProposalOperation): OperationParam[];
+```
+
+
+#### ++dnt++Procedure._populateInitialize
+
+```typescript
+static _populateInitialize(_populateInitializeInput: PopulateInitializeInput, _clients: ContractClients): Promise<PopulatedTransactionData>;
+```
+
+
+#### ++dnt++Procedure._stringifyParamType
+
+```typescript
+static _stringifyParamType(type: OperationParamType): string;
+```
+
+
+#### ++dnt++Procedure.applyProposal
+
+```typescript
+applyProposal(proposalKey: string, options?: TransactionOptions): Promise<OrganigramTransactionReceipt>;
+```
+
+
+#### ++dnt++Procedure.applyProposalBySig
+
+```typescript
+applyProposalBySig(input: SignedProposalActionInput & {
+        signature: string;
+    }, options?: TransactionOptions): Promise<OrganigramTransactionReceipt>;
+```
+
+
+#### ++dnt++Procedure.blockProposal
+
+```typescript
+blockProposal(proposalKey: string, reason: string, options?: TransactionOptions): Promise<OrganigramTransactionReceipt>;
+```
+
+
+#### ++dnt++Procedure.blockProposalBySig
+
+```typescript
+blockProposalBySig(input: SignedBlockProposalInput & {
+        signature: string;
+    }, options?: TransactionOptions): Promise<OrganigramTransactionReceipt>;
+```
+
+
+#### ++dnt++Procedure.createExternalCallOperation
+
+```typescript
+static createExternalCallOperation(input: ExternalCallOperationInput): ProcedureProposalOperation;
+```
+
+
+#### ++dnt++Procedure.getClients
+
+```typescript
+protected getClients(): ContractClients;
+```
+
+
+#### ++dnt++Procedure.getNonce
+
+```typescript
+getNonce(account: string): Promise<bigint>;
+```
+
+
+#### ++dnt++Procedure.getTypedDataDomain
+
+```typescript
+getTypedDataDomain(): {
+        name: string;
+        version: string;
+        chainId: bigint;
+        verifyingContract: `0x${string}`;
+    };
+```
+
+
+#### ++dnt++Procedure.isProcedure
+
+```typescript
+static isProcedure(address: string, clients: ContractClients): Promise<boolean>;
+```
+
+
+#### ++dnt++Procedure.load
+
+```typescript
+static load(address: string, clients: ContractClients, initialProcedure?: ProcedureInput): Promise<Procedure>;
+```
+
+
+#### ++dnt++Procedure.loadData
+
+```typescript
+static loadData(address: string, clients: ContractClients): Promise<ProcedureContractData>;
+```
+
+
+#### ++dnt++Procedure.loadProposal
+
+```typescript
+static loadProposal(address: string, proposalKey: string, clients: ContractClients): Promise<ProcedureProposal>;
+```
+
+
+#### ++dnt++Procedure.loadProposals
+
+```typescript
+static loadProposals(address: string, clients: ContractClients, data?: ProcedureContractData): Promise<ProcedureProposal[]>;
+```
+
+
+#### ++dnt++Procedure.parseOperation
+
+```typescript
+static parseOperation(rawOperation: unknown): ProcedureProposalOperation;
+```
+
+
+#### ++dnt++Procedure.presentProposal
+
+```typescript
+presentProposal(proposalKey: string, options?: TransactionOptions): Promise<OrganigramTransactionReceipt>;
+```
+
+
+#### ++dnt++Procedure.presentProposalBySig
+
+```typescript
+presentProposalBySig(input: SignedProposalActionInput & {
+        signature: string;
+    }, options?: TransactionOptions): Promise<OrganigramTransactionReceipt>;
+```
+
+
+#### ++dnt++Procedure.propose
+
+```typescript
+propose(input: {
+        cid: string;
+        operations: ProcedureProposalOperation[];
+        options?: TransactionOptions;
+    }): Promise<ProcedureProposal>;
+```
+
+
+#### ++dnt++Procedure.proposeBySig
+
+```typescript
+proposeBySig(input: SignedProposalInput & {
+        signature: string;
+    }): Promise<OrganigramTransaction>;
+```
+
+
+#### ++dnt++Procedure.reloadData
+
+```typescript
+reloadData(): Promise<Procedure>;
+```
+
+
+#### ++dnt++Procedure.reloadProposal
+
+```typescript
+reloadProposal(proposalKey: string): Promise<Procedure>;
+```
+
+
+#### ++dnt++Procedure.reloadProposals
+
+```typescript
+reloadProposals(): Promise<Procedure>;
+```
+
+
+#### ++dnt++Procedure.signApplyProposal
+
+```typescript
+signApplyProposal(input: SignedProposalActionInput): Promise<string>;
+```
+
+
+#### ++dnt++Procedure.signBlockProposal
+
+```typescript
+signBlockProposal(input: SignedBlockProposalInput): Promise<string>;
+```
+
+
+#### ++dnt++Procedure.signPresentProposal
+
+```typescript
+signPresentProposal(input: SignedProposalActionInput): Promise<string>;
+```
+
+
+#### ++dnt++Procedure.signProposal
+
+```typescript
+signProposal(input: SignedProposalInput): Promise<string>;
+```
+
+
+#### ++dnt++Procedure.updateAdmin
+
+```typescript
+updateAdmin(address: string, options?: TransactionOptions): Promise<OrganigramTransaction>;
+```
+
+
+#### ++dnt++Procedure.updateCid
+
+```typescript
+updateCid(cid: string, options?: TransactionOptions): Promise<OrganigramTransaction>;
+```
+
+
+
+## class ++dnt++VoteProcedure
+
+### Constructors
+
+#### ++dnt++constructor
+
+Constructs a new instance of the `VoteProcedure` class
+
+```typescript
+constructor(input: VoteProcedureInput);
+```
+
+### Properties
+
+#### ++dnt++VoteProcedure.contract
+
+```typescript
+contract?: any;
+```
+
+
+#### ++dnt++VoteProcedure.elections
+
+```typescript
+elections: Election[];
+```
+
+
+#### ++dnt++VoteProcedure.INTERFACE
+
+```typescript
+static INTERFACE: string;
+```
+
+
+#### ++dnt++VoteProcedure.majoritySize
+
+```typescript
+majoritySize: string;
+```
+
+
+#### ++dnt++VoteProcedure.quorumSize
+
+```typescript
+quorumSize: string;
+```
+
+
+#### ++dnt++VoteProcedure.toJson
+
+```typescript
+toJson: () => ProcedureJson;
+```
+
+
+#### ++dnt++VoteProcedure.typeName
+
+```typescript
+typeName: ProcedureTypeName;
+```
+
+
+#### ++dnt++VoteProcedure.voteDuration
+
+```typescript
+voteDuration: string;
+```
+
+### Methods
+
+#### ++dnt++VoteProcedure._populateInitialize
+
+```typescript
+static _populateInitialize(input: PopulateInitializeInput, clients: ContractClients): Promise<PopulatedTransactionData>;
+```
+
+
+#### ++dnt++VoteProcedure.count
+
+```typescript
+count(proposalKey: string): Promise<boolean>;
+```
+
+
+#### ++dnt++VoteProcedure.load
+
+```typescript
+static load(address: string, clients: ContractClients, initialProcedure?: ProcedureInput): Promise<VoteProcedure>;
+```
+
+
+#### ++dnt++VoteProcedure.loadElection
+
+```typescript
+static loadElection(address: string, proposalKey: string, clients: ContractClients, voteDuration?: bigint, contract?: any): Promise<Election>;
+```
+
+
+#### ++dnt++VoteProcedure.loadElections
+
+```typescript
+static loadElections(address: string, clients: ContractClients, proposalsLength?: number): Promise<Election[]>;
+```
+
+
+#### ++dnt++VoteProcedure.signVote
+
+```typescript
+signVote(input: {
+        proposalKey: string;
+        approval: boolean;
+        nonce: bigint;
+        deadline: bigint | number;
+    }): Promise<string>;
+```
+
+
+#### ++dnt++VoteProcedure.vote
+
+```typescript
+vote(proposalKey: string, approval: boolean, options?: TransactionOptions): Promise<boolean>;
+```
+
+
+#### ++dnt++VoteProcedure.voteBySig
+
+```typescript
+voteBySig(input: {
+        proposalKey: string;
+        approval: boolean;
+        nonce: bigint;
+        deadline: bigint | number;
+        signature: string;
+    }): Promise<boolean>;
+```
+
+
+
+## interface ++dnt++AssetInput
+
+Input used to create or hydrate an asset model.
+
+### Properties
+
+#### ++dnt++AssetInput.address
+
+```typescript
+address?: string | null;
+```
+
+
+#### ++dnt++AssetInput.chainId
+
+```typescript
+chainId?: string | null;
+```
+
+
+#### ++dnt++AssetInput.description
+
+```typescript
+description?: string | null;
+```
+
+
+#### ++dnt++AssetInput.image
+
+```typescript
+image?: string | null;
+```
+
+
+#### ++dnt++AssetInput.initialSupply
+
+```typescript
+initialSupply?: number | null;
+```
+
+
+#### ++dnt++AssetInput.isDeployed
+
+```typescript
+isDeployed?: boolean;
+```
+
+
+#### ++dnt++AssetInput.name
+
+```typescript
+name?: string | null;
+```
+
+
+#### ++dnt++AssetInput.organigramId
+
+```typescript
+organigramId?: string | null;
+```
+
+
+#### ++dnt++AssetInput.salt
+
+```typescript
+salt?: string | null;
+```
+
+
+#### ++dnt++AssetInput.symbol
+
+```typescript
+symbol?: string | null;
+```
+
+
+#### ++dnt++AssetInput.userBalance
+
+```typescript
+userBalance?: string | null;
+```
+
+
+
+## interface ++dnt++AssetJson
+
+JSON-safe serialized representation of one asset.
+
+### Properties
+
+#### ++dnt++AssetJson.address
+
+```typescript
+address: string;
+```
+
+
+#### ++dnt++AssetJson.chainId
+
+```typescript
+chainId: string;
+```
+
+
+#### ++dnt++AssetJson.image
+
+```typescript
+image?: string | null;
+```
+
+
+#### ++dnt++AssetJson.initialSupply
+
+```typescript
+initialSupply: number;
+```
+
+
+#### ++dnt++AssetJson.isDeployed
+
+```typescript
+isDeployed: boolean;
+```
+
+
+#### ++dnt++AssetJson.name
+
+```typescript
+name: string;
+```
+
+
+#### ++dnt++AssetJson.organigramId
+
+```typescript
+organigramId?: string | null;
+```
+
+
+#### ++dnt++AssetJson.salt
+
+```typescript
+salt?: string | null;
+```
+
+
+#### ++dnt++AssetJson.symbol
+
+```typescript
+symbol: string;
+```
+
+
+#### ++dnt++AssetJson.userBalance
+
+```typescript
+userBalance: string;
+```
+
+
+
+## interface ++dnt++DeployAssetInput
+
+Input used to deploy one ERC-20 asset contract.
+
+### Properties
+
+#### ++dnt++DeployAssetInput.initialSupply
+
+```typescript
+initialSupply?: number | null;
+```
+
+
+#### ++dnt++DeployAssetInput.name
+
+```typescript
+name: string;
+```
+
+
+#### ++dnt++DeployAssetInput.salt
+
+```typescript
+salt?: string | null;
+```
+
+
+#### ++dnt++DeployAssetInput.symbol
+
+```typescript
+symbol: string;
+```
+
+
+
+## interface ++dnt++DeployOrganigramInput
+
+Batch deployment input for a full organigram.
+
+### Properties
+
+#### ++dnt++DeployOrganigramInput.assets
+
+```typescript
+assets: DeployAssetInput[];
+```
+
+
+#### ++dnt++DeployOrganigramInput.organs
+
+```typescript
+organs: DeployOrganInput[];
+```
+
+
+#### ++dnt++DeployOrganigramInput.procedures
+
+```typescript
+procedures: DeployProceduresInput[];
+```
+
+
+
+## interface ++dnt++DeployOrganInput
+
+Input used to deploy one organ through an [OrganigramClient](/docs/reference/js#class_OrganigramClient).
+
+### Properties
+
+#### ++dnt++DeployOrganInput.cid
+
+```typescript
+cid?: string;
+```
+
+
+#### ++dnt++DeployOrganInput.entries
+
+```typescript
+entries?: OrganEntry[];
+```
+
+
+#### ++dnt++DeployOrganInput.options
+
+```typescript
+options?: TransactionOptions;
+```
+
+
+#### ++dnt++DeployOrganInput.permissions
+
+```typescript
+permissions?: OrganPermission[];
+```
+
+
+#### ++dnt++DeployOrganInput.salt
+
+```typescript
+salt?: string | null;
+```
+
+
+
+## interface ++dnt++DeployProceduresInput
+
+Input used to deploy one procedure instance from a registered procedure type.
+
+### Properties
+
+#### ++dnt++DeployProceduresInput.args
+
+```typescript
+args?: unknown[];
+```
+
+
+#### ++dnt++DeployProceduresInput.chainId
+
+```typescript
+chainId?: string | null;
+```
+
+
+#### ++dnt++DeployProceduresInput.cid
+
+```typescript
+cid?: string | null;
+```
+
+
+#### ++dnt++DeployProceduresInput.data
+
+```typescript
+data?: string;
+```
+
+
+#### ++dnt++DeployProceduresInput.deciders
+
+```typescript
+deciders: string;
+```
+
+
+#### ++dnt++DeployProceduresInput.forwarder
+
+```typescript
+forwarder?: string | null;
+```
+
+
+#### ++dnt++DeployProceduresInput.moderators
+
+```typescript
+moderators?: string | null;
+```
+
+
+#### ++dnt++DeployProceduresInput.options
+
+```typescript
+options?: TransactionOptions;
+```
+
+
+#### ++dnt++DeployProceduresInput.proposers
+
+```typescript
+proposers?: string | null;
+```
+
+
+#### ++dnt++DeployProceduresInput.salt
+
+```typescript
+salt?: string | null;
+```
+
+
+#### ++dnt++DeployProceduresInput.typeName
+
+```typescript
+typeName: ProcedureTypeName;
+```
+
+
+#### ++dnt++DeployProceduresInput.withModeration
+
+```typescript
+withModeration?: boolean | null;
+```
+
+
+
+## interface ++dnt++ExternalCallOperationInput
+
+### Properties
+
+#### ++dnt++ExternalCallOperationInput.data
+
+```typescript
+data: string;
+```
+
+
+#### ++dnt++ExternalCallOperationInput.index
+
+```typescript
+index?: string | number;
+```
+
+
+#### ++dnt++ExternalCallOperationInput.organAddress
+
+```typescript
+organAddress: string;
+```
+
+
+#### ++dnt++ExternalCallOperationInput.target
+
+```typescript
+target: string;
+```
+
+
+#### ++dnt++ExternalCallOperationInput.value
+
+```typescript
+value?: string | bigint | number;
+```
+
+
+
+## interface ++dnt++File_2
+
+In-memory representation of a CID-backed file managed by the client.
+
+### Properties
+
+#### ++dnt++File_2.cid
+
+```typescript
+cid: string;
+```
+
+
+#### ++dnt++File_2.data
+
+```typescript
+data: unknown;
+```
+
+
+
+## interface ++dnt++IOrganEntry
+
+Entry payload used when creating or updating an organ entry.
+
+### Properties
+
+#### ++dnt++IOrganEntry.address
+
+```typescript
+address?: string;
+```
+
+
+#### ++dnt++IOrganEntry.cid
+
+```typescript
+cid?: string;
+```
+
+
+
+## interface ++dnt++OperationParam
+
+### Properties
+
+#### ++dnt++OperationParam.action
+
+```typescript
+action?: OperationParamAction;
+```
+
+
+#### ++dnt++OperationParam.parser
+
+```typescript
+parser?: unknown;
+```
+
+
+#### ++dnt++OperationParam.type
+
+```typescript
+type: OperationParamType;
+```
+
+
+#### ++dnt++OperationParam.value
+
+```typescript
+value?: unknown;
+```
+
+
+
+## interface ++dnt++OrganEntry
+
+### Properties
+
+#### ++dnt++OrganEntry.address
+
+```typescript
+address: string;
+```
+
+
+#### ++dnt++OrganEntry.cid
+
+```typescript
+cid: string;
+```
+
+
+#### ++dnt++OrganEntry.index
+
+```typescript
+index: string;
+```
+
+
+
+## interface ++dnt++OrganInput
+
+### Properties
+
+#### ++dnt++OrganInput.address
+
+```typescript
+address?: string | null;
+```
+
+
+#### ++dnt++OrganInput.balance
+
+```typescript
+balance?: string | null;
+```
+
+
+#### ++dnt++OrganInput.chainId
+
+```typescript
+chainId?: string | null;
+```
+
+
+#### ++dnt++OrganInput.cid
+
+```typescript
+cid?: string | null;
+```
+
+
+#### ++dnt++OrganInput.description
+
+```typescript
+description?: string | null;
+```
+
+
+#### ++dnt++OrganInput.entries
+
+```typescript
+entries?: Array<{
+        index: string;
+        address: string;
+        cid: string;
+    }> | null;
+```
+
+
+#### ++dnt++OrganInput.forwarder
+
+```typescript
+forwarder?: string | null;
+```
+
+
+#### ++dnt++OrganInput.isDeployed
+
+```typescript
+isDeployed?: boolean | null;
+```
+
+
+#### ++dnt++OrganInput.name
+
+```typescript
+name?: string | null;
+```
+
+
+#### ++dnt++OrganInput.organigramId
+
+```typescript
+organigramId?: string | null;
+```
+
+
+#### ++dnt++OrganInput.permissions
+
+```typescript
+permissions?: OrganPermission[] | null;
+```
+
+
+#### ++dnt++OrganInput.publicClient
+
+```typescript
+publicClient?: PublicClient | null;
+```
+
+
+#### ++dnt++OrganInput.salt
+
+```typescript
+salt?: string | null;
+```
+
+
+#### ++dnt++OrganInput.walletClient
+
+```typescript
+walletClient?: WalletClient | null;
+```
+
+
+
+## interface ++dnt++OrganJson
+
+JSON-safe serialized representation of one organ.
+
+### Properties
+
+#### ++dnt++OrganJson.address
+
+```typescript
+address: string;
+```
+
+
+#### ++dnt++OrganJson.balance
+
+```typescript
+balance: string;
+```
+
+
+#### ++dnt++OrganJson.chainId
+
+```typescript
+chainId: string;
+```
+
+
+#### ++dnt++OrganJson.cid
+
+```typescript
+cid: string;
+```
+
+
+#### ++dnt++OrganJson.description
+
+```typescript
+description: string;
+```
+
+
+#### ++dnt++OrganJson.entries
+
+```typescript
+entries: OrganEntry[];
+```
+
+
+#### ++dnt++OrganJson.isDeployed
+
+```typescript
+isDeployed: boolean;
+```
+
+
+#### ++dnt++OrganJson.name
+
+```typescript
+name: string;
+```
+
+
+#### ++dnt++OrganJson.organigramId
+
+```typescript
+organigramId: string;
+```
+
+
+#### ++dnt++OrganJson.permissions
+
+```typescript
+permissions: OrganPermission[];
+```
+
+
+#### ++dnt++OrganJson.salt
+
+```typescript
+salt?: string | null;
+```
+
+
+
+## interface ++dnt++OrganPermission
+
+Permission grant applied to a procedure or address on an organ.
+
+### Properties
+
+#### ++dnt++OrganPermission.permissionAddress
+
+```typescript
+permissionAddress: string;
+```
+
+
+#### ++dnt++OrganPermission.permissionValue
+
+```typescript
+permissionValue: number;
+```
+
+
+
+## interface ++dnt++PopulateInitializeInput
+
+### Properties
+
+#### ++dnt++PopulateInitializeInput.args
+
+```typescript
+args: unknown[];
+```
+
+
+#### ++dnt++PopulateInitializeInput.cid
+
+```typescript
+cid: string;
+```
+
+
+#### ++dnt++PopulateInitializeInput.deciders
+
+```typescript
+deciders: string;
+```
+
+
+#### ++dnt++PopulateInitializeInput.forwarder
+
+```typescript
+forwarder: string;
+```
+
+
+#### ++dnt++PopulateInitializeInput.moderators
+
+```typescript
+moderators: string;
+```
+
+
+#### ++dnt++PopulateInitializeInput.options
+
+```typescript
+options?: TransactionOptions;
+```
+
+
+#### ++dnt++PopulateInitializeInput.proposers
+
+```typescript
+proposers: string;
+```
+
+
+#### ++dnt++PopulateInitializeInput.typeName
+
+```typescript
+typeName?: ProcedureTypeName;
+```
+
+
+#### ++dnt++PopulateInitializeInput.withModeration
+
+```typescript
+withModeration: boolean;
+```
+
+
+
+## interface ++dnt++ProcedureInput
+
+Input used to create or hydrate a procedure model.
+
+### Properties
+
+#### ++dnt++ProcedureInput.address
+
+```typescript
+address?: string | null;
+```
+
+
+#### ++dnt++ProcedureInput.chainId
+
+```typescript
+chainId?: string | null;
+```
+
+
+#### ++dnt++ProcedureInput.cid
+
+```typescript
+cid?: string | null;
+```
+
+
+#### ++dnt++ProcedureInput.data
+
+```typescript
+data?: string | null;
+```
+
+
+#### ++dnt++ProcedureInput.deciders
+
+```typescript
+deciders: string;
+```
+
+
+#### ++dnt++ProcedureInput.description
+
+```typescript
+description?: string | null;
+```
+
+
+#### ++dnt++ProcedureInput.forwarder
+
+```typescript
+forwarder?: string | null;
+```
+
+
+#### ++dnt++ProcedureInput.isDeployed
+
+```typescript
+isDeployed?: boolean | null;
+```
+
+
+#### ++dnt++ProcedureInput.metadata
+
+```typescript
+metadata?: string | null;
+```
+
+
+#### ++dnt++ProcedureInput.moderators
+
+```typescript
+moderators?: string | null;
+```
+
+
+#### ++dnt++ProcedureInput.name
+
+```typescript
+name?: string | null;
+```
+
+
+#### ++dnt++ProcedureInput.organigramId
+
+```typescript
+organigramId?: string | null;
+```
+
+
+#### ++dnt++ProcedureInput.proposals
+
+```typescript
+proposals?: ProcedureProposal[] | null;
+```
+
+
+#### ++dnt++ProcedureInput.proposers
+
+```typescript
+proposers?: string | null;
+```
+
+
+#### ++dnt++ProcedureInput.publicClient
+
+```typescript
+publicClient?: PublicClient | null;
+```
+
+
+#### ++dnt++ProcedureInput.salt
+
+```typescript
+salt?: string | null;
+```
+
+
+#### ++dnt++ProcedureInput.type
+
+```typescript
+type?: ProcedureType;
+```
+
+
+#### ++dnt++ProcedureInput.typeName
+
+```typescript
+typeName: string;
+```
+
+
+#### ++dnt++ProcedureInput.walletClient
+
+```typescript
+walletClient?: WalletClient | null;
+```
+
+
+#### ++dnt++ProcedureInput.withModeration
+
+```typescript
+withModeration?: boolean | null;
+```
+
+
+
+## interface ++dnt++ProcedureProposal
+
+Hydrated proposal state exposed by the SDK.
+
+### Properties
+
+#### ++dnt++ProcedureProposal.adopted
+
+```typescript
+adopted: boolean;
+```
+
+
+#### ++dnt++ProcedureProposal.applied
+
+```typescript
+applied: boolean;
+```
+
+
+#### ++dnt++ProcedureProposal.blocked
+
+```typescript
+blocked: boolean;
+```
+
+
+#### ++dnt++ProcedureProposal.blockReason
+
+```typescript
+blockReason: string;
+```
+
+
+#### ++dnt++ProcedureProposal.cid
+
+```typescript
+cid: string;
+```
+
+
+#### ++dnt++ProcedureProposal.creator
+
+```typescript
+creator: string;
+```
+
+
+#### ++dnt++ProcedureProposal.key
+
+```typescript
+key: ProposalKey;
+```
+
+
+#### ++dnt++ProcedureProposal.metadata
+
+```typescript
+metadata?: ProposalMetadata;
+```
+
+
+#### ++dnt++ProcedureProposal.operations
+
+```typescript
+operations: ProcedureProposalOperation[];
+```
+
+
+#### ++dnt++ProcedureProposal.presented
+
+```typescript
+presented: boolean;
+```
+
+
+
+## interface ++dnt++ProcedureProposalOperation
+
+One low-level operation bundled into a proposal.
+
+### Properties
+
+#### ++dnt++ProcedureProposalOperation.data
+
+```typescript
+data: string;
+```
+
+
+#### ++dnt++ProcedureProposalOperation.description
+
+```typescript
+description?: string;
+```
+
+
+#### ++dnt++ProcedureProposalOperation.function
+
+```typescript
+function?: ProcedureProposalOperationFunction;
+```
+
+
+#### ++dnt++ProcedureProposalOperation.functionSelector
+
+```typescript
+functionSelector: string;
+```
+
+
+#### ++dnt++ProcedureProposalOperation.index
+
+```typescript
+index: string;
+```
+
+
+#### ++dnt++ProcedureProposalOperation.params
+
+```typescript
+params?: OperationParam[];
+```
+
+
+#### ++dnt++ProcedureProposalOperation.processed
+
+```typescript
+processed?: boolean;
+```
+
+
+#### ++dnt++ProcedureProposalOperation.target
+
+```typescript
+target?: string;
+```
+
+
+#### ++dnt++ProcedureProposalOperation.userIsInEntry
+
+```typescript
+userIsInEntry?: boolean;
+```
+
+
+#### ++dnt++ProcedureProposalOperation.userIsInOrgan
+
+```typescript
+userIsInOrgan?: boolean;
+```
+
+
+#### ++dnt++ProcedureProposalOperation.value
+
+```typescript
+value?: string;
+```
+
+
+
+## interface ++dnt++ProcedureProposalOperationFunction
+
+### Properties
+
+#### ++dnt++ProcedureProposalOperationFunction.abi
+
+```typescript
+abi?: unknown;
+```
+
+
+#### ++dnt++ProcedureProposalOperationFunction.funcSig
+
+```typescript
+funcSig: string;
+```
+
+
+#### ++dnt++ProcedureProposalOperationFunction.key
+
+```typescript
+key: ProposalKey;
+```
+
+
+#### ++dnt++ProcedureProposalOperationFunction.label
+
+```typescript
+label?: string;
+```
+
+
+#### ++dnt++ProcedureProposalOperationFunction.params
+
+```typescript
+params?: OperationParamType[];
+```
+
+
+#### ++dnt++ProcedureProposalOperationFunction.signature
+
+```typescript
+signature?: string;
+```
+
+
+#### ++dnt++ProcedureProposalOperationFunction.tags
+
+```typescript
+tags?: OperationTag[];
+```
+
+
+#### ++dnt++ProcedureProposalOperationFunction.target
+
+```typescript
+target?: 'organ' | 'self';
+```
+
+
+
+## interface ++dnt++ProcedureType
+
+Metadata describing one registered procedure implementation.
+
+### Properties
+
+#### ++dnt++ProcedureType.address
+
+```typescript
+address: string;
+```
+
+
+#### ++dnt++ProcedureType.fields
+
+```typescript
+fields?: {
+        [key: string]: ProcedureTypeField;
+    };
+```
+
+
+#### ++dnt++ProcedureType.key
+
+```typescript
+key: string;
+```
+
+
+#### ++dnt++ProcedureType.metadata
+
+```typescript
+metadata: {
+        cid?: string;
+        label?: string;
+        description?: string;
+    };
+```
+
+
+
+## interface ++dnt++ProcedureTypeField
+
+Declarative description of one procedure configuration field.
+
+### Properties
+
+#### ++dnt++ProcedureTypeField.defaultValue
+
+```typescript
+defaultValue: string;
+```
+
+
+#### ++dnt++ProcedureTypeField.description
+
+```typescript
+description: string;
+```
+
+
+#### ++dnt++ProcedureTypeField.label
+
+```typescript
+label: string;
+```
+
+
+#### ++dnt++ProcedureTypeField.name
+
+```typescript
+name: string;
+```
+
+
+#### ++dnt++ProcedureTypeField.type
+
+```typescript
+type: any;
+```
+
+
+
+## interface ++dnt++ProposalMetadata
+
+Rich content attached to a proposal, usually stored off-chain.
+
+### Properties
+
+#### ++dnt++ProposalMetadata.cid
+
+```typescript
+cid?: string;
+```
+
+
+#### ++dnt++ProposalMetadata.description
+
+```typescript
+description?: string;
+```
+
+
+#### ++dnt++ProposalMetadata.discussion
+
+```typescript
+discussion?: string;
+```
+
+
+#### ++dnt++ProposalMetadata.file
+
+```typescript
+file?: string;
+```
+
+
+#### ++dnt++ProposalMetadata.subtitle
+
+```typescript
+subtitle?: string;
+```
+
+
+#### ++dnt++ProposalMetadata.title
+
+```typescript
+title: string;
+```
+
+
+
+## interface ++dnt++SignedBlockProposalInput
+
+Extends [SignedProposalActionInput](/docs/reference/js#interface_SignedProposalActionInput).
+
+### Properties
+
+#### ++dnt++SignedBlockProposalInput.reason
+
+```typescript
+reason: string;
+```
+
+
+
+## interface ++dnt++SignedProposalActionInput
+
+### Properties
+
+#### ++dnt++SignedProposalActionInput.deadline
+
+```typescript
+deadline: bigint | number;
+```
+
+
+#### ++dnt++SignedProposalActionInput.nonce
+
+```typescript
+nonce: bigint;
+```
+
+
+#### ++dnt++SignedProposalActionInput.proposalKey
+
+```typescript
+proposalKey: string;
+```
+
+
+
+## interface ++dnt++SignedProposalInput
+
+### Properties
+
+#### ++dnt++SignedProposalInput.cid
+
+```typescript
+cid: string;
+```
+
+
+#### ++dnt++SignedProposalInput.deadline
+
+```typescript
+deadline: bigint | number;
+```
+
+
+#### ++dnt++SignedProposalInput.nonce
+
+```typescript
+nonce: bigint;
+```
+
+
+#### ++dnt++SignedProposalInput.operations
+
+```typescript
+operations: ProcedureProposalOperation[];
+```
+
+
+
+## interface ++dnt++TransactionOptions
+
+Optional transaction-level controls shared by write operations.
+
+### Properties
+
+#### ++dnt++TransactionOptions.customData
+
+```typescript
+customData?: {
+        index?: number;
+    };
+```
+
+
+#### ++dnt++TransactionOptions.nonce
+
+```typescript
+nonce?: number;
+```
+
+
+#### ++dnt++TransactionOptions.onTransaction
+
+```typescript
+onTransaction?: (tx: OrganigramTransaction, description: string) => void;
+```
+
+
+
+## type ++dnt++AccountInOrgans
+
+```typescript
+export type AccountInOrgans = {
+    moderators?: boolean;
+    proposers?: boolean;
+    deciders?: boolean;
+};
+```
+
+
+## type ++dnt++ContractClients
+
+```typescript
+export type ContractClients = {
+    publicClient: PublicClient;
+    walletClient?: WalletClient | null;
+};
+```
+
+
+## type ++dnt++ContractName
+
+```typescript
+export type ContractName = 'Organ' | 'Asset' | 'ERC20VoteProcedure' | 'VoteProcedure' | 'NominationProcedure' | 'OrganigramClient';
+```
+
+
+## type ++dnt++Election
+
+Current election state for one vote-based proposal.
+
+```typescript
+export type Election = {
+    proposalKey: string;
+    start: string;
+    votesCount: string;
+    hasVoted: boolean;
+    approved?: boolean;
+};
+```
+
+
+## type ++dnt++ERC20VoteProcedureInput
+
+```typescript
+export type ERC20VoteProcedureInput = Omit<VoteProcedureInput, 'type' | 'typeName'> & {
+    erc20: string;
+};
+```
+
+
+## type ++dnt++OperationParamAction
+
+```typescript
+export type OperationParamAction = 'select' | 'create' | 'update' | 'delete' | 'withdraw' | 'deposit' | 'transfer' | 'block';
+```
+
+
+## type ++dnt++OperationParamType
+
+```typescript
+export type OperationParamType = 'cid' | 'entry' | 'entries' | 'address' | 'bytes' | 'addresses' | 'index' | 'indexes' | 'organ' | 'oldPermissionAddress' | 'newPermissionAddress' | 'permissionAddress' | 'permissionValue' | 'proposal' | 'proposals' | 'amount' | 'tokenId';
+```
+
+
+## type ++dnt++OperationTag
+
+```typescript
+export type OperationTag = 'cid' | 'entries' | 'permissions' | 'coins' | 'collectibles' | 'erc721' | 'erc20' | 'erc1155' | 'ether' | 'add' | 'replace' | 'remove' | 'deposit' | 'withdraw' | 'transfer';
+```
+
+
+## type ++dnt++OrganigramInput
+
+Input used to create an in-memory organigram model.
+
+```typescript
+export type OrganigramInput = {
+    id?: string | null;
+    slug?: string | null;
+    name?: string | null;
+    description?: string | null;
+    chainId?: string | null;
+    organs: OrganInput[];
+    procedures: ProcedureInput[];
+    assets: AssetInput[];
+    organigramClient?: OrganigramClient | null;
+    walletClient?: WalletClient | null;
+    publicClient?: PublicClient | null;
+    contractAddresses?: string[] | null;
+    workspaceId?: string | null;
+};
+```
+
+
+## type ++dnt++OrganigramJson
+
+JSON-safe serialized representation of an organigram.
+
+```typescript
+export type OrganigramJson = {
+    id: string;
+    slug: string;
+    name: string;
+    description: string;
+    chainId: string;
+    organs: OrganJson[];
+    procedures: ProcedureJson[];
+    assets: AssetJson[];
+    workspaceId?: string | null;
+};
+```
+
+
+## type ++dnt++OrganigramTransaction
+
+```typescript
+export type OrganigramTransaction = {
+    hash: Hex;
+    wait: () => Promise<OrganigramTransactionReceipt>;
+};
+```
+
+
+## type ++dnt++OrganigramTransactionReceipt
+
+```typescript
+export type OrganigramTransactionReceipt = TransactionReceipt & {
+    gasPrice?: bigint | null;
+};
+```
+
+
+## type ++dnt++PopulatedTransactionData
+
+```typescript
+export type PopulatedTransactionData = {
+    data: string;
+};
+```
+
+
+## type ++dnt++ProcedureJson
+
+JSON-safe serialized representation of one procedure.
+
+```typescript
+export type ProcedureJson = {
+    isDeployed: boolean;
+    address: string;
+    deciders: string;
+    typeName: ProcedureTypeName;
+    name: string;
+    description: string;
+    cid: string;
+    salt?: string | null;
+    chainId: string;
+    data: string;
+    metadata?: string;
+    proposers: string;
+    moderators: string;
+    withModeration: boolean;
+    forwarder: string;
+    proposals?: ProcedureProposal[];
+    args?: unknown[];
+    type: ProcedureType;
+    organigramId?: string | null;
+};
+```
+
+
+## type ++dnt++ProcedureRoleTypeName
+
+Named organ roles used by procedure access control.
+
+```typescript
+export type ProcedureRoleTypeName = 'proposers' | 'moderators' | 'deciders';
+```
+
+
+## type ++dnt++ProcedureTypeName
+
+```typescript
+export type ProcedureTypeName = 'erc20Vote' | 'nomination' | 'vote';
+```
+
+
+## type ++dnt++ProposalKey
+
+```typescript
+export type ProposalKey = 'addEntries' | 'removeEntries' | 'replaceEntry' | 'addPermission' | 'removePermission' | 'replacePermission' | 'updateMetadata' | 'withdrawEther' | 'withdrawERC20' | 'withdrawERC721' | 'externalCall' | string;
+```
+
+
+## type ++dnt++TemplateName
+
+```typescript
+export type TemplateName = keyof typeof templates;
+```
+
+
+## type ++dnt++VoteProcedureInput
+
+```typescript
+export type VoteProcedureInput = ProcedureInput & {
+    quorumSize: string;
+    voteDuration: string;
+    majoritySize: string;
+    elections: Election[];
+};
+```
+
+
+## enum ++dnt++OrganFunctionName
+
+High-level names for the writable organ functions exposed by the SDK.
+
+| Name | Value | Description |
+| --- | --- | --- |
+| `addEntries` | `"addEntries"` |   |
+| `addPermission` | `"addPermission"` |   |
+| `removeEntries` | `"removeEntries"` |   |
+| `removePermission` | `"removePermission"` |   |
+| `replaceEntry` | `"replaceEntry"` |   |
+| `replacePermission` | `"replacePermission"` |   |
+| `withdrawERC20` | `"withdrawERC20"` |   |
+| `withdrawERC721` | `"withdrawERC721"` |   |
+| `withdrawEther` | `"withdrawEther"` |   |
+
+
+## enum ++dnt++ProcedureTypeNameEnum
+
+| Name | Value | Description |
+| --- | --- | --- |
+| `erc20Vote` | `"erc20Vote"` |   |
+| `nomination` | `"nomination"` |   |
+| `vote` | `"vote"` |   |
+
+
