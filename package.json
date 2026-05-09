@@ -9,7 +9,8 @@
     "generate:pricing-module": "env-cmd --silent tsx scripts/generatePricingModule.ts",
     "generate:rest-api": "env-cmd --silent tsx scripts/generateRestApiDocs.ts",
     "docs:generate": "pnpm generate:docs-modules && pnpm generate:rest-api && pnpm generate:pricing-module",
-    "linkcheck": "find mdx -name '*.mdx' -print0 | xargs -0 -n1 markdown-link-check --quiet"
+    "linkcheck": "find mdx -name '*.mdx' -print0 | xargs -0 -n1 markdown-link-check --quiet",
+    "typecheck": "tsc --noEmit --incremental false"
   },
   "peerDependencies": {
     "@code-hike/mdx": "^0.9.0",
