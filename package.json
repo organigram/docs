@@ -5,29 +5,64 @@
   "license": "MIT",
   "type": "module",
   "scripts": {
-    "docs:generate": "env-cmd --silent tsx scripts/generateRestApiDocs.ts",
+    "generate:docs-modules": "env-cmd --silent tsx scripts/generateDocsModules.ts",
+    "generate:pricing-module": "env-cmd --silent tsx scripts/generatePricingModule.ts",
+    "generate:rest-api": "env-cmd --silent tsx scripts/generateRestApiDocs.ts",
+    "docs:generate": "pnpm generate:docs-modules && pnpm generate:rest-api && pnpm generate:pricing-module",
     "linkcheck": "find mdx -name '*.mdx' -print0 | xargs -0 -n1 markdown-link-check --quiet"
   },
   "peerDependencies": {
     "@code-hike/mdx": "^0.9.0",
+    "@mdx-js/loader": "^3.1.1",
     "@mui/icons-material": "^5.18.0",
     "@mui/material": "^5.18.0",
+    "@mui/x-tree-view": "^7.29.10",
     "@organigram/js": "workspace:^",
-    "@organigram/react": "workspace:^"
+    "@organigram/react": "workspace:^",
+    "i18next": "^23.16.8",
+    "lodash": "^4.17.21",
+    "next": "^16.1.1",
+    "stripe": "^16.12.0"
   },
   "devDependencies": {
     "@code-hike/mdx": "^0.9.0",
+    "@mdx-js/loader": "^3.1.1",
     "@mui/icons-material": "^5.18.0",
     "@mui/material": "^5.18.0",
+    "@mui/x-tree-view": "^7.29.10",
     "@organigram/js": "workspace:^",
     "@organigram/react": "workspace:^",
+    "@types/lodash": "^4.17.21",
+    "@types/react": "18.3.3",
+    "@types/react-dom": "^18.3.7",
     "env-cmd": "^10.1.0",
+    "i18next": "^23.16.8",
+    "lodash": "^4.17.21",
     "markdown-link-check": "^3.14.2",
+    "next": "^16.1.1",
+    "remark-gfm": "^4.0.1",
     "tsx": "^4.21.0",
-    "typescript": "^5.9.3"
+    "typescript": "^5.9.3",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "react-flow-renderer": "^10.3.17",
+    "stripe": "^16.12.0",
+    "viem": "^2.18.2"
   },
   "exports": {
+    ".": "./index.ts",
+    "./components/CalendlyBooking": "./components/CalendlyBooking.tsx",
+    "./components/DeploymentAddresses": "./components/DeploymentAddresses.tsx",
+    "./components/Link": "./components/Link.tsx",
+    "./components/Minimap": "./components/Minimap.tsx",
+    "./components/PricingTable": "./components/PricingTable.tsx",
+    "./components/*": "./components/*",
+    "./lib/*": "./lib/*",
+    "./modules": "./lib/modules.ts",
+    "./pricing": "./lib/pricing.ts",
+    "./server": "./lib/server.ts",
     "./code-examples/*": "./code-examples/*",
-    "./mdx/*": "./mdx/*"
+    "./mdx/*": "./mdx/*",
+    "./types": "./types.ts"
   }
 }

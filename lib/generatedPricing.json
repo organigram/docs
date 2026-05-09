@@ -1,0 +1,33 @@
+{
+  "generatedAt": "2026-04-22T05:45:26.649Z",
+  "items": [
+    {
+      "key": "soloMonthly",
+      "label": "ID Certificates",
+      "price": "0,89€ / address",
+      "details": "Minimum amount charged monthly to keep a certification active. This allows both Certified Solo users and members of Certified Entity organizations to generate advanced e-signatures tied to their wallet.",
+      "source": "stripe"
+    },
+    {
+      "key": "sponsoredTransactions",
+      "label": "Sponsored transactions",
+      "price": "x2 gas used, min. 0.01€",
+      "details": "Only the gas actually used is charged when sponsoring transactions, with a multiplier to cover relayer costs, processing fees and price fluctuations. Price is in Euro at currency rates updated every minute, with a minimum of 0.01€.",
+      "source": "stripe_usage"
+    },
+    {
+      "key": "signatures",
+      "label": "Advanced digital signatures",
+      "price": "0,89€ / signature",
+      "details": "Certified signatures for legally binding actions included in both Certified Solo and Certified Entity plans.",
+      "source": "stripe"
+    },
+    {
+      "key": "storage",
+      "label": "Additional IPFS storage (above 1GB)",
+      "price": "0,89€ / GB",
+      "details": "IPFS storage above 1GB is charged monthly for both organizations and personal workspaces.",
+      "source": "stripe"
+    }
+  ]
+}

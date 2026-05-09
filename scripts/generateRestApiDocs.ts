@@ -8,26 +8,22 @@ import type {
   ApiRouteDocs,
   ApiVisibleRouteDocs,
   ApiRouteSection
-} from '../../../stack/types'
+} from './restApiTypes'
 
-const getStackDir = (): string => {
+const getSourceRoot = (): string => {
   const cwd = process.cwd()
-  const candidates = [
-    cwd,
-    path.resolve(cwd, 'stack'),
-    path.resolve(cwd, '../stack'),
-    path.resolve(cwd, '../../stack')
-  ]
+  const candidates = [cwd, path.resolve(cwd, '..'), path.resolve(cwd, '../..')]
   return (
     candidates.find(candidate =>
-      fs.existsSync(path.resolve(candidate, 'lib/api/index.ts'))
+      fs.existsSync(path.resolve(candidate, 'stack/lib/api/index.ts'))
     ) ?? candidates[0]!
   )
 }
 
-const stackDir = getStackDir()
-const libDir = path.resolve(stackDir, 'lib')
-const outputPath = path.resolve(stackDir, '../packages/docs/mdx/reference/rest-api.mdx')
+const sourceRoot = getSourceRoot()
+const stackRoot = path.resolve(sourceRoot, 'stack')
+const libDir = path.resolve(stackRoot, 'lib')
+const outputPath = path.resolve(sourceRoot, 'packages/docs/mdx/reference/rest-api.mdx')
 const docsPath = '/docs/reference/rest-api'
 
 type JsonValue =
@@ -327,7 +323,7 @@ const validateRouteDocs = (route: PreparedRoute): void => {
 const prepareRoute = async (
   absolutePath: string
 ): Promise<PreparedRoute | null> => {
-  const relativePath = toPosixPath(path.relative(stackDir, absolutePath))
+  const relativePath = toPosixPath(path.relative(stackRoot, absolutePath))
   const source = await fsp.readFile(absolutePath, 'utf8')
   const apiDocs = readApiDocs(source, relativePath)
 
@@ -471,9 +467,9 @@ ${section.routes.map(renderRoute).join('\n')}`
 
 const main = async (): Promise<void> => {
   const routeFiles: string[] = (await walk(libDir))
-    .map(filePath => toPosixPath(path.relative(stackDir, filePath)))
+    .map(filePath => toPosixPath(path.relative(stackRoot, filePath)))
     .filter(isRouteFile)
-    .map(relativePath => path.resolve(stackDir, relativePath))
+    .map(relativePath => path.resolve(stackRoot, relativePath))
     .sort((a, b) => a.localeCompare(b))
 
   const preparedRoutes: PreparedRoute[] = (
@@ -535,7 +531,7 @@ ${details}
 `
 
   await fsp.writeFile(outputPath, document, 'utf8')
-  console.info(`Generated ${path.relative(stackDir, outputPath)}.`)
+  console.info(`Generated ${path.relative(sourceRoot, outputPath)}.`)
 }
 
 main().catch(error => {
