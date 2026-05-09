@@ -20,4 +20,6 @@ export interface ApiHiddenRouteDocs {
 }
 
 export type ApiRouteDocs = ApiHiddenRouteDocs | ApiVisibleRouteDocs
-export type ApiOperationDoc = Partial<Record<'GET'|'POST'|'PUT'|'PATCH'|'DELETE', ApiRouteDocs>>
+export type ApiOperationDoc = Partial<
+  Record<'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE', ApiRouteDocs>
+>
