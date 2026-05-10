@@ -1,5 +1,6 @@
 import DeploymentAddresses, {
   DeploymentNetworkHeading,
+  DeploymentNetworksTableOfContents,
   getDeploymentNetworks,
   getNetworkAnchor,
   getNetworkLabel
@@ -13,15 +14,7 @@ export const networks = getDeploymentNetworks()
 
 Organigram.ai supports the networks below for the web platform and the open-source libraries. Published protocol contract addresses are tracked in [packages/protocol/deployments.json](https://github.com/organigram/organigram/blob/main/packages/protocol/deployments.json).
 
-## Networks
-
-<ul>
-  {networks.map(network => (
-    <li key={network.chainId}>
-      <a href={getNetworkAnchor(network)}>{getNetworkLabel(network)}</a>
-    </li>
-  ))}
-</ul>
+<DeploymentNetworksTableOfContents networks={networks} />
 
 {networks.map(network => (
   <section key={network.chainId}>
