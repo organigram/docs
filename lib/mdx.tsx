@@ -172,6 +172,14 @@ const translateNode = (node: ReactNode): ReactNode => {
   return typeof node === 'string' ? t(node) : node
 }
 
+export const CustomStrong: React.FC<{
+  children: ReactNode
+}> = ({ children }) => (
+  <Box component='strong' sx={{ fontWeight: 700 }}>
+    {translateNode(children)}
+  </Box>
+)
+
 export const CustomParagraph: React.FC<{
   children: ReactNode
   isLi?: boolean
@@ -363,6 +371,7 @@ export const MDXComponents = {
   ul: CustomUl,
   ol: CustomOl,
   a: CustomLink,
+  strong: CustomStrong,
   code: CustomCode,
   pre: CustomPre,
   blockquote: CustomBlockquote,
