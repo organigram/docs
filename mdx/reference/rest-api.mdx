@@ -23,7 +23,7 @@ The official reference for the API routes used by Organigram.ai. Unlike the pack
 
 ### Uploads and generated assets
 
-- [/api/ipfs/\[...workspaceId\]](/docs/reference/rest-api#route_apiipfsworkspaceId): Uploads a workspace file to Web3.Storage and tracks billable storage usage.
+- [/api/ipfs/\[...workspaceId\]](/docs/reference/rest-api#route_apiipfsworkspaceId): Uploads a workspace file to IPFS and tracks billable storage usage.
 - [/api/certifiedProof/\[...workspaceId\]](/docs/reference/rest-api#route_apicertifiedProofworkspaceId): Generates, signs, stores, and bills a certified proof PDF for a workspace transaction.
 - [/api/nlp/\[...workspaceId\]](/docs/reference/rest-api#route_apinlpworkspaceId): Builds an organigram draft from plain text or uploaded documents.
 
@@ -187,7 +187,7 @@ Subscription updates and invoice lookups for the current user or sponsor.
 
 ### ++dnt++/api/ipfs/[...workspaceId]
 
-Uploads a workspace file to Web3.Storage and tracks billable storage usage.
+Uploads a workspace file to IPFS and tracks billable storage usage.
 
 | Field | Value |
 | --- | --- |

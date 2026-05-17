@@ -38,6 +38,9 @@ import { OrganigramClient } from '@organigram/js'
 - [DeployOrganigramInput](/docs/reference/js#interface_DeployOrganigramInput)
 - [DeployOrganInput](/docs/reference/js#interface_DeployOrganInput)
 - [DeployProceduresInput](/docs/reference/js#interface_DeployProceduresInput)
+- [EncryptedCidAccessGroup](/docs/reference/js#interface_EncryptedCidAccessGroup)
+- [EncryptedCidManifest](/docs/reference/js#interface_EncryptedCidManifest)
+- [EncryptionPublicKeySiweResource](/docs/reference/js#interface_EncryptionPublicKeySiweResource)
 - [ExternalCallOperationInput](/docs/reference/js#interface_ExternalCallOperationInput)
 - [File_2](/docs/reference/js#interface_File_2)
 - [IOrganEntry](/docs/reference/js#interface_IOrganEntry)
@@ -46,6 +49,7 @@ import { OrganigramClient } from '@organigram/js'
 - [OrganInput](/docs/reference/js#interface_OrganInput)
 - [OrganJson](/docs/reference/js#interface_OrganJson)
 - [OrganPermission](/docs/reference/js#interface_OrganPermission)
+- [ParsedCidRef](/docs/reference/js#interface_ParsedCidRef)
 - [PopulateInitializeInput](/docs/reference/js#interface_PopulateInitializeInput)
 - [ProcedureInput](/docs/reference/js#interface_ProcedureInput)
 - [ProcedureProposal](/docs/reference/js#interface_ProcedureProposal)
@@ -54,18 +58,31 @@ import { OrganigramClient } from '@organigram/js'
 - [ProcedureType](/docs/reference/js#interface_ProcedureType)
 - [ProcedureTypeField](/docs/reference/js#interface_ProcedureTypeField)
 - [ProposalMetadata](/docs/reference/js#interface_ProposalMetadata)
+- [PublicFileVersionManifest](/docs/reference/js#interface_PublicFileVersionManifest)
+- [RecipientEncryptionKey](/docs/reference/js#interface_RecipientEncryptionKey)
+- [ScopeEnvelopeCheckpoint](/docs/reference/js#interface_ScopeEnvelopeCheckpoint)
+- [ScopeEnvelopeItem](/docs/reference/js#interface_ScopeEnvelopeItem)
+- [ScopeEnvelopeManifest](/docs/reference/js#interface_ScopeEnvelopeManifest)
+- [ScopeEnvelopeReference](/docs/reference/js#interface_ScopeEnvelopeReference)
 - [SignedBlockProposalInput](/docs/reference/js#interface_SignedBlockProposalInput)
 - [SignedProposalActionInput](/docs/reference/js#interface_SignedProposalActionInput)
 - [SignedProposalInput](/docs/reference/js#interface_SignedProposalInput)
+- [StoredUserEncryptionKeyPair](/docs/reference/js#interface_StoredUserEncryptionKeyPair)
 - [TransactionOptions](/docs/reference/js#interface_TransactionOptions)
+- [UserEncryptionKeyBackup](/docs/reference/js#interface_UserEncryptionKeyBackup)
+- [WrappedContentKey](/docs/reference/js#interface_WrappedContentKey)
+- [WrappedGroupKey](/docs/reference/js#interface_WrappedGroupKey)
 
 ### Types
 
+- [AccessGroupScopeType](/docs/reference/js#type_AccessGroupScopeType)
 - [AccountInOrgans](/docs/reference/js#type_AccountInOrgans)
 - [ContractClients](/docs/reference/js#type_ContractClients)
 - [ContractName](/docs/reference/js#type_ContractName)
 - [Election](/docs/reference/js#type_Election)
+- [EncryptedCidContentType](/docs/reference/js#type_EncryptedCidContentType)
 - [ERC20VoteProcedureInput](/docs/reference/js#type_ERC20VoteProcedureInput)
+- [FileVersionManifest](/docs/reference/js#type_FileVersionManifest)
 - [OperationParamAction](/docs/reference/js#type_OperationParamAction)
 - [OperationParamType](/docs/reference/js#type_OperationParamType)
 - [OperationTag](/docs/reference/js#type_OperationTag)
@@ -78,6 +95,9 @@ import { OrganigramClient } from '@organigram/js'
 - [ProcedureRoleTypeName](/docs/reference/js#type_ProcedureRoleTypeName)
 - [ProcedureTypeName](/docs/reference/js#type_ProcedureTypeName)
 - [ProposalKey](/docs/reference/js#type_ProposalKey)
+- [ScopeEnvelopeContentType](/docs/reference/js#type_ScopeEnvelopeContentType)
+- [ScopeEnvelopeRetentionState](/docs/reference/js#type_ScopeEnvelopeRetentionState)
+- [ScopeEnvelopeScopeType](/docs/reference/js#type_ScopeEnvelopeScopeType)
 - [TemplateName](/docs/reference/js#type_TemplateName)
 - [VoteProcedureInput](/docs/reference/js#type_VoteProcedureInput)
 
@@ -88,17 +108,46 @@ import { OrganigramClient } from '@organigram/js'
 
 ### Functions
 
+- [base64ToBytes](/docs/reference/js#function_base64ToBytes)
+- [base64UrlToBytes](/docs/reference/js#function_base64UrlToBytes)
 - [bufferEstimatedGas](/docs/reference/js#function_bufferEstimatedGas)
+- [bytesToArrayBuffer](/docs/reference/js#function_bytesToArrayBuffer)
+- [bytesToBase64](/docs/reference/js#function_bytesToBase64)
+- [bytesToBase64Url](/docs/reference/js#function_bytesToBase64Url)
+- [bytesToText](/docs/reference/js#function_bytesToText)
 - [capitalize](/docs/reference/js#function_capitalize)
 - [cloneInitCodeHash](/docs/reference/js#function_cloneInitCodeHash)
+- [computeScopeEnvelopeRoot](/docs/reference/js#function_computeScopeEnvelopeRoot)
 - [createContractWriteTransaction](/docs/reference/js#function_createContractWriteTransaction)
 - [createDeployTransaction](/docs/reference/js#function_createDeployTransaction)
+- [createEncryptedCidManifest](/docs/reference/js#function_createEncryptedCidManifest)
+- [createEncryptionKeyVersion](/docs/reference/js#function_createEncryptionKeyVersion)
+- [createEncryptionPublicKeyMessage](/docs/reference/js#function_createEncryptionPublicKeyMessage)
+- [createEncryptionPublicKeySiweResource](/docs/reference/js#function_createEncryptionPublicKeySiweResource)
+- [createFileVersionManifest](/docs/reference/js#function_createFileVersionManifest)
+- [createPublicFileVersionManifest](/docs/reference/js#function_createPublicFileVersionManifest)
 - [createRandom32BytesHexId](/docs/reference/js#function_createRandom32BytesHexId)
+- [createScopeEnvelopeCheckpoint](/docs/reference/js#function_createScopeEnvelopeCheckpoint)
+- [createScopeEnvelopeItem](/docs/reference/js#function_createScopeEnvelopeItem)
+- [createScopeEnvelopeManifest](/docs/reference/js#function_createScopeEnvelopeManifest)
+- [createScopeEnvelopeSignatureMessage](/docs/reference/js#function_createScopeEnvelopeSignatureMessage)
+- [decryptBytes](/docs/reference/js#function_decryptBytes)
 - [encodeProcedureInitialization](/docs/reference/js#function_encodeProcedureInitialization)
+- [encryptBytes](/docs/reference/js#function_encryptBytes)
+- [ensureUserEncryptionKeyPair](/docs/reference/js#function_ensureUserEncryptionKeyPair)
+- [exportSymmetricKey](/docs/reference/js#function_exportSymmetricKey)
+- [exportUserEncryptionKeyBackup](/docs/reference/js#function_exportUserEncryptionKeyBackup)
+- [exportUserPrivateKey](/docs/reference/js#function_exportUserPrivateKey)
+- [exportUserPublicKey](/docs/reference/js#function_exportUserPublicKey)
+- [formatCidRef](/docs/reference/js#function_formatCidRef)
 - [formatSalt](/docs/reference/js#function_formatSalt)
+- [generateContentKey](/docs/reference/js#function_generateContentKey)
+- [generateGroupKey](/docs/reference/js#function_generateGroupKey)
+- [generateUserEncryptionKeyPair](/docs/reference/js#function_generateUserEncryptionKeyPair)
 - [getChainExplorerBaseUrl](/docs/reference/js#function_getChainExplorerBaseUrl)
 - [getConfiguredChain](/docs/reference/js#function_getConfiguredChain)
 - [getContractInstance](/docs/reference/js#function_getContractInstance)
+- [getCrypto](/docs/reference/js#function_getCrypto)
 - [getDefaultChainId](/docs/reference/js#function_getDefaultChainId)
 - [getDeployment](/docs/reference/js#function_getDeployment)
 - [getHostUrl](/docs/reference/js#function_getHostUrl)
@@ -106,28 +155,94 @@ import { OrganigramClient } from '@organigram/js'
 - [getProcedureClass](/docs/reference/js#function_getProcedureClass)
 - [getProcedureType](/docs/reference/js#function_getProcedureType)
 - [getProcedureTypes](/docs/reference/js#function_getProcedureTypes)
+- [getRandomIv](/docs/reference/js#function_getRandomIv)
 - [getSupportedChainIds](/docs/reference/js#function_getSupportedChainIds)
 - [getSupportedChains](/docs/reference/js#function_getSupportedChains)
 - [getTemplate](/docs/reference/js#function_getTemplate)
 - [getWalletAccount](/docs/reference/js#function_getWalletAccount)
 - [getWalletAddress](/docs/reference/js#function_getWalletAddress)
 - [handleJsonBigInt](/docs/reference/js#function_handleJsonBigInt)
+- [importExtractableUserPublicKey](/docs/reference/js#function_importExtractableUserPublicKey)
+- [importSymmetricKey](/docs/reference/js#function_importSymmetricKey)
+- [importUserEncryptionKeyBackup](/docs/reference/js#function_importUserEncryptionKeyBackup)
+- [importUserPrivateKey](/docs/reference/js#function_importUserPrivateKey)
+- [importUserPublicKey](/docs/reference/js#function_importUserPublicKey)
+- [isCidRef](/docs/reference/js#function_isCidRef)
+- [isEncryptedCidManifest](/docs/reference/js#function_isEncryptedCidManifest)
+- [isFileVersionManifest](/docs/reference/js#function_isFileVersionManifest)
 - [isLocalHost](/docs/reference/js#function_isLocalHost)
+- [isPublicFileVersionManifest](/docs/reference/js#function_isPublicFileVersionManifest)
+- [isScopeEnvelopeManifest](/docs/reference/js#function_isScopeEnvelopeManifest)
 - [isSupportedChainId](/docs/reference/js#function_isSupportedChainId)
+- [isValidEncryptionKeyVersion](/docs/reference/js#function_isValidEncryptionKeyVersion)
+- [loadUserEncryptionKeyPair](/docs/reference/js#function_loadUserEncryptionKeyPair)
+- [normalizeEncryptionKeyVersion](/docs/reference/js#function_normalizeEncryptionKeyVersion)
+- [parseCidRef](/docs/reference/js#function_parseCidRef)
+- [parseEncryptionPublicKeySiweResource](/docs/reference/js#function_parseEncryptionPublicKeySiweResource)
 - [populateInitializeProcedure](/docs/reference/js#function_populateInitializeProcedure)
 - [predictContractAddress](/docs/reference/js#function_predictContractAddress)
 - [prepareDeployOrgansInput](/docs/reference/js#function_prepareDeployOrgansInput)
 - [prepareDeployProceduresInput](/docs/reference/js#function_prepareDeployProceduresInput)
 - [renewSaltsAndAddresses](/docs/reference/js#function_renewSaltsAndAddresses)
 - [resolveDeployment](/docs/reference/js#function_resolveDeployment)
+- [saveUserEncryptionKeyPair](/docs/reference/js#function_saveUserEncryptionKeyPair)
+- [sha256Hex](/docs/reference/js#function_sha256Hex)
+- [stableStringify](/docs/reference/js#function_stableStringify)
+- [textToBytes](/docs/reference/js#function_textToBytes)
+- [unwrapContentKey](/docs/reference/js#function_unwrapContentKey)
+- [unwrapGroupKey](/docs/reference/js#function_unwrapGroupKey)
+- [wrapContentKey](/docs/reference/js#function_wrapContentKey)
+- [wrapGroupKeyForRecipient](/docs/reference/js#function_wrapGroupKeyForRecipient)
 
 
 ## Utility functions
+
+## function ++dnt++base64ToBytes
+
+```typescript
+base64ToBytes: (value: string) => Uint8Array
+```
+
+
+## function ++dnt++base64UrlToBytes
+
+```typescript
+base64UrlToBytes: (value: string) => Uint8Array
+```
+
 
 ## function ++dnt++bufferEstimatedGas
 
 ```typescript
 bufferEstimatedGas: (estimatedGas: bigint) => bigint
+```
+
+
+## function ++dnt++bytesToArrayBuffer
+
+```typescript
+bytesToArrayBuffer: (value: ArrayBuffer | Uint8Array) => ArrayBuffer
+```
+
+
+## function ++dnt++bytesToBase64
+
+```typescript
+bytesToBase64: (bytes: ArrayBuffer | Uint8Array) => string
+```
+
+
+## function ++dnt++bytesToBase64Url
+
+```typescript
+bytesToBase64Url: (bytes: ArrayBuffer | Uint8Array) => string
+```
+
+
+## function ++dnt++bytesToText
+
+```typescript
+bytesToText: (value: ArrayBuffer | Uint8Array) => string
 ```
 
 
@@ -142,6 +257,13 @@ capitalize: (s: string) => string
 
 ```typescript
 export declare function cloneInitCodeHash(implementation: string): string;
+```
+
+
+## function ++dnt++computeScopeEnvelopeRoot
+
+```typescript
+computeScopeEnvelopeRoot: (items: Record<string, ScopeEnvelopeItem>) => Promise<string>
 ```
 
 
@@ -174,10 +296,159 @@ createDeployTransaction: <TAbi extends Abi | readonly unknown[]>(input: {
 ```
 
 
+## function ++dnt++createEncryptedCidManifest
+
+```typescript
+createEncryptedCidManifest: (input: {
+    contentType: EncryptedCidContentType;
+    accessGroup?: EncryptedCidAccessGroup;
+    scopeRef?: FileVersionManifest["scopeRef"];
+    logicalKey?: string;
+    retentionState?: FileVersionManifest["retentionState"];
+    previousManifestCid?: string;
+    encryptedCid: string;
+    encryptedContentIv: string;
+    encryptedContentSize: number;
+    wrappedContentKey: WrappedContentKey;
+    mime?: string;
+    name?: string;
+    scopeEnvelope?: FileVersionManifest["scopeEnvelope"];
+    signature?: string;
+    signedByAddress?: string;
+}) => EncryptedCidManifest
+```
+
+
+## function ++dnt++createEncryptionKeyVersion
+
+```typescript
+createEncryptionKeyVersion: (timestamp?: number) => number
+```
+
+
+## function ++dnt++createEncryptionPublicKeyMessage
+
+```typescript
+createEncryptionPublicKeyMessage: (address: string, publicKey: JsonWebKey, keyVersion: number) => string
+```
+
+
+## function ++dnt++createEncryptionPublicKeySiweResource
+
+```typescript
+createEncryptionPublicKeySiweResource: (address: string, publicKey: JsonWebKey, keyVersion: number) => string
+```
+
+
+## function ++dnt++createFileVersionManifest
+
+```typescript
+createFileVersionManifest: (input: {
+    contentType: ScopeEnvelopeContentType;
+    scopeRef: ScopeEnvelopeReference;
+    logicalKey: string;
+    encryptedCid: string;
+    encryptedContentIv: string;
+    encryptedContentSize: number;
+    wrappedContentKey: WrappedContentKey;
+    previousManifestCid?: string | null;
+    retentionState?: ScopeEnvelopeRetentionState;
+    scopeEnvelope?: ScopeEnvelopeCheckpoint;
+    mime?: string;
+    name?: string;
+    signature?: string | null;
+    signedByAddress?: string | null;
+    createdAt?: Date | string;
+}) => FileVersionManifest
+```
+
+
+## function ++dnt++createPublicFileVersionManifest
+
+```typescript
+createPublicFileVersionManifest: (input: {
+    contentType: ScopeEnvelopeContentType;
+    scopeRef: ScopeEnvelopeReference;
+    logicalKey: string;
+    publicCid: string;
+    publicContentSize: number;
+    previousManifestCid?: string | null;
+    retentionState?: ScopeEnvelopeRetentionState;
+    scopeEnvelope?: ScopeEnvelopeCheckpoint;
+    mime?: string;
+    name?: string;
+    signature?: string | null;
+    signedByAddress?: string | null;
+    createdAt?: Date | string;
+}) => PublicFileVersionManifest
+```
+
+
 ## function ++dnt++createRandom32BytesHexId
 
 ```typescript
 createRandom32BytesHexId: () => `0x${string}`
+```
+
+
+## function ++dnt++createScopeEnvelopeCheckpoint
+
+```typescript
+createScopeEnvelopeCheckpoint: (input: {
+    epoch: number;
+    membershipHash: string;
+    rootHash: string;
+}) => ScopeEnvelopeCheckpoint
+```
+
+
+## function ++dnt++createScopeEnvelopeItem
+
+```typescript
+createScopeEnvelopeItem: (input: {
+    logicalKey: string;
+    currentManifestCid: string;
+    contentType: ScopeEnvelopeContentType;
+    version?: number;
+    retentionState?: ScopeEnvelopeRetentionState;
+    previousManifestCid?: string;
+    updatedAt?: Date | string;
+}) => ScopeEnvelopeItem
+```
+
+
+## function ++dnt++createScopeEnvelopeManifest
+
+```typescript
+createScopeEnvelopeManifest: (input: {
+    scopeRef: ScopeEnvelopeReference;
+    checkpoint: ScopeEnvelopeCheckpoint;
+    items: Record<string, ScopeEnvelopeItem>;
+    wrappedEnvelopeKey: WrappedContentKey;
+    previousEnvelopeCid?: string | null;
+    signature?: string | null;
+    signedByAddress?: string | null;
+    createdAt?: Date | string;
+}) => ScopeEnvelopeManifest
+```
+
+
+## function ++dnt++createScopeEnvelopeSignatureMessage
+
+```typescript
+createScopeEnvelopeSignatureMessage: (input: {
+    scopeRef: ScopeEnvelopeReference;
+    checkpoint: ScopeEnvelopeCheckpoint;
+    items: Record<string, ScopeEnvelopeItem>;
+    previousEnvelopeCid?: string | null;
+}) => string
+```
+
+
+## function ++dnt++decryptBytes
+
+```typescript
+decryptBytes: (encryptedBytes: ArrayBuffer | Uint8Array, key: CryptoKey, iv: string) => Promise<Uint8Array>
 ```
 
 
@@ -188,10 +459,83 @@ encodeProcedureInitialization: (abi: unknown, functionName: string, args: unknow
 ```
 
 
+## function ++dnt++encryptBytes
+
+```typescript
+encryptBytes: (bytes: ArrayBuffer | Uint8Array, key: CryptoKey) => Promise<{
+    encryptedBytes: Uint8Array;
+    iv: string;
+}>
+```
+
+
+## function ++dnt++ensureUserEncryptionKeyPair
+
+```typescript
+ensureUserEncryptionKeyPair: (address: string) => Promise<StoredUserEncryptionKeyPair>
+```
+
+
+## function ++dnt++exportSymmetricKey
+
+```typescript
+exportSymmetricKey: (key: CryptoKey) => Promise<Uint8Array>
+```
+
+
+## function ++dnt++exportUserEncryptionKeyBackup
+
+```typescript
+exportUserEncryptionKeyBackup: (address: string, passphrase: string) => Promise<UserEncryptionKeyBackup>
+```
+
+
+## function ++dnt++exportUserPrivateKey
+
+```typescript
+exportUserPrivateKey: (keyPair: CryptoKeyPair) => Promise<JsonWebKey>
+```
+
+
+## function ++dnt++exportUserPublicKey
+
+```typescript
+exportUserPublicKey: (keyPair: CryptoKeyPair) => Promise<JsonWebKey>
+```
+
+
+## function ++dnt++formatCidRef
+
+```typescript
+formatCidRef: (scopeRef: ScopeEnvelopeReference, logicalKey: string) => string
+```
+
+
 ## function ++dnt++formatSalt
 
 ```typescript
 formatSalt: (salt?: string | null) => string
+```
+
+
+## function ++dnt++generateContentKey
+
+```typescript
+generateContentKey: () => Promise<CryptoKey>
+```
+
+
+## function ++dnt++generateGroupKey
+
+```typescript
+generateGroupKey: () => Promise<CryptoKey>
+```
+
+
+## function ++dnt++generateUserEncryptionKeyPair
+
+```typescript
+generateUserEncryptionKeyPair: () => Promise<CryptoKeyPair>
 ```
 
 
@@ -205,7 +549,7 @@ getChainExplorerBaseUrl: (chainId: string) => string | undefined
 ## function ++dnt++getConfiguredChain
 
 ```typescript
-getConfiguredChain: (chainId: string, hostUrl?: string, preferLocalHost?: boolean) => Chain | undefined
+getConfiguredChain: (chainId: string) => Chain | undefined
 ```
 
 
@@ -413,6 +757,13 @@ getContractInstance: <TAbi extends Abi | readonly unknown[]>(input: {
 ```
 
 
+## function ++dnt++getCrypto
+
+```typescript
+getCrypto: () => Crypto
+```
+
+
 ## function ++dnt++getDefaultChainId
 
 ```typescript
@@ -466,6 +817,13 @@ getProcedureTypes: (chainId?: string) => {
 ```
 
 
+## function ++dnt++getRandomIv
+
+```typescript
+getRandomIv: () => Uint8Array
+```
+
+
 ## function ++dnt++getSupportedChainIds
 
 ```typescript
@@ -476,83 +834,14 @@ getSupportedChainIds: () => string[]
 ## function ++dnt++getSupportedChains
 
 ```typescript
-getSupportedChains: (hostUrl?: string, preferLocalHost?: boolean) => Chain[]
+getSupportedChains: () => Chain[]
 ```
 
 
 ## function ++dnt++getTemplate
 
 ```typescript
-getTemplate: (templateName: TemplateName, chainId: string) => {
-    chainId: string;
-    organs: {
-        salt: string;
-        address: string;
-        chainId: string;
-        isDeployed: boolean;
-        permissions: {
-            permissionAddress: string;
-            permissionValue: number;
-        }[] | undefined;
-        publicClient?: import("viem").PublicClient | null;
-        walletClient?: import("viem").WalletClient | null;
-        balance?: string | null;
-        cid?: string | null;
-        entries?: Array<{
-            index: string;
-            address: string;
-            cid: string;
-        }> | null;
-        name?: string | null;
-        description?: string | null;
-        organigramId?: string | null;
-        forwarder?: string | null;
-    }[];
-    procedures: {
-        salt: string;
-        chainId: string;
-        data: string;
-        isDeployed: boolean;
-        address: string;
-        deciders: string;
-        proposers: string;
-        moderators: string | undefined;
-        typeName: string;
-        type?: import("..").ProcedureType;
-        name?: string | null;
-        description?: string | null;
-        cid?: string | null;
-        publicClient?: import("viem").PublicClient | null;
-        walletClient?: import("viem").WalletClient | null;
-        metadata?: string | null;
-        withModeration?: boolean | null;
-        forwarder?: string | null;
-        proposals?: import("..").ProcedureProposal[] | null;
-        organigramId?: string | null;
-    }[];
-    assets: {
-        chainId: string;
-        isDeployed: boolean;
-        salt: string;
-        address: string;
-        name?: string | null;
-        description?: string | null;
-        symbol?: string | null;
-        initialSupply?: number | null;
-        image?: string | null;
-        userBalance?: string | null;
-        organigramId?: string | null;
-    }[];
-    id?: string | null;
-    slug?: string | null;
-    name?: string | null;
-    description?: string | null;
-    organigramClient?: import("..").OrganigramClient | null;
-    walletClient?: import("viem").WalletClient | null;
-    publicClient?: import("viem").PublicClient | null;
-    contractAddresses?: string[] | null;
-    workspaceId?: string | null;
-}
+getTemplate: (templateName: TemplateName, chainId: string) => OrganigramInput
 ```
 
 
@@ -577,6 +866,62 @@ handleJsonBigInt: (key: string, value: any) => any
 ```
 
 
+## function ++dnt++importExtractableUserPublicKey
+
+```typescript
+importExtractableUserPublicKey: (publicKey: JsonWebKey) => Promise<CryptoKey>
+```
+
+
+## function ++dnt++importSymmetricKey
+
+```typescript
+importSymmetricKey: (rawKey: ArrayBuffer | Uint8Array) => Promise<CryptoKey>
+```
+
+
+## function ++dnt++importUserEncryptionKeyBackup
+
+```typescript
+importUserEncryptionKeyBackup: (backup: UserEncryptionKeyBackup, passphrase: string) => Promise<StoredUserEncryptionKeyPair>
+```
+
+
+## function ++dnt++importUserPrivateKey
+
+```typescript
+importUserPrivateKey: (privateKey: JsonWebKey) => Promise<CryptoKey>
+```
+
+
+## function ++dnt++importUserPublicKey
+
+```typescript
+importUserPublicKey: (publicKey: JsonWebKey) => Promise<CryptoKey>
+```
+
+
+## function ++dnt++isCidRef
+
+```typescript
+isCidRef: (value?: string | null) => boolean
+```
+
+
+## function ++dnt++isEncryptedCidManifest
+
+```typescript
+isEncryptedCidManifest: (value: unknown) => value is EncryptedCidManifest
+```
+
+
+## function ++dnt++isFileVersionManifest
+
+```typescript
+isFileVersionManifest: (value: unknown) => value is FileVersionManifest
+```
+
+
 ## function ++dnt++isLocalHost
 
 ```typescript
@@ -584,10 +929,59 @@ isLocalHost: (hostUrl?: string) => boolean
 ```
 
 
+## function ++dnt++isPublicFileVersionManifest
+
+```typescript
+isPublicFileVersionManifest: (value: unknown) => value is PublicFileVersionManifest
+```
+
+
+## function ++dnt++isScopeEnvelopeManifest
+
+```typescript
+isScopeEnvelopeManifest: (value: unknown) => value is ScopeEnvelopeManifest
+```
+
+
 ## function ++dnt++isSupportedChainId
 
 ```typescript
 isSupportedChainId: (chainId: string | number | bigint | null | undefined) => boolean
+```
+
+
+## function ++dnt++isValidEncryptionKeyVersion
+
+```typescript
+isValidEncryptionKeyVersion: (keyVersion: number) => boolean
+```
+
+
+## function ++dnt++loadUserEncryptionKeyPair
+
+```typescript
+loadUserEncryptionKeyPair: (address: string) => Promise<StoredUserEncryptionKeyPair | null>
+```
+
+
+## function ++dnt++normalizeEncryptionKeyVersion
+
+```typescript
+normalizeEncryptionKeyVersion: (keyVersion: number) => number | null
+```
+
+
+## function ++dnt++parseCidRef
+
+```typescript
+parseCidRef: (value?: string | null) => ParsedCidRef | null
+```
+
+
+## function ++dnt++parseEncryptionPublicKeySiweResource
+
+```typescript
+parseEncryptionPublicKeySiweResource: (resources: string[] | undefined, address: string) => EncryptionPublicKeySiweResource | null
 ```
 
 
@@ -640,76 +1034,7 @@ prepareDeployProceduresInput: (deployProceduresInput: DeployProceduresInput[], c
 ## function ++dnt++renewSaltsAndAddresses
 
 ```typescript
-renewSaltsAndAddresses: (organigram: OrganigramInput, chainId: string) => {
-    chainId: string;
-    organs: {
-        salt: string;
-        address: string;
-        chainId: string;
-        isDeployed: boolean;
-        permissions: {
-            permissionAddress: string;
-            permissionValue: number;
-        }[] | undefined;
-        publicClient?: import("viem").PublicClient | null;
-        walletClient?: import("viem").WalletClient | null;
-        balance?: string | null;
-        cid?: string | null;
-        entries?: Array<{
-            index: string;
-            address: string;
-            cid: string;
-        }> | null;
-        name?: string | null;
-        description?: string | null;
-        organigramId?: string | null;
-        forwarder?: string | null;
-    }[];
-    procedures: {
-        salt: string;
-        chainId: string;
-        data: string;
-        isDeployed: boolean;
-        address: string;
-        deciders: string;
-        proposers: string;
-        moderators: string | undefined;
-        typeName: string;
-        type?: import("..").ProcedureType;
-        name?: string | null;
-        description?: string | null;
-        cid?: string | null;
-        publicClient?: import("viem").PublicClient | null;
-        walletClient?: import("viem").WalletClient | null;
-        metadata?: string | null;
-        withModeration?: boolean | null;
-        forwarder?: string | null;
-        proposals?: import("..").ProcedureProposal[] | null;
-        organigramId?: string | null;
-    }[];
-    assets: {
-        chainId: string;
-        isDeployed: boolean;
-        salt: string;
-        address: string;
-        name?: string | null;
-        description?: string | null;
-        symbol?: string | null;
-        initialSupply?: number | null;
-        image?: string | null;
-        userBalance?: string | null;
-        organigramId?: string | null;
-    }[];
-    id?: string | null;
-    slug?: string | null;
-    name?: string | null;
-    description?: string | null;
-    organigramClient?: import("..").OrganigramClient | null;
-    walletClient?: import("viem").WalletClient | null;
-    publicClient?: import("viem").PublicClient | null;
-    contractAddresses?: string[] | null;
-    workspaceId?: string | null;
-}
+renewSaltsAndAddresses: (organigram: OrganigramInput, chainId: string) => OrganigramInput
 ```
 
 
@@ -717,6 +1042,62 @@ renewSaltsAndAddresses: (organigram: OrganigramInput, chainId: string) => {
 
 ```typescript
 resolveDeployment: (chainId: string | number | bigint | null | undefined, deploymentName: ProtocolDeploymentName) => string | undefined
+```
+
+
+## function ++dnt++saveUserEncryptionKeyPair
+
+```typescript
+saveUserEncryptionKeyPair: (address: string, value: StoredUserEncryptionKeyPair) => Promise<void>
+```
+
+
+## function ++dnt++sha256Hex
+
+```typescript
+sha256Hex: (value: string) => Promise<string>
+```
+
+
+## function ++dnt++stableStringify
+
+```typescript
+stableStringify: (value: unknown) => string
+```
+
+
+## function ++dnt++textToBytes
+
+```typescript
+textToBytes: (value: string) => Uint8Array
+```
+
+
+## function ++dnt++unwrapContentKey
+
+```typescript
+unwrapContentKey: (wrappedContentKey: WrappedContentKey, groupKey: CryptoKey) => Promise<CryptoKey>
+```
+
+
+## function ++dnt++unwrapGroupKey
+
+```typescript
+unwrapGroupKey: (wrappedGroupKey: WrappedGroupKey, recipientPrivateKey: CryptoKey) => Promise<CryptoKey>
+```
+
+
+## function ++dnt++wrapContentKey
+
+```typescript
+wrapContentKey: (contentKey: CryptoKey, groupKey: CryptoKey) => Promise<WrappedContentKey>
+```
+
+
+## function ++dnt++wrapGroupKeyForRecipient
+
+```typescript
+wrapGroupKeyForRecipient: (groupKey: CryptoKey, recipient: RecipientEncryptionKey) => Promise<WrappedGroupKey>
 ```
 
 
@@ -2788,6 +3169,175 @@ withModeration?: boolean | null;
 
 
 
+## interface ++dnt++EncryptedCidAccessGroup
+
+### Properties
+
+#### ++dnt++EncryptedCidAccessGroup.epoch
+
+```typescript
+epoch: number;
+```
+
+
+#### ++dnt++EncryptedCidAccessGroup.scopeId
+
+```typescript
+scopeId: string;
+```
+
+
+#### ++dnt++EncryptedCidAccessGroup.scopeType
+
+```typescript
+scopeType: AccessGroupScopeType;
+```
+
+
+
+## interface ++dnt++EncryptedCidManifest
+
+### Properties
+
+#### ++dnt++EncryptedCidManifest.accessGroup
+
+```typescript
+accessGroup?: EncryptedCidAccessGroup;
+```
+
+
+#### ++dnt++EncryptedCidManifest.contentType
+
+```typescript
+contentType: ScopeEnvelopeContentType;
+```
+
+
+#### ++dnt++EncryptedCidManifest.createdAt
+
+```typescript
+createdAt: string;
+```
+
+
+#### ++dnt++EncryptedCidManifest.encryptedContent
+
+```typescript
+encryptedContent: {
+        cid: string;
+        algorithm: typeof ENCRYPTION_ALGORITHM;
+        iv: string;
+        size: number;
+        mime?: string;
+        name?: string;
+    };
+```
+
+
+#### ++dnt++EncryptedCidManifest.kind
+
+```typescript
+kind: typeof ENCRYPTED_CID_KIND | typeof FILE_VERSION_MANIFEST_KIND;
+```
+
+
+#### ++dnt++EncryptedCidManifest.logicalKey
+
+```typescript
+logicalKey?: string;
+```
+
+
+#### ++dnt++EncryptedCidManifest.previousManifestCid
+
+```typescript
+previousManifestCid?: string;
+```
+
+
+#### ++dnt++EncryptedCidManifest.retentionState
+
+```typescript
+retentionState?: ScopeEnvelopeRetentionState;
+```
+
+
+#### ++dnt++EncryptedCidManifest.scopeEnvelope
+
+```typescript
+scopeEnvelope?: ScopeEnvelopeCheckpoint;
+```
+
+
+#### ++dnt++EncryptedCidManifest.scopeRef
+
+```typescript
+scopeRef?: ScopeEnvelopeReference;
+```
+
+
+#### ++dnt++EncryptedCidManifest.signature
+
+```typescript
+signature?: string;
+```
+
+
+#### ++dnt++EncryptedCidManifest.signedByAddress
+
+```typescript
+signedByAddress?: string;
+```
+
+
+#### ++dnt++EncryptedCidManifest.version
+
+```typescript
+version: 1;
+```
+
+
+#### ++dnt++EncryptedCidManifest.wrappedContentKey
+
+```typescript
+wrappedContentKey: WrappedContentKey;
+```
+
+
+
+## interface ++dnt++EncryptionPublicKeySiweResource
+
+### Properties
+
+#### ++dnt++EncryptionPublicKeySiweResource.address
+
+```typescript
+address: string;
+```
+
+
+#### ++dnt++EncryptionPublicKeySiweResource.keyVersion
+
+```typescript
+keyVersion: number;
+```
+
+
+#### ++dnt++EncryptionPublicKeySiweResource.kind
+
+```typescript
+kind: typeof ENCRYPTION_PUBLIC_KEY_SIWE_RESOURCE_KIND;
+```
+
+
+#### ++dnt++EncryptionPublicKeySiweResource.publicKey
+
+```typescript
+publicKey: JsonWebKey;
+```
+
+
+
 ## interface ++dnt++ExternalCallOperationInput
 
 ### Properties
@@ -3137,6 +3687,25 @@ permissionAddress: string;
 
 ```typescript
 permissionValue: number;
+```
+
+
+
+## interface ++dnt++ParsedCidRef
+
+### Properties
+
+#### ++dnt++ParsedCidRef.logicalKey
+
+```typescript
+logicalKey: string;
+```
+
+
+#### ++dnt++ParsedCidRef.scopeRef
+
+```typescript
+scopeRef: ScopeEnvelopeReference;
 ```
 
 
@@ -3710,6 +4279,307 @@ title: string;
 
 
 
+## interface ++dnt++PublicFileVersionManifest
+
+### Properties
+
+#### ++dnt++PublicFileVersionManifest.accessGroup
+
+```typescript
+accessGroup?: EncryptedCidAccessGroup;
+```
+
+
+#### ++dnt++PublicFileVersionManifest.contentType
+
+```typescript
+contentType: ScopeEnvelopeContentType;
+```
+
+
+#### ++dnt++PublicFileVersionManifest.createdAt
+
+```typescript
+createdAt: string;
+```
+
+
+#### ++dnt++PublicFileVersionManifest.kind
+
+```typescript
+kind: typeof FILE_VERSION_MANIFEST_KIND;
+```
+
+
+#### ++dnt++PublicFileVersionManifest.logicalKey
+
+```typescript
+logicalKey?: string;
+```
+
+
+#### ++dnt++PublicFileVersionManifest.previousManifestCid
+
+```typescript
+previousManifestCid?: string;
+```
+
+
+#### ++dnt++PublicFileVersionManifest.publicContent
+
+```typescript
+publicContent: {
+        cid: string;
+        size: number;
+        mime?: string;
+        name?: string;
+    };
+```
+
+
+#### ++dnt++PublicFileVersionManifest.retentionState
+
+```typescript
+retentionState?: ScopeEnvelopeRetentionState;
+```
+
+
+#### ++dnt++PublicFileVersionManifest.scopeEnvelope
+
+```typescript
+scopeEnvelope?: ScopeEnvelopeCheckpoint;
+```
+
+
+#### ++dnt++PublicFileVersionManifest.scopeRef
+
+```typescript
+scopeRef?: ScopeEnvelopeReference;
+```
+
+
+#### ++dnt++PublicFileVersionManifest.signature
+
+```typescript
+signature?: string;
+```
+
+
+#### ++dnt++PublicFileVersionManifest.signedByAddress
+
+```typescript
+signedByAddress?: string;
+```
+
+
+#### ++dnt++PublicFileVersionManifest.version
+
+```typescript
+version: 1;
+```
+
+
+
+## interface ++dnt++RecipientEncryptionKey
+
+### Properties
+
+#### ++dnt++RecipientEncryptionKey.address
+
+```typescript
+address: string;
+```
+
+
+#### ++dnt++RecipientEncryptionKey.keyVersion
+
+```typescript
+keyVersion: number;
+```
+
+
+#### ++dnt++RecipientEncryptionKey.publicKey
+
+```typescript
+publicKey: JsonWebKey;
+```
+
+
+
+## interface ++dnt++ScopeEnvelopeCheckpoint
+
+### Properties
+
+#### ++dnt++ScopeEnvelopeCheckpoint.epoch
+
+```typescript
+epoch: number;
+```
+
+
+#### ++dnt++ScopeEnvelopeCheckpoint.membershipHash
+
+```typescript
+membershipHash: string;
+```
+
+
+#### ++dnt++ScopeEnvelopeCheckpoint.rootHash
+
+```typescript
+rootHash: string;
+```
+
+
+
+## interface ++dnt++ScopeEnvelopeItem
+
+### Properties
+
+#### ++dnt++ScopeEnvelopeItem.contentType
+
+```typescript
+contentType: ScopeEnvelopeContentType;
+```
+
+
+#### ++dnt++ScopeEnvelopeItem.currentManifestCid
+
+```typescript
+currentManifestCid: string;
+```
+
+
+#### ++dnt++ScopeEnvelopeItem.logicalKey
+
+```typescript
+logicalKey: string;
+```
+
+
+#### ++dnt++ScopeEnvelopeItem.previousManifestCid
+
+```typescript
+previousManifestCid?: string;
+```
+
+
+#### ++dnt++ScopeEnvelopeItem.retentionState
+
+```typescript
+retentionState: ScopeEnvelopeRetentionState;
+```
+
+
+#### ++dnt++ScopeEnvelopeItem.updatedAt
+
+```typescript
+updatedAt: string;
+```
+
+
+#### ++dnt++ScopeEnvelopeItem.version
+
+```typescript
+version: number;
+```
+
+
+
+## interface ++dnt++ScopeEnvelopeManifest
+
+### Properties
+
+#### ++dnt++ScopeEnvelopeManifest.checkpoint
+
+```typescript
+checkpoint: ScopeEnvelopeCheckpoint;
+```
+
+
+#### ++dnt++ScopeEnvelopeManifest.createdAt
+
+```typescript
+createdAt: string;
+```
+
+
+#### ++dnt++ScopeEnvelopeManifest.items
+
+```typescript
+items: Record<string, ScopeEnvelopeItem>;
+```
+
+
+#### ++dnt++ScopeEnvelopeManifest.kind
+
+```typescript
+kind: typeof SCOPE_ENVELOPE_KIND;
+```
+
+
+#### ++dnt++ScopeEnvelopeManifest.previousEnvelopeCid
+
+```typescript
+previousEnvelopeCid?: string;
+```
+
+
+#### ++dnt++ScopeEnvelopeManifest.scopeRef
+
+```typescript
+scopeRef: ScopeEnvelopeReference;
+```
+
+
+#### ++dnt++ScopeEnvelopeManifest.signature
+
+```typescript
+signature?: string;
+```
+
+
+#### ++dnt++ScopeEnvelopeManifest.signedByAddress
+
+```typescript
+signedByAddress?: string;
+```
+
+
+#### ++dnt++ScopeEnvelopeManifest.version
+
+```typescript
+version: 1;
+```
+
+
+#### ++dnt++ScopeEnvelopeManifest.wrappedEnvelopeKey
+
+```typescript
+wrappedEnvelopeKey: WrappedContentKey;
+```
+
+
+
+## interface ++dnt++ScopeEnvelopeReference
+
+### Properties
+
+#### ++dnt++ScopeEnvelopeReference.scopeId
+
+```typescript
+scopeId: string;
+```
+
+
+#### ++dnt++ScopeEnvelopeReference.scopeType
+
+```typescript
+scopeType: ScopeEnvelopeScopeType;
+```
+
+
+
 ## interface ++dnt++SignedBlockProposalInput
 
 Extends [SignedProposalActionInput](/docs/reference/js#interface_SignedProposalActionInput).
@@ -3783,6 +4653,32 @@ operations: ProcedureProposalOperation[];
 
 
 
+## interface ++dnt++StoredUserEncryptionKeyPair
+
+### Properties
+
+#### ++dnt++StoredUserEncryptionKeyPair.keyPair
+
+```typescript
+keyPair: CryptoKeyPair;
+```
+
+
+#### ++dnt++StoredUserEncryptionKeyPair.keyVersion
+
+```typescript
+keyVersion: number;
+```
+
+
+#### ++dnt++StoredUserEncryptionKeyPair.publicKey
+
+```typescript
+publicKey: JsonWebKey;
+```
+
+
+
 ## interface ++dnt++TransactionOptions
 
 Optional transaction-level controls shared by write operations.
@@ -3811,6 +4707,139 @@ nonce?: number;
 onTransaction?: (tx: OrganigramTransaction, description: string) => void;
 ```
 
+
+
+## interface ++dnt++UserEncryptionKeyBackup
+
+### Properties
+
+#### ++dnt++UserEncryptionKeyBackup.address
+
+```typescript
+address: string;
+```
+
+
+#### ++dnt++UserEncryptionKeyBackup.createdAt
+
+```typescript
+createdAt: string;
+```
+
+
+#### ++dnt++UserEncryptionKeyBackup.keyVersion
+
+```typescript
+keyVersion: number;
+```
+
+
+#### ++dnt++UserEncryptionKeyBackup.kind
+
+```typescript
+kind: typeof USER_ENCRYPTION_KEY_BACKUP_KIND;
+```
+
+
+#### ++dnt++UserEncryptionKeyBackup.privateKey
+
+```typescript
+privateKey: {
+        algorithm: 'PBKDF2-SHA256+A256GCM';
+        iterations: number;
+        salt: string;
+        iv: string;
+        ciphertext: string;
+    };
+```
+
+
+#### ++dnt++UserEncryptionKeyBackup.publicKey
+
+```typescript
+publicKey: JsonWebKey;
+```
+
+
+
+## interface ++dnt++WrappedContentKey
+
+### Properties
+
+#### ++dnt++WrappedContentKey.algorithm
+
+```typescript
+algorithm: typeof ENCRYPTION_ALGORITHM;
+```
+
+
+#### ++dnt++WrappedContentKey.ciphertext
+
+```typescript
+ciphertext: string;
+```
+
+
+#### ++dnt++WrappedContentKey.iv
+
+```typescript
+iv: string;
+```
+
+
+
+## interface ++dnt++WrappedGroupKey
+
+### Properties
+
+#### ++dnt++WrappedGroupKey.algorithm
+
+```typescript
+algorithm: typeof GROUP_KEY_ALGORITHM;
+```
+
+
+#### ++dnt++WrappedGroupKey.ciphertext
+
+```typescript
+ciphertext: string;
+```
+
+
+#### ++dnt++WrappedGroupKey.ephemeralPublicKey
+
+```typescript
+ephemeralPublicKey: JsonWebKey;
+```
+
+
+#### ++dnt++WrappedGroupKey.iv
+
+```typescript
+iv: string;
+```
+
+
+#### ++dnt++WrappedGroupKey.recipientAddress
+
+```typescript
+recipientAddress: string;
+```
+
+
+#### ++dnt++WrappedGroupKey.recipientKeyVersion
+
+```typescript
+recipientKeyVersion: number;
+```
+
+
+
+## type ++dnt++AccessGroupScopeType
+
+```typescript
+export type AccessGroupScopeType = 'workspace' | 'organization' | 'organ' | 'procedure' | 'certifiedProof';
+```
 
 
 ## type ++dnt++AccountInOrgans
@@ -3856,12 +4885,26 @@ export type Election = {
 ```
 
 
+## type ++dnt++EncryptedCidContentType
+
+```typescript
+export type EncryptedCidContentType = 'entry' | 'proposal' | 'organMetadata' | 'procedureMetadata' | 'certifiedProof' | 'file' | string;
+```
+
+
 ## type ++dnt++ERC20VoteProcedureInput
 
 ```typescript
 export type ERC20VoteProcedureInput = Omit<VoteProcedureInput, 'type' | 'typeName'> & {
     erc20: string;
 };
+```
+
+
+## type ++dnt++FileVersionManifest
+
+```typescript
+export type FileVersionManifest = PublicFileVersionManifest | EncryptedCidManifest;
 ```
 
 
@@ -4005,6 +5048,27 @@ export type ProcedureTypeName = 'erc20Vote' | 'nomination' | 'vote';
 
 ```typescript
 export type ProposalKey = 'addEntries' | 'removeEntries' | 'replaceEntry' | 'addPermission' | 'removePermission' | 'replacePermission' | 'updateMetadata' | 'withdrawEther' | 'withdrawERC20' | 'withdrawERC721' | 'externalCall' | string;
+```
+
+
+## type ++dnt++ScopeEnvelopeContentType
+
+```typescript
+export type ScopeEnvelopeContentType = EncryptedCidContentType;
+```
+
+
+## type ++dnt++ScopeEnvelopeRetentionState
+
+```typescript
+export type ScopeEnvelopeRetentionState = 'current' | 'superseded' | 'revoked' | 'archived';
+```
+
+
+## type ++dnt++ScopeEnvelopeScopeType
+
+```typescript
+export type ScopeEnvelopeScopeType = 'workspace';
 ```
 
 

@@ -1,3 +1,7 @@
+import Button from '@mui/material/Button'
+import Grid from '@mui/material/Grid'
+
+import Link from '../../components/Link'
 import PricingTable from '../../components/PricingTable'
 export const metadata = {
   title: '🛡️ Certified program',
@@ -54,6 +58,14 @@ By default, all information and metadata relative to organs, procedures, proposa
 ## Getting started
 
 To subscribe to a Certified plan, you can simply go to the Account Settings (for Certified Solo) or Workspace Settings (for Certified Entity) and simply add a payment method.
+
+<Grid container my={3} justifyContent='center'>
+  <Grid item>
+    <Link href={'/workspace'} target='_blank' rel='noopener noreferrer'>
+      <Button variant='contained'>Get Started</Button>
+    </Link>
+  </Grid>
+</Grid>
 
 You can then start using the services of your Certified plan immediately.
 

@@ -280,7 +280,7 @@ Create an \{@link OrganigramClient\} tied to the provided viem clients.
 The hook returns `null` until a public client is available.
 
 ```tsx
-export const useOrganigramClient: (publicClient?: PublicClient | null, walletClient?: WalletClient | null) => OrganigramClient | null
+export const useOrganigramClient: (publicClient?: PublicClient | null, walletClient?: WalletClient | null, chainId?: string | number | null) => OrganigramClient | null
 ```
 
 **Parameters**
