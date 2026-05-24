@@ -99,6 +99,41 @@ export const useCurrentTocIndex: (
   const [currentIndex, setCurrentIndex] = useState('')
   const delay = 166
 
+  const scrollToHash = useCallback(() => {
+    if (typeof window === 'undefined') return () => {}
+
+    const hash = window.location.hash
+    if (hash === '') return () => {}
+
+    const targetId = decodeURIComponent(hash.slice(1))
+    let attempts = 0
+    let timeoutId: ReturnType<typeof setTimeout> | null = null
+
+    const scroll = () => {
+      const node = document.getElementById(targetId)
+      if (node == null) {
+        attempts += 1
+        if (attempts <= 10) {
+          timeoutId = setTimeout(scroll, 100)
+        }
+        return
+      }
+
+      const top =
+        window.scrollY + node.getBoundingClientRect().top - navHeight
+
+      window.scrollTo({
+        top: Math.max(top, 0)
+      })
+    }
+
+    scroll()
+
+    return () => {
+      if (timeoutId != null) clearTimeout(timeoutId)
+    }
+  }, [navHeight])
+
   const findActiveIndex = useCallback(() => {
     let active
     for (let i = headings.length - 1; i >= 0; i -= 1) {
@@ -122,17 +157,22 @@ export const useCurrentTocIndex: (
   )
 
   useEffect(() => {
-    const shiftWindow: () => void = () => {
-      scrollBy(0, -navHeight)
+    let cleanupScroll: (() => void) | undefined
+
+    const handleHashChange = () => {
+      cleanupScroll?.()
+      cleanupScroll = scrollToHash()
     }
-    if (window.location.hash != null) shiftWindow()
+
+    handleHashChange()
     window.addEventListener('scroll', scrollListener)
-    window.addEventListener('hashchange', shiftWindow)
+    window.addEventListener('hashchange', handleHashChange)
     return () => {
+      cleanupScroll?.()
       window.removeEventListener('scroll', scrollListener)
-      window.removeEventListener('hashchange', shiftWindow)
+      window.removeEventListener('hashchange', handleHashChange)
     }
-  }, [navHeight, scrollListener])
+  }, [scrollListener, scrollToHash])
 
   return currentIndex
 }

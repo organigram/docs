@@ -94,7 +94,7 @@ const pricingConfigs: Record<PublicPricingKey, PricingConfig> = {
       label: 'ID Certificates',
       price: getPerUnitPriceLabel(price, 'address'),
       details:
-        'Minimum amount charged monthly to keep a certification active. This allows both Certified Solo users and members of Certified Entity organizations to generate advanced e-signatures tied to their wallet.',
+        "Minimum amount charged monthly to keep a certification active. This allows to generate advanced e-signatures tied to a user's wallet.",
       source: 'stripe'
     })
   },

@@ -20,6 +20,7 @@ The official reference for the API routes used by Organigram.ai. Unlike the pack
 - [/api/organigram](/docs/reference/rest-api#route_apiorganigram): Organigram, organ, procedure, entry, and asset mutations for authenticated users.
 - [/api/organization](/docs/reference/rest-api#route_apiorganization): Organization lookups plus authenticated organization mutations.
 - [/api/subscription](/docs/reference/rest-api#route_apisubscription): Subscription updates and invoice lookups for the current user or sponsor.
+- [/api/notification](/docs/reference/rest-api#route_apinotification): Notification reads, sync, and read-state mutations.
 
 ### Uploads and generated assets
 
@@ -35,6 +36,8 @@ The official reference for the API routes used by Organigram.ai. Unlike the pack
 
 ## Action routes
 
+<span id="route_api"></span>
+
 ### ++dnt++/api
 
 Legacy RPC-style entrypoint that delegates an `action` payload to the concrete application route.
@@ -47,6 +50,8 @@ Legacy RPC-style entrypoint that delegates an `action` payload to the concrete a
 | Notes | Prefer the concrete route once the target endpoint is known. |
 
 
+
+<span id="route_apiaccount"></span>
 
 ### ++dnt++/api/account
 
@@ -71,7 +76,13 @@ Account, profile, and privacy operations for the current signed-in user.
 | `updateProfile` | Session required | Updates profile fields for the current user. |
 | `updatePrivacySettings` | Session required | Persists the current user privacy settings. |
 | `getUserContacts` | Session required | Returns the contacts linked to the current user. |
+| `getNotificationPreferences` | Session required | Loads the notification preferences attached to the current user. |
+| `requestNotificationEmailVerification` | Session required | Sends a verification code before persisting a notification email address. |
+| `updateNotificationPreferences` | Session required | Persists notification email settings for the current user. |
+| `verifyNotificationEmailCode` | Session required | Validates a notification email verification code for the current user. |
 
+
+<span id="route_apiworkspace"></span>
 
 ### ++dnt++/api/workspace
 
@@ -98,6 +109,8 @@ Workspace reads and mutations, including membership and ownership changes.
 | `editUserRoleInWorkspace` | Session required | Changes a member role inside a workspace. |
 | `transferWorkspaceOwnership` | Session required | Transfers workspace ownership to an organization. |
 
+
+<span id="route_apiorganigram"></span>
 
 ### ++dnt++/api/organigram
 
@@ -136,6 +149,8 @@ Organigram, organ, procedure, entry, and asset mutations for authenticated users
 | `deleteAsset` | Session required | Removes an asset from an organigram. |
 
 
+<span id="route_apiorganization"></span>
+
 ### ++dnt++/api/organization
 
 Organization lookups plus authenticated organization mutations.
@@ -160,6 +175,8 @@ Organization lookups plus authenticated organization mutations.
 | `getUserOrganizations` | Session required | Lists the organizations linked to the current user. |
 
 
+<span id="route_apisubscription"></span>
+
 ### ++dnt++/api/subscription
 
 Subscription updates and invoice lookups for the current user or sponsor.
@@ -182,8 +199,34 @@ Subscription updates and invoice lookups for the current user or sponsor.
 | `deleteSubscription` | Session required | Cancels or deletes a sponsor subscription for the current user. |
 
 
+<span id="route_apinotification"></span>
+
+### ++dnt++/api/notification
+
+Notification reads, sync, and read-state mutations.
+
+| Field | Value |
+| --- | --- |
+| Methods | `POST` |
+| Auth | Session required |
+| Body | JSON payload with an `action` field |
+| Notes | Also reachable through `/api` with the same `action` payload. |
+
+
+**Actions**
+
+| Action | Auth | Description |
+| --- | --- | --- |
+| `listNotifications` | Session required | Lists the current user notifications and unread count. |
+| `markNotificationRead` | Session required | Marks one notification as read. |
+| `markAllNotificationsRead` | Session required | Marks all notifications as read. |
+| `syncWorkspaceNotifications` | Session required | Synchronizes proposal and asset notifications for one workspace. |
+
+
 
 ## Uploads and generated assets
+
+<span id="route_apiipfsworkspaceId"></span>
 
 ### ++dnt++/api/ipfs/[...workspaceId]
 
@@ -204,6 +247,8 @@ Uploads a workspace file to IPFS and tracks billable storage usage.
 | `upload` |   | Session with workspace access required | Uploads the first file from the multipart payload and returns its filename and CID. |
 
 
+<span id="route_apicertifiedProofworkspaceId"></span>
+
 ### ++dnt++/api/certifiedProof/[...workspaceId]
 
 Generates, signs, stores, and bills a certified proof PDF for a workspace transaction.
@@ -221,6 +266,8 @@ Generates, signs, stores, and bills a certified proof PDF for a workspace transa
 | --- | --- | --- | --- |
 | `create certified proof` |   | Session with workspace access required | Creates a certified proof, uploads the signed PDF, and records the related usage. |
 
+
+<span id="route_apinlpworkspaceId"></span>
 
 ### ++dnt++/api/nlp/[...workspaceId]
 
@@ -244,6 +291,8 @@ Builds an organigram draft from plain text or uploaded documents.
 
 ## Authentication, billing, and integrations
 
+<span id="route_apiauthnextauth"></span>
+
 ### ++dnt++/api/auth/[...nextauth]
 
 NextAuth endpoint used for SIWE sign-in, session resolution, and auth callbacks.
@@ -256,6 +305,8 @@ NextAuth endpoint used for SIWE sign-in, session resolution, and auth callbacks.
 | Notes | Backed by the SIWE credentials provider in `lib/auth/server.ts`. |
 
 
+
+<span id="route_apigasStation"></span>
 
 ### ++dnt++/api/gasStation
 

@@ -447,7 +447,11 @@ ${operations
   .join('\n')}
 `
 
-const renderRoute = (route: PreparedRoute): string => `### ++dnt++${route.path}
+const renderRoute = (route: PreparedRoute): string => `<span id="${getRouteAnchor(
+  route.path
+)}"></span>
+
+### ++dnt++${route.path}
 
 ${formatText(route.summary)}
 
