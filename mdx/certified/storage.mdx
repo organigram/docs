@@ -1,0 +1,146 @@
+import Button from '@mui/material/Button'
+import Grid from '@mui/material/Grid'
+
+import Link from '../../components/Link'
+
+export const metadata = { title: '🗄️ Certified storage', order: 4.5 }
+
+# Certified storage 🗄️
+
+Organigram uses IPFS to preserve governance metadata, procedure records, certified proofs, and supporting files on decentralized storage infrastructure.
+
+This helps organizations keep records accessible and verifiable without depending only on Organigram servers.
+
+## What is IPFS?
+
+IPFS is a decentralized file storage system. Instead of identifying files by where they are hosted, IPFS identifies them by their content.
+
+When a file is stored on IPFS, it receives a content identifier. If the content changes, the identifier changes too. This makes IPFS useful for governance evidence because records can be referenced, checked, and preserved over time.
+
+## What Organigram stores
+
+Depending on the workflow, Organigram can store:
+
+- organization metadata
+- organ and procedure metadata
+- proposal records
+- supporting files
+- certified proof documents
+- encrypted files shared with selected recipients
+
+## Encrypted workspace envelopes
+
+Some workspace content is stored through an encrypted envelope instead of being
+referenced by a raw IPFS CID.
+
+An envelope is a versioned index for a workspace. It maps stable logical
+references, such as a proposal file or certified proof attachment, to the
+current file manifest stored on IPFS. In Organigram these references use the
+workspace scope, so the application can keep using a durable reference while
+the underlying file version changes over time.
+
+For encrypted content, the file itself is encrypted in the browser before it is
+uploaded. IPFS only receives encrypted bytes and a manifest describing how to
+resolve them. The manifest includes the encrypted payload CID, the encryption
+algorithm, the initialization vector, the content size, optional file metadata,
+and a wrapped content key.
+
+The content key is not stored in clear text. It is wrapped by a workspace
+envelope key, and the envelope key is itself wrapped by the current workspace
+access group key. This gives Organigram two useful properties:
+
+- each file version can have its own content key
+- the workspace can rotate access when membership changes without rewriting
+  every encrypted file
+
+## Workspace access groups
+
+Encrypted envelopes are tied to the workspace membership model.
+
+Each user who needs access registers an encryption public key for their wallet
+address. The corresponding private key stays in the user's browser storage, and
+can be exported or imported through a passphrase-protected backup.
+
+When workspace encryption is initialized, Organigram builds a membership
+snapshot from the workspace: personal workspace owners, organization workspace
+admins, and the relevant organization members. The snapshot is hashed and used
+to create an access group epoch.
+
+For each epoch, a workspace group key is generated and wrapped separately for
+each recipient public key. A member can decrypt the group key only with their
+own local private encryption key. If the workspace membership changes, or a
+member rotates their encryption key, the access group becomes stale and a new
+epoch is created.
+
+## Publishing an encrypted file
+
+When a workspace file is uploaded with encryption enabled, Organigram follows
+this flow:
+
+1. The workspace envelope and current access group are loaded.
+2. A fresh content key encrypts the file with AES-GCM in the browser.
+3. The encrypted bytes are uploaded to IPFS.
+4. A file version manifest is uploaded to IPFS. It points to the encrypted
+   bytes and stores the wrapped content key.
+5. The workspace envelope is updated so the logical reference points to the new
+   manifest CID.
+6. The update is signed by the connected wallet and checked against the current
+   workspace membership hash.
+
+This means a workspace reference can remain stable while the content behind it
+is versioned. Older manifests can still exist on IPFS, but the current envelope
+defines which version is active for the workspace.
+
+## Reading an encrypted file
+
+When a member opens an encrypted workspace reference, Organigram resolves it in
+the opposite direction:
+
+1. The logical workspace reference is resolved through the current envelope.
+2. The file manifest is loaded from IPFS.
+3. The member unwraps the workspace group key with their local private key.
+4. The workspace envelope key unwraps the file content key.
+5. The encrypted payload is downloaded from IPFS and decrypted locally.
+
+If the connected user is not part of the current access group, does not have a
+local private encryption key, or has not restored their backup on the device,
+the encrypted payload cannot be opened from that browser.
+
+## How this integrates with the workspace
+
+The workspace remains the coordination layer for encrypted storage.
+
+Workspace membership determines who receives wrapped access keys. Workspace
+actions determine which logical references are created, updated, archived, or
+superseded. Wallet signatures protect envelope updates, so an envelope version
+can be checked against the signer, the membership hash, the access group epoch,
+and the root hash of the indexed items.
+
+This is why encrypted storage works well for governance records: the content is
+stored on decentralized infrastructure, while access and versioning follow the
+same workspace structure that participants already use for procedures,
+proposals, proofs, and supporting files.
+
+## Why decentralized storage matters
+
+Decentralized storage helps reduce vendor lock-in. Governance records are designed to remain readable and verifiable even if Organigram stopped operating as a company.
+
+It also gives organizations a stronger continuity story: decisions, proofs, and metadata can be preserved outside the application database.
+
+## Pricing
+
+Included storage is available for normal usage. Additional IPFS storage above 1GB is charged according to the public prices listed on the [Pricing](/pricing) page.
+
+<Grid container my={3} justifyContent='center'>
+  <Grid item>
+    <Link href={'/pricing'}>
+      <Button variant='contained'>View storage pricing</Button>
+    </Link>
+  </Grid>
+</Grid>
+
+## Related pages
+
+- [Sponsored transactions](/docs/certified/sponsored-transactions)
+- [Advanced signatures](/docs/certified/advanced-signatures)
+- [Pricing](/pricing)

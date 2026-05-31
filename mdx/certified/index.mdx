@@ -1,0 +1,64 @@
+import Button from '@mui/material/Button'
+import Grid from '@mui/material/Grid'
+
+import CertifiedSettingsButton from '@/components/CertifiedSettingsButton'
+import Link from '../../components/Link'
+
+export const metadata = {
+  title: '🛡️ Certified',
+  folderName: '🛡️ Certified',
+  order: 4
+}
+
+# Organigram Certified Program 🛡️
+
+Organigram Certified is the paid service layer for organizations and independent operators that need stronger evidence around sensitive decisions.
+
+Use it when a vote, approval, appointment, transaction authorization, or governance change should be tied to identity-backed certificates, advanced signatures, sponsored transactions, certified storage, and durable proof records.
+
+## Certified Solo and Certified Entity
+
+Certified Solo is designed for independent founders, freelancers, and individuals who need Certified services without joining a specific organization.
+
+Certified Entity is designed for companies, associations, cooperatives, and digital organizations that want verified members to use Certified services on behalf of the organization.
+
+Both use the same core Certified services.
+
+<Grid container spacing={2} my={4}>
+  <Grid item xs={12} md={6}>
+    <CertifiedSettingsButton plan='solo' />
+  </Grid>
+  <Grid item xs={12} md={6}>
+    <CertifiedSettingsButton plan='entity' />
+  </Grid>
+</Grid>
+
+## What the program includes
+
+Both plans enable users to execute [Binding actions](/docs/certified/binding-actions): legally-binding automations and records with on-chain evidence. They achieve this by combining the following services:
+- [ID certificates](/docs/certified/id-certificates): keep a verified identity linked to the wallet used for governance decisions.
+- [Advanced signatures](/docs/certified/advanced-signatures): add stronger signature evidence to sensitive approvals and records.
+- [Sponsored transactions](/docs/certified/sponsored-transactions): let users participate without managing cryptocurrency for network fees.
+- [Certified storage](/docs/certified/storage): preserve governance metadata and certified proofs on decentralized, encrypted storage infrastructure.
+
+See the [Pricing](/pricing) page for more details on these services.
+
+## Start with a first decision
+
+The fastest way to evaluate Organigram Certified is to run one real decision end to end:
+
+1. choose a decision that already matters
+2. configure the workspace and participants
+3. collect the vote or approval
+4. sign with the required level of assurance
+5. keep the certified proof
+
+You can book a setup call below if you want help choosing and setting up the first decision to certify.
+
+<Grid container my={3} justifyContent='center'>
+  <Grid item>
+    <Link href={'/certified-governance-pilot'}>
+      <Button variant='contained'>Book a Certified setup call</Button>
+    </Link>
+  </Grid>
+</Grid>

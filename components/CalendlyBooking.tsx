@@ -1,7 +1,12 @@
 import { useEffect, useRef } from 'react'
 import Box from '@mui/material/Box'
 
-const CalendlyBooking: React.FC = () => {
+const defaultCalendlyUrl = 'https://calendly.com/organigram/30mn'
+
+const CalendlyBooking: React.FC<{
+  url?: string
+  minHeight?: string | number
+}> = ({ url = defaultCalendlyUrl, minHeight = '860px' }) => {
   const widgetRef = useRef<HTMLDivElement | null>(null)
 
   useEffect(() => {
@@ -15,7 +20,7 @@ const CalendlyBooking: React.FC = () => {
       if (calendly == null) return
       widgetElement.innerHTML = ''
       calendly.initInlineWidget({
-        url: 'https://calendly.com/organigram/30mn',
+        url,
         parentElement: widgetElement,
         resize: true
       })
@@ -36,9 +41,9 @@ const CalendlyBooking: React.FC = () => {
       script?.removeEventListener('load', init)
       widgetElement.innerHTML = ''
     }
-  }, [])
+  }, [url])
 
-  return <Box ref={widgetRef} sx={{ width: '100%', minHeight: '860px' }} />
+  return <Box ref={widgetRef} sx={{ width: '100%', minHeight }} />
 }
 
 export default CalendlyBooking

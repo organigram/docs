@@ -2,24 +2,75 @@ export const metadata = { title: '🔐 Signing in', order: 1.3 }
 
 # Connecting to the app 🔐
 
-In order to create and manage incorruptible organizations, we need a way to identify you and allow you to sign transactions; but we want to do it in a way that always keeps you safe and in control of your own data.
+Your account is anchored to an Ethereum-compatible address. That address is used
+to open your workspace, sign in to the web app, sign governance actions, publish
+workspace records, and, when needed, authorize encrypted storage access.
+
+## Choosing a connection method
+
+You can sign in in a self-sovereign, privacy-preserving manner by clicking "Connect Wallet" on the top right corner of the screen. There, you can either:
+
+- Sign in with passkeys. Select "Porto" in the recommended wallet list. This
+  option lets you store keys in your password manager, use biometric
+  credentials, connect across devices, and configure [recovery
+  options](https://id.porto.sh). It is the easiest and recommended option for most new users.
+- Use a crypto wallet such as Rabby, MetaMask, Rainbow, Trust Wallet, Ledger, or
+  any supported wallet available through
+  [WalletConnect](https://walletguide.walletconnect.network/).
 
 ## Preserving data and privacy
 
-You can sign in in a self-sovereign, privacy-preserving manner by clicking "Connect Wallet" on the top right corner of the screen. There, you can either:
-- Sign in with Passkeys. Select "Porto" in the list. This option will allow you to store private keys in a password manager for use across multiple devices, use biometric credentials, and add [recovery options](https://id.porto.sh). It is the easiest and most secure way to connect to the app.
-- Use a crypto wallet such as Rabby, Metamask, Rainbow or Ledger, or any of the 600+ supported wallets via [WalletConnect](https://walletguide.walletconnect.network/).
+Both options connect the same kind of account: an address controlled by your own
+keys. After you choose a wallet, Organigram asks it to sign a message. During sign-in, Organigram also prepares a personal encryption key for
+the connected address when the browser supports it.
+
+The encryption key is separate from your wallet signing key. Your wallet key signs login
+messages, transactions, proposals, and other governance actions. The encryption key is only
+used to decrypt private workspace content, such as encrypted IPFS files and
+encrypted workspace envelopes.
+
+On the server, Organigram verifies the signature before saving the public
+encryption key, a key version, and signature on your account. The private encryption key is never sent
+to Organigram.
+
+This encryption key is what allows private storage to work without sharing secrets with the
+server. Workspace access keys can be wrapped for your public encryption key, and only the
+matching private encryption key on your device can unwrap them.
+
+You can manage the encryption key from Account Settings:
+
+- export an encrypted backup protected by a passphrase
+- import that backup on another device
+- restore access to encrypted workspace content after changing browsers or
+  devices
+
+If you do not have the private encryption key on the current device, you may still be
+signed in, but private workspace files encrypted for that key cannot be opened
+until the backup is restored.
+
 
 ## Compliance and non-custody
 
-With both options, your private keys and assets are never shared with the app. You can create multiple accounts and switch between them at any time.
+With both connection options, your private keys and assets are never shared with
+the app. Organigram can ask your wallet to sign messages or transactions, but
+the final approval happens in your wallet interface.
 
-That said, you also have the option to verify your identity to get access to [additional features](/docs/advanced/certified) such as [legally-binding e-signatures](/docs/advanced/binding-actions). In this case, we recommend using new addresses that have never been used on a public network before.
+You can also verify your identity with an [ID
+certificate](/docs/certified/id-certificates) to get access to [advanced
+signatures](/docs/certified/advanced-signatures) and [legally-binding
+actions](/docs/certified/binding-actions). In that case, we recommend using new
+addresses that have never been used on a public network before.
 
 For the full list of the information we access and how we use it in these services, you can refer to our [privacy policy](/docs/reference/privacy).
 
 ## You are now set!
 
-Head to [the workspace](/workspace) page to create and deploy your first organigram. Feel free to chose [any template](/docs/guides) or add [payment methods](/docs/advanced/transactions) from your Account settings to get started quicker.
+Head to [the workspace](/workspace) page to create and deploy your first
+organigram. Feel free to choose [any template](/docs/guides) or add [payment
+methods](/docs/certified/sponsored-transactions) from Account Settings to get
+started quicker.
 
-That's it! In less than 5 minutes, you just entered a global, decentralized economy 🙌 Head to the [next chapter](/docs/protocol) to learn in details how the system works, or skip to [creating a an organigram from legal documentation](/docs/guides/draw-ai) if you prefer a more hands-on approach.
+That's it! In less than 5 minutes, you just entered a global, decentralized
+economy 🙌 Head to the [next chapter](/docs/protocol) to learn in detail how the
+system works, or skip to [creating an organigram from legal
+documentation](/docs/guides/draw-ai) if you prefer a more hands-on approach.

@@ -1,0 +1,59 @@
+import Button from '@mui/material/Button'
+import Grid from '@mui/material/Grid'
+
+import Link from '../../components/Link'
+
+export const metadata = { title: '✍️ Advanced signatures', order: 4.3 }
+
+# Advanced Signatures ✍️
+
+E-signatures are digital signatures used to sign documents, transactions, and governance records online. They are legally recognized in most countries and have been standardized by the eIDAS regulation in Europe.
+
+Organigram provides simple signatures by default and optional advanced signatures for users covered by Certified Solo or Certified Entity services.
+
+## Signature levels
+
+eIDAS signatures come in three levels of security:
+
+- **Simple e-signature**: the default level on {process.env.NEXT_PUBLIC_COMPANY_URL}. It is recognized in many jurisdictions for basic legal actions and contract signatures.
+- **Advanced e-signature**: a higher level of security tied to identity verification and stronger authentication. It is often useful for sensitive organizational decisions, such as transfers of shares or votes in a shareholders meeting.
+- **Qualified e-signature**: the highest level of security, usually requiring a qualified certificate and signing device. It can be legally equivalent to a handwritten signature in the European Union.
+
+## How Organigram uses advanced signatures
+
+Advanced signatures provided by Organigram are issued through a certificate authority of the highest qualification level.
+
+When an eligible user signs a certified procedure, Organigram can generate a proof file showing that the transaction or approval was signed by the verified owner of the account wallet.
+
+This gives organizations a stronger record for decisions such as:
+
+- appointing a CEO or officer
+- approving annual accounts
+- changing bylaws
+- recording shareholder or member votes
+- authorizing sensitive transactions
+
+## Requirements
+
+To generate advanced signatures, the signer needs:
+
+- an active [ID certificate](/docs/certified/id-certificates)
+- identity verification
+- access to a Certified Solo account or a Certified Entity workspace
+- an eligible certified procedure or workflow
+
+Current public prices are listed on the [Pricing](/pricing) page.
+
+<Grid container my={3} justifyContent='center'>
+  <Grid item>
+    <Link href={'/pricing'}>
+      <Button variant='contained'>View signature pricing</Button>
+    </Link>
+  </Grid>
+</Grid>
+
+## Related pages
+
+- [ID certificates](/docs/certified/id-certificates)
+- [Binding actions](/docs/advanced/binding-actions)
+- [Governance decisions guide](/docs/guides/governance-decisions)

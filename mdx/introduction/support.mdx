@@ -1,4 +1,7 @@
-import CalendlyBooking from '../../components/CalendlyBooking'
+import Button from '@mui/material/Button'
+import Grid from '@mui/material/Grid'
+
+import Link from '../../components/Link'
 
 export const metadata = { title: '🛟 Support', order: 1.4 }
 
@@ -12,7 +15,13 @@ For reporting bugs, issues or get support regarding the open-source libraries, y
 
 For direct support regarding the Organigram platform or implementing incorruptible services in your organization, you can book a call with a member of our team by filling out the form below:
 
-<CalendlyBooking />
+<Grid container my={3} justifyContent='center'>
+  <Grid item>
+    <Link href={'/certified-governance-pilot'}>
+      <Button variant='contained'>Book a call</Button>
+    </Link>
+  </Grid>
+</Grid>
 
 ## Email us
 

@@ -30,9 +30,17 @@ export interface PublicPricingResponse {
   items: PublicPricingItem[]
 }
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string, {
-  apiVersion: '2024-06-20'
-})
+let stripe: Stripe | undefined
+
+const getStripe = (): Stripe => {
+  if (stripe == null) {
+    stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string, {
+      apiVersion: '2024-06-20'
+    })
+  }
+
+  return stripe
+}
 
 const CACHE_TTL_MS = 5 * 60 * 1000
 
@@ -83,8 +91,14 @@ const getStoragePriceLabel = (price: Stripe.Price): string => {
 
   return `${formatEuroAmount(
     convertStripeStorageEuroPerUnitToEuroPerGb(amount)
-  )} / GB`
+  )} / GB / month`
 }
+
+const getDocumentedGasMultiplier = (): string =>
+  process.env.NEXT_PUBLIC_GAS_SERVICE_FEE_MULTIPLIER ?? '2'
+
+const getDocumentedMinimumTransactionAmount = (): string =>
+  process.env.NEXT_PUBLIC_MINIMUM_TRANSACTION_AMOUNT_EURO ?? '0.01'
 
 const pricingConfigs: Record<PublicPricingKey, PricingConfig> = {
   soloMonthly: {
@@ -92,7 +106,7 @@ const pricingConfigs: Record<PublicPricingKey, PricingConfig> = {
     buildItem: price => ({
       key: 'soloMonthly',
       label: 'ID Certificates',
-      price: getPerUnitPriceLabel(price, 'address'),
+      price: getPerUnitPriceLabel(price, 'address / month'),
       details:
         "Minimum amount charged monthly to keep a certification active. This allows to generate advanced e-signatures tied to a user's wallet.",
       source: 'stripe'
@@ -104,12 +118,12 @@ const pricingConfigs: Record<PublicPricingKey, PricingConfig> = {
       key: 'sponsoredTransactions',
       label: 'Sponsored transactions',
       price:
-        'x' +
-        process.env.NEXT_PUBLIC_GAS_SERVICE_FEE_MULTIPLIER +
+        '~x' +
+        getDocumentedGasMultiplier() +
         ' gas used, min. ' +
-        process.env.NEXT_PUBLIC_MINIMUM_TRANSACTION_AMOUNT_EURO +
+        getDocumentedMinimumTransactionAmount() +
         '€',
-      details: `Only the gas actually used is charged when sponsoring transactions, with a multiplier to cover relayer costs, processing fees and price fluctuations. Price is in Euro at currency rates updated every minute, with a minimum of ${process.env.NEXT_PUBLIC_MINIMUM_TRANSACTION_AMOUNT_EURO}€.`,
+      details: `Only the gas actually used is charged when sponsoring transactions, including relayer costs, processing fees and price fluctuations. Price is in Euro at currency rates updated every minute, with a minimum of ${getDocumentedMinimumTransactionAmount()}€.`,
       source: 'stripe_usage'
     })
   },
@@ -128,10 +142,10 @@ const pricingConfigs: Record<PublicPricingKey, PricingConfig> = {
     envKey: 'NEXT_PUBLIC_STORAGE_PRICE_ID',
     buildItem: price => ({
       key: 'storage',
-      label: 'Additional IPFS storage (above 1GB)',
+      label: 'Certified storage (above 1GB)',
       price: getStoragePriceLabel(price),
       details:
-        'IPFS storage above 1GB is charged monthly for both organizations and personal workspaces.',
+        'Certified encrypted storage above 1GB is charged monthly for both organizations and personal workspaces.',
       source: 'stripe'
     })
   }
@@ -154,7 +168,9 @@ export const getPublicPricing = async (): Promise<PublicPricingResponse> => {
     const items = await Promise.all(
       publicPricingKeys.map(async key => {
         const config = pricingConfigs[key]
-        const price = await stripe.prices.retrieve(getPriceId(config.envKey))
+        const price = await getStripe().prices.retrieve(
+          getPriceId(config.envKey)
+        )
         return config.buildItem(price)
       })
     )

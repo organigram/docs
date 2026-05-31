@@ -1,0 +1,49 @@
+export const metadata = { title: '⚡️ Sponsored transactions', order: 4.3 }
+
+# Sponsored Transactions ⚡️
+
+Many actions in {process.env.NEXT_PUBLIC_COMPANY_URL} involve sending transactions to a blockchain network. These transactions have a cost associated with them, paid to the network operator to process the transaction.
+
+Natively, they are paid in the native cryptocurrency of the network. This can be a problem because many people do not have or want to own cryptocurrencies, while they can still benefit from cryptographic signatures and verifiable governance records.
+
+Organigram sponsored transactions let a user participate without managing cryptocurrency for network fees.
+
+## What are transactions?
+
+{process.env.NEXT_PUBLIC_COMPANY_URL} uses transactions to record votes and decisions. This allows {process.env.NEXT_PUBLIC_COMPANY_URL} to provide proof of the vote or signature to the user and the organization without relying only on data stored on our servers.
+
+## What are network fees?
+
+Network fees are the cost of executing a transaction on the blockchain.
+The network fee is paid to the network operator to process the transaction on the network.
+It depends on the network and the type of transaction, because arbitrary data can be added to the transaction.
+The execution of such code is more expensive than a simple transfer of value. It can therefore be affected by the transaction type, network congestion, and cryptocurrency prices.
+
+## Using Organigram without cryptocurrencies
+
+Using Organigram without cryptocurrencies is as simple as adding payment information once and never worrying about network fees again.
+
+The transactions are relayed in a safe and privacy-preserving way to network operators, on your behalf. Your payment information is processed by Stripe. {process.env.NEXT_PUBLIC_COMPANY_URL} does not access your payment information. We keep track of the total amount of fees spent for billing.
+This amount is charged at the end of each month on the saved payment method.
+
+## Rates
+
+See the [Pricing](/pricing) page for current sponsored transaction rates.
+
+## Organization-level sponsorship
+
+Sponsored transactions can be paid for by an organization. The end user does not have to pay the transaction fee.
+
+Organigram can allow an entire organization to pay for the transaction fees of its users. The organization is charged in Euro and billed once at the end of each billing period.
+
+You can select specific organs to use sponsored transactions. Users present in those organs will be able to use the service.
+
+## How does it work?
+
+Under the hood, Organigram sponsored transactions use a relayer service that relays transactions to the blockchain on your behalf. It is non-custodial: relayers do not have access to your private keys, and neither do we.
+
+## Related pages
+
+- [ID certificates](/docs/certified/id-certificates)
+- [Advanced signatures](/docs/certified/advanced-signatures)
+- [Pricing](/pricing)

@@ -1,4 +1,123 @@
-export const metadata = { title: '', folderName: '🛰 Advanced', order: 3.6 }
+export const metadata = { title: '🔔 Notifications', folderName: '🛰 Advanced', order: 3.5 }
 
-# Notifications 🔔 (beta)
+# Notifications 🔔
 
+Organigram notifications help workspace members keep track of governance and
+Certified activity without watching every procedure, billing event, or asset
+balance manually.
+
+Notifications are attached to a user address and a workspace. They appear in the
+in-app notification inbox, and can optionally be sent by email for the event
+types selected in Account Settings.
+
+## What notifications cover
+
+Organigram currently creates notifications for:
+
+- new proposals submitted to deployed procedures
+- proposals that are adopted
+- proposals that are rejected or blocked
+- successful organigram deployments
+- incoming deposits to deployed organs
+- outgoing withdrawals from deployed organs
+- subscription activations, pauses, and cancellations
+- sponsored transactions confirmed by the relayer
+- certified transactions that produce a certified proof
+
+The exact notification contains a title, short body, workspace link, event type,
+creation date, read state, and optional metadata such as a proposal key,
+procedure address, transaction hash, or asset balance snapshot.
+
+## In-app inbox
+
+The bell icon in the navigation bar shows the number of unread notifications
+for the connected account. Opening it displays the latest notifications, with
+unread items highlighted.
+
+Clicking a notification marks it as read and opens the relevant workspace,
+proposal, organigram, or Certified context. You can also mark all notifications
+as read from the inbox.
+
+In-app notifications are always stored for the user address that received them.
+They do not require an email address and do not depend on email preferences.
+
+## Workspace recipients
+
+Most notifications are fanned out from a workspace event.
+
+For general workspace events, Organigram looks at the workspace owner,
+workspace admins, and the addresses listed in deployed organ entries. Each
+known user address receives its own notification record.
+
+Some sensitive or billing-related events are sent only to workspace management
+recipients. For example, subscription status changes are sent to the owner and
+admins. Sponsored and certified transaction notifications can also include the
+address that initiated the transaction.
+
+Each recipient gets a separate notification, with a deduplication key. This
+prevents the same event from creating repeated notifications for the same user
+when a sync or webhook is retried.
+
+## Email notifications
+
+Email notifications are optional. You can configure them from Account Settings
+under the Notifications tab.
+
+To enable email delivery:
+
+1. add an email address
+2. enter the six digit verification code sent to that address
+3. enable the event types you want to receive by email
+
+The verification code is short lived. If it expires, request a new code and try
+again.
+
+Email preferences are independent for each notification type. You can receive
+emails for billing and Certified events while keeping proposal updates in-app
+only, or enable email for every available category.
+
+## Synchronizing workspace activity
+
+Some notifications are created directly when Organigram receives a webhook or
+finishes an operation, such as a subscription update, deployment, sponsored
+transaction, or certified proof.
+
+Other notifications are synchronized from workspace state. Proposal and asset
+notifications are produced by loading deployed organigrams, reading current
+procedure and asset state, and comparing it with the last known snapshots.
+
+This is useful because some governance events happen on public networks. The
+notification system can reconcile the application inbox with the deployed
+state, rather than relying only on the original browser session that initiated
+the action.
+
+## Asset balance notifications
+
+For deployed organigrams, Organigram tracks balances for the native network
+asset and the assets defined in the organigram. When an organ balance changes,
+the next synchronization compares the current balance with the previous
+snapshot:
+
+- if the balance increased, Organigram creates an incoming deposit notification
+- if the balance decreased, Organigram creates an outgoing withdrawal
+  notification
+
+The snapshot is then updated so future changes can be detected without sending
+duplicate events for the same balance.
+
+## Privacy and control
+
+Notifications are scoped to the workspace and recipient address. They store the
+minimum event information needed to route the user back to the relevant context,
+such as a proposal, workspace, transaction, or organigram.
+
+Email delivery is opt-in and requires verification of the destination address.
+If no verified email is configured, notifications remain available in the app
+only.
+
+## Related pages
+
+- [Organizations](/docs/advanced/organizations)
+- [Sponsored transactions](/docs/certified/sponsored-transactions)
+- [Advanced signatures](/docs/certified/advanced-signatures)
+- [Certified storage](/docs/certified/storage)

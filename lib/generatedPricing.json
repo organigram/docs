@@ -1,33 +1,33 @@
 {
-  "generatedAt": "2026-04-22T05:45:26.649Z",
+  "generatedAt": "2026-05-31T20:06:27.845Z",
   "items": [
     {
       "key": "soloMonthly",
       "label": "ID Certificates",
-      "price": "0,89€ / address",
+      "price": "0,89€ / address / month",
       "details": "Minimum amount charged monthly to keep a certification active. This allows to generate advanced e-signatures tied to a user's wallet.",
-      "source": "stripe"
+      "source": "documented"
     },
     {
       "key": "sponsoredTransactions",
       "label": "Sponsored transactions",
-      "price": "x2 gas used, min. 0.01€",
-      "details": "Only the gas actually used is charged when sponsoring transactions, with a multiplier to cover relayer costs, processing fees and price fluctuations. Price is in Euro at currency rates updated every minute, with a minimum of 0.01€.",
-      "source": "stripe_usage"
+      "price": "~x2 gas used, min. 0.01€",
+      "details": "Only the gas actually used is charged when sponsoring transactions, including relayer costs, processing fees and price fluctuations. Price is in Euro at currency rates updated every minute, with a minimum of 0.01€.",
+      "source": "documented"
     },
     {
       "key": "signatures",
       "label": "Advanced digital signatures",
       "price": "0,89€ / signature",
       "details": "Certified signatures for legally binding actions included in both Certified Solo and Certified Entity plans.",
-      "source": "stripe"
+      "source": "documented"
     },
     {
       "key": "storage",
-      "label": "Additional IPFS storage (above 1GB)",
-      "price": "0,89€ / GB",
-      "details": "IPFS storage above 1GB is charged monthly for both organizations and personal workspaces.",
-      "source": "stripe"
+      "label": "Certified storage (above 1GB)",
+      "price": "0,89€ / GB / month",
+      "details": "Certified encrypted storage above 1GB is charged monthly for both organizations and personal workspaces.",
+      "source": "documented"
     }
   ]
 }

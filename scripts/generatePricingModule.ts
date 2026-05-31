@@ -6,29 +6,18 @@ const outputFile = path.resolve(
   '../lib/generatedPricing.json'
 )
 
-const readExistingPricing = async (): Promise<unknown | null> => {
-  try {
-    const content = await fs.readFile(outputFile, 'utf8')
-    return JSON.parse(content)
-  } catch {
-    return null
-  }
-}
-
 const main = async (): Promise<void> => {
   let generatedPublicPricing = null
-  let usedExistingFallback = false
+
+  const { getPublicPricing } = await import('../lib/pricing')
 
   try {
-    const { getPublicPricing } = await import('../lib/pricing')
     generatedPublicPricing = await getPublicPricing()
   } catch (error) {
     console.error(
-      'Failed to load pricing from Stripe while generating the static module. Reusing the existing static pricing module when available.',
+      'Failed to load pricing from Stripe while generating the static module. Reusing existing price amounts with the current documented labels and notes.',
       error
     )
-    generatedPublicPricing = await readExistingPricing()
-    usedExistingFallback = generatedPublicPricing != null
   }
 
   await fs.writeFile(
@@ -38,11 +27,7 @@ const main = async (): Promise<void> => {
   )
   console.info(
     `Generated ${path.relative(path.resolve(import.meta.dirname, '..'), outputFile)}${
-      generatedPublicPricing == null
-        ? ' (null fallback)'
-        : usedExistingFallback
-          ? ' (existing fallback)'
-          : ''
+      generatedPublicPricing == null ? ' (null fallback)' : ''
     }.`
   )
 }
