@@ -38,6 +38,7 @@ const TableOfContents: React.FC<{ headings: Heading[] }> = ({ headings }) => {
             item
             sx={{
               pl: heading.type * 2,
+              py: 0.5,
               width: [
                 tocWidthSm.toString() + 'px',
                 tocWidthMd.toString() + 'px'

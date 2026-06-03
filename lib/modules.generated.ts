@@ -13,6 +13,7 @@ export type DocsModule = {
 export type DocsImporter = () => Promise<DocsModule>
 
 export const docsImporters: Record<string, DocsImporter> = {
+  '/advanced/encryption.mdx': async () => await import('../mdx/advanced/encryption.mdx'),
   '/advanced/index.mdx': async () => await import('../mdx/advanced/index.mdx'),
   '/advanced/notifications.mdx': async () => await import('../mdx/advanced/notifications.mdx'),
   '/advanced/organizations.mdx': async () => await import('../mdx/advanced/organizations.mdx'),

@@ -1,4 +1,4 @@
-export const metadata = { title: "⚛️ React", order: 4.3 }
+export const metadata = { title: "⚛️ React", order: 5.3 }
 
 # React reference ⚛️
 
@@ -23,6 +23,7 @@ import { Diagram, useOrganigramClient } from '@organigram/react'
 ### Components
 
 - [AssetNode](/docs/reference/react#component_AssetNode)
+- [ClassicOrgChart](/docs/reference/react#component_ClassicOrgChart)
 - [DecidersActions](/docs/reference/react#component_DecidersActions)
 - [defaultNodeTypes](/docs/reference/react#constant_defaultNodeTypes)
 - [Diagram](/docs/reference/react#component_Diagram)
@@ -32,6 +33,7 @@ import { Diagram, useOrganigramClient } from '@organigram/react'
 - [OrganNode](/docs/reference/react#component_OrganNode)
 - [ProcedureIcon](/docs/reference/react#component_ProcedureIcon)
 - [ProcedureNode](/docs/reference/react#component_ProcedureNode)
+- [projectOrganigramToClassicForest](/docs/reference/react#constant_projectOrganigramToClassicForest)
 - [Summit](/docs/reference/react#component_Summit)
 - [TimeLeft](/docs/reference/react#component_TimeLeft)
 - [Token](/docs/reference/react#component_Token)
@@ -72,6 +74,8 @@ import { Diagram, useOrganigramClient } from '@organigram/react'
 ### Types
 
 - [AssetNodeProps](/docs/reference/react#interface_AssetNodeProps)
+- [ClassicOrgChartNode](/docs/reference/react#interface_ClassicOrgChartNode)
+- [ClassicOrgChartProps](/docs/reference/react#interface_ClassicOrgChartProps)
 - [CreateProcedure](/docs/reference/react#type_CreateProcedure)
 - [DecidersActionsProps](/docs/reference/react#interface_DecidersActionsProps)
 - [DeployOrganInput](/docs/reference/react#type_DeployOrganInput)
@@ -97,6 +101,14 @@ Default React Flow node used to display one asset inside a diagram.
 
 ```tsx
 export const AssetNode: React.FC<NodeProps & AssetNodeProps>
+```
+
+
+
+### component ++dnt++ClassicOrgChart
+
+```tsx
+export const ClassicOrgChart: React.FC<ClassicOrgChartProps>
 ```
 
 
@@ -206,6 +218,14 @@ export const ProcedureNode: React.FC<
   > &
     ProcedureNodeProps
 >
+```
+
+
+
+### constant ++dnt++projectOrganigramToClassicForest
+
+```tsx
+export const projectOrganigramToClassicForest: (organigram: OrganigramJson) => ClassicOrgChartNode[]
 ```
 
 
@@ -630,6 +650,48 @@ export interface AssetNodeProps {
 | `hideHandles` | `boolean` |   |
 
 
+### interface ++dnt++ClassicOrgChartNode
+
+```tsx
+export interface ClassicOrgChartNode {
+  organ: OrganJson
+  entries: OrganEntry[]
+  children: ClassicOrgChartNode[]
+}
+```
+
+**Members**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| `organ` | `OrganJson` |   |
+| `entries` | `OrganEntry[]` |   |
+| `children` | `ClassicOrgChartNode[]` |   |
+
+
+### interface ++dnt++ClassicOrgChartProps
+
+```tsx
+export interface ClassicOrgChartProps {
+  organigram: OrganigramJson | null
+  controls?: boolean
+  isTabletOrAbove?: boolean
+  onClickOrgan?: (organ: OrganJson) => void
+  style?: Record<string, unknown>
+}
+```
+
+**Members**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| `organigram` | `OrganigramJson \| null` |   |
+| `controls` | `boolean` |   |
+| `isTabletOrAbove` | `boolean` |   |
+| `onClickOrgan` | `(organ: OrganJson) => void` |   |
+| `style` | `Record<string, unknown>` |   |
+
+
 ### type ++dnt++CreateProcedure
 
 Helper signature used by flows that deploy one procedure from the UI.
@@ -694,7 +756,9 @@ Props accepted by the default `Diagram` component.
 export interface DiagramProps {
   nodeTypes?: NodeTypes
   direction?: string
+  edgeType?: OrganigramEdgeType
   organigram: OrganigramJson | null
+  onNodePositionsChange?: (nodePositions: OrganigramNodePositions) => void
   style?: Record<string, unknown>
   controls?: boolean
   options?: ReactFlowProps
@@ -714,7 +778,9 @@ export interface DiagramProps {
 | --- | --- | --- |
 | `nodeTypes` | `NodeTypes` |   |
 | `direction` | `string` |   |
+| `edgeType` | `OrganigramEdgeType` |   |
 | `organigram` | `OrganigramJson \| null` |   |
+| `onNodePositionsChange` | `(nodePositions: OrganigramNodePositions) => void` |   |
 | `style` | `Record<string, unknown>` |   |
 | `controls` | `boolean` |   |
 | `options` | `ReactFlowProps` |   |

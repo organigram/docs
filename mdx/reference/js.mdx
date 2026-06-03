@@ -1,4 +1,4 @@
-export const metadata = { title: "⚙️ Typescript", order: 4.2 }
+export const metadata = { title: "⚙️ Typescript", order: 5.2 }
 
 # Typescript reference ⚙️
 
@@ -86,8 +86,11 @@ import { OrganigramClient } from '@organigram/js'
 - [OperationParamAction](/docs/reference/js#type_OperationParamAction)
 - [OperationParamType](/docs/reference/js#type_OperationParamType)
 - [OperationTag](/docs/reference/js#type_OperationTag)
+- [OrganigramEdgeType](/docs/reference/js#type_OrganigramEdgeType)
 - [OrganigramInput](/docs/reference/js#type_OrganigramInput)
 - [OrganigramJson](/docs/reference/js#type_OrganigramJson)
+- [OrganigramNodePosition](/docs/reference/js#type_OrganigramNodePosition)
+- [OrganigramNodePositions](/docs/reference/js#type_OrganigramNodePositions)
 - [OrganigramTransaction](/docs/reference/js#type_OrganigramTransaction)
 - [OrganigramTransactionReceipt](/docs/reference/js#type_OrganigramTransactionReceipt)
 - [PopulatedTransactionData](/docs/reference/js#type_PopulatedTransactionData)
@@ -177,6 +180,8 @@ import { OrganigramClient } from '@organigram/js'
 - [isValidEncryptionKeyVersion](/docs/reference/js#function_isValidEncryptionKeyVersion)
 - [loadUserEncryptionKeyPair](/docs/reference/js#function_loadUserEncryptionKeyPair)
 - [normalizeEncryptionKeyVersion](/docs/reference/js#function_normalizeEncryptionKeyVersion)
+- [normalizeOrganigramEdgeType](/docs/reference/js#function_normalizeOrganigramEdgeType)
+- [normalizeOrganigramNodePositions](/docs/reference/js#function_normalizeOrganigramNodePositions)
 - [parseCidRef](/docs/reference/js#function_parseCidRef)
 - [parseEncryptionPublicKeySiweResource](/docs/reference/js#function_parseEncryptionPublicKeySiweResource)
 - [populateInitializeProcedure](/docs/reference/js#function_populateInitializeProcedure)
@@ -862,7 +867,7 @@ getWalletAddress: (walletClient: WalletClient) => Promise<Address>
 ## function ++dnt++handleJsonBigInt
 
 ```typescript
-handleJsonBigInt: (key: string, value: any) => any
+handleJsonBigInt: (_key: string, value: any) => any
 ```
 
 
@@ -968,6 +973,20 @@ loadUserEncryptionKeyPair: (address: string) => Promise<StoredUserEncryptionKeyP
 
 ```typescript
 normalizeEncryptionKeyVersion: (keyVersion: number) => number | null
+```
+
+
+## function ++dnt++normalizeOrganigramEdgeType
+
+```typescript
+normalizeOrganigramEdgeType: (edgeType?: string | null) => OrganigramEdgeType
+```
+
+
+## function ++dnt++normalizeOrganigramNodePositions
+
+```typescript
+normalizeOrganigramNodePositions: (nodePositions?: unknown) => OrganigramNodePositions
 ```
 
 
@@ -1542,6 +1561,13 @@ description: string;
 ```
 
 
+#### ++dnt++Organigram.edgeType
+
+```typescript
+edgeType: OrganigramEdgeType;
+```
+
+
 #### ++dnt++Organigram.id
 
 ```typescript
@@ -1565,6 +1591,13 @@ load: (input?: {
 
 ```typescript
 name: string;
+```
+
+
+#### ++dnt++Organigram.nodePositions
+
+```typescript
+nodePositions: OrganigramNodePositions;
 ```
 
 
@@ -1642,6 +1675,8 @@ deploy(): Promise<Organigram>;
 editDetails(input: {
         name?: string;
         description?: string;
+        edgeType?: OrganigramEdgeType;
+        nodePositions?: OrganigramNodePositions;
         contractAddresses?: string[];
     }): void;
 ```
@@ -4929,6 +4964,13 @@ export type OperationTag = 'cid' | 'entries' | 'permissions' | 'coins' | 'collec
 ```
 
 
+## type ++dnt++OrganigramEdgeType
+
+```typescript
+export type OrganigramEdgeType = (typeof organigramEdgeTypes)[number];
+```
+
+
 ## type ++dnt++OrganigramInput
 
 Input used to create an in-memory organigram model.
@@ -4939,6 +4981,8 @@ export type OrganigramInput = {
     slug?: string | null;
     name?: string | null;
     description?: string | null;
+    edgeType?: string | null;
+    nodePositions?: unknown;
     chainId?: string | null;
     organs: OrganInput[];
     procedures: ProcedureInput[];
@@ -4962,12 +5006,31 @@ export type OrganigramJson = {
     slug: string;
     name: string;
     description: string;
+    edgeType: OrganigramEdgeType;
+    nodePositions: OrganigramNodePositions;
     chainId: string;
     organs: OrganJson[];
     procedures: ProcedureJson[];
     assets: AssetJson[];
     workspaceId?: string | null;
 };
+```
+
+
+## type ++dnt++OrganigramNodePosition
+
+```typescript
+export type OrganigramNodePosition = {
+    x: number;
+    y: number;
+};
+```
+
+
+## type ++dnt++OrganigramNodePositions
+
+```typescript
+export type OrganigramNodePositions = Record<string, OrganigramNodePosition>;
 ```
 
 
