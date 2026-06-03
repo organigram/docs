@@ -1,6 +1,6 @@
-export const metadata = { title: '🔐 Signing in', order: 1.3 }
+export const metadata = { title: '🔑 Signing in', order: 1.3 }
 
-# Connecting to the app 🔐
+# Connecting to the app 🔑
 
 Your account is anchored to an Ethereum-compatible address. That address is used
 to open your workspace, sign in to the web app, sign governance actions, publish
@@ -17,37 +17,6 @@ You can sign in in a self-sovereign, privacy-preserving manner by clicking "Conn
 - Use a crypto wallet such as Rabby, MetaMask, Rainbow, Trust Wallet, Ledger, or
   any supported wallet available through
   [WalletConnect](https://walletguide.walletconnect.network/).
-
-## Preserving data and privacy
-
-Both options connect the same kind of account: an address controlled by your own
-keys. After you choose a wallet, Organigram asks it to sign a message. During sign-in, Organigram also prepares a personal encryption key for
-the connected address when the browser supports it.
-
-The encryption key is separate from your wallet signing key. Your wallet key signs login
-messages, transactions, proposals, and other governance actions. The encryption key is only
-used to decrypt private workspace content, such as encrypted IPFS files and
-encrypted workspace envelopes.
-
-On the server, Organigram verifies the signature before saving the public
-encryption key, a key version, and signature on your account. The private encryption key is never sent
-to Organigram.
-
-This encryption key is what allows private storage to work without sharing secrets with the
-server. Workspace access keys can be wrapped for your public encryption key, and only the
-matching private encryption key on your device can unwrap them.
-
-You can manage the encryption key from Account Settings:
-
-- export an encrypted backup protected by a passphrase
-- import that backup on another device
-- restore access to encrypted workspace content after changing browsers or
-  devices
-
-If you do not have the private encryption key on the current device, you may still be
-signed in, but private workspace files encrypted for that key cannot be opened
-until the backup is restored.
-
 
 ## Compliance and non-custody
 

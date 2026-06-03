@@ -515,7 +515,7 @@ ${renderSummaryList(section.routes)}
 
   const details: string = preparedSections.map(renderSection).join('\n\n')
 
-  const document = `export const metadata = { title: "🌐 Web API", order: 4.35 }
+  const document = `export const metadata = { title: "🌐 Web API", order: 5.35 }
 
 # Web API 🌐
 
