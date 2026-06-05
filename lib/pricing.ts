@@ -134,7 +134,7 @@ const pricingConfigs: Record<PublicPricingKey, PricingConfig> = {
       label: 'Advanced digital signatures',
       price: getPerUnitPriceLabel(price, 'signature'),
       details:
-        'Certified signatures for legally binding actions included in both Certified Solo and Certified Entity plans.',
+        'Advanced signatures for legally binding actions included in both Certified Solo and Certified Entity plans.',
       source: 'stripe'
     })
   },
