@@ -39,7 +39,7 @@ export const makeFileTreeFromPaths = async (
               .reduce((pv, cv) => pv + '/' + cv) + '/index.mdx'
           : path
       const { metadata } = (await getDocsModule(_path)) ?? {}
-      current = { text: component, path: _path, metadata }
+      current = { text: component, path: _path, metadata: metadata ?? null }
       arr.push(current)
     }
     if (paths.length !== 0) {

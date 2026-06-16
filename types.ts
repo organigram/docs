@@ -8,5 +8,5 @@ export interface FileTree {
   text?: string
   path?: string
   children?: FileTree[]
-  metadata?: DocsMetadata
+  metadata?: DocsMetadata | null
 }

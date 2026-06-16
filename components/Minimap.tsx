@@ -5,16 +5,18 @@ import { Organigram, type OrganigramJson } from '@organigram/js'
 const Minimap: React.FC<{
   organigram?: OrganigramJson | Organigram
   direction?: string
-  diagramProps?: DiagramProps
+  diagramProps?: Partial<DiagramProps>
 }> = ({ organigram, direction, diagramProps }) => {
   if (organigram == null) return null
-  const parsed = organigram instanceof Organigram ? organigram : new Organigram(organigram)
+  const parsed =
+    organigram instanceof Organigram ? organigram : new Organigram(organigram)
   const {
     style: diagramStyle,
     options: diagramOptions,
     ...restDiagramProps
   } = diagramProps ?? {}
   const zoomOnScroll = diagramOptions?.zoomOnScroll ?? false
+  const fitViewOptions = diagramOptions?.fitViewOptions ?? {}
 
   return (
     <Card
@@ -29,9 +31,6 @@ const Minimap: React.FC<{
         position: 'relative',
         '& .react-flow': {
           maxWidth: '100%'
-        },
-        '& .react-flow__renderer, & .react-flow__pane, & .react-flow__viewport': {
-          overflow: 'hidden'
         }
       }}
     >
@@ -46,12 +45,13 @@ const Minimap: React.FC<{
           ...diagramStyle
         }}
         options={{
+          ...diagramOptions,
           zoomOnScroll,
           preventScrolling: zoomOnScroll,
           fitViewOptions: {
-            padding: 0.2
-          },
-          ...diagramOptions
+            padding: 0.2,
+            ...fitViewOptions
+          }
         }}
         onClickAsset={() => {}}
         onClickOrgan={() => {}}
