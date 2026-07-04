@@ -26,7 +26,7 @@ The official reference for the API routes used by Organigram.ai. Unlike the pack
 
 - [/api/ipfs/\[...workspaceId\]](/docs/reference/rest-api#route_apiipfsworkspaceId): Uploads a workspace file to IPFS and tracks billable storage usage.
 - [/api/certifiedProof/\[...workspaceId\]](/docs/reference/rest-api#route_apicertifiedProofworkspaceId): Generates, signs, stores, and bills a certified proof PDF for a workspace transaction.
-- [/api/nlp/\[...workspaceId\]](/docs/reference/rest-api#route_apinlpworkspaceId): Builds an organigram draft from plain text or uploaded documents.
+- [/api/agent/\[...workspaceId\]](/docs/reference/rest-api#route_apiagentworkspaceId): Answers questions about a workspace and can return additive organigram previews.
 
 ### Authentication, billing, and integrations
 
@@ -107,6 +107,7 @@ Workspace reads and mutations, including membership and ownership changes.
 | `deleteWorkspace` | Session required | Deletes a workspace. |
 | `removeUserFromWorkspace` | Session required | Removes a member from a workspace. |
 | `editUserRoleInWorkspace` | Session required | Changes a member role inside a workspace. |
+| `getWorkspaceUserEntries` | Session required | Lists workspace member entry identities with encrypted profile content references only. |
 | `transferWorkspaceOwnership` | Session required | Transfers workspace ownership to an organization. |
 
 
@@ -140,7 +141,7 @@ Organigram, organ, procedure, entry, and asset mutations for authenticated users
 | `createProcedure` | Session required | Creates a procedure and its target permissions. |
 | `updateProcedure` | Session required | Updates a procedure and its target permissions. |
 | `deleteProcedure` | Session required | Deletes a procedure. |
-| `getPrivateReference` | Session required | Resolves a private entry reference for the authenticated user. |
+| `getEntryReference` | Session required | Resolves an entry reference for the authenticated user without profile contents. |
 | `deleteEntry` | Session required | Deletes an entry. |
 | `createAsset` | Session required | Creates an asset. |
 | `updateAsset` | Session required | Updates an asset. |
@@ -267,25 +268,26 @@ Generates, signs, stores, and bills a certified proof PDF for a workspace transa
 | `create certified proof` |   | Session with workspace access required | Creates a certified proof, uploads the signed PDF, and records the related usage. |
 
 
-<span id="route_apinlpworkspaceId"></span>
+<span id="route_apiagentworkspaceId"></span>
 
-### ++dnt++/api/nlp/[...workspaceId]
+### ++dnt++/api/agent/[...workspaceId]
 
-Builds an organigram draft from plain text or uploaded documents.
+Answers questions about a workspace and can return additive organigram previews.
 
 | Field | Value |
 | --- | --- |
-| Methods | `POST` |
+| Methods | `GET`, `POST` |
 | Auth | Session with workspace access required |
-| Body | `application/json` with a `text` field or `multipart/form-data` with text fields and files |
-| Notes | The default Next.js body parser is disabled for this route. |
+| Body | `message` or `messages` with optional `threadId`, `source`, and `currentOrganigramId` |
 
 
 **Operations**
 
 | Operation | Trigger | Auth | Description |
 | --- | --- | --- | --- |
-| `infer organigram` |   | Session with workspace access required | Extracts usable text from the request and sends it to the inference service. |
+| `ask workspace agent` |   | Session with workspace access required | Builds a safe workspace snapshot, persists the exchange in a workspace thread, and asks the configured inference service for a structured answer. |
+| `list workspace agent threads` |   | Session with workspace access required | Lists persisted workspace agent conversations for the workspace. |
+| `record workspace agent thread` |   | Session with workspace access required | Stores a workspace agent conversation created by another surface, such as the home hero. |
 
 
 
