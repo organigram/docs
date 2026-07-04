@@ -9,8 +9,23 @@ import { t } from '../lib/i18n'
 import type { PublicPricingResponse } from '../lib/pricing'
 import generatedPublicPricing from '../lib/generatedPricing.json' with { type: 'json' }
 
+type PricingTextInput = {
+  fallback?: string
+  key?: string
+  values?: Record<string, string>
+}
+
+const getTranslatedPricingText = ({
+  fallback,
+  key,
+  values
+}: PricingTextInput): string => {
+  const textKey = key ?? fallback
+  return textKey == null ? '' : t(textKey, values)
+}
+
 const PricingTable: React.FC = () => {
-  const pricing = generatedPublicPricing as PublicPricingResponse | null
+  const pricing = generatedPublicPricing as unknown as PublicPricingResponse | null
 
   if (pricing == null) {
     return (
@@ -33,8 +48,20 @@ const PricingTable: React.FC = () => {
         {pricing.items.map(item => (
           <TableRow key={item.key}>
             <TableCell>{t(item.label)}</TableCell>
-            <TableCell>{item.price}</TableCell>
-            <TableCell>{item.details != null ? t(item.details) : ''}</TableCell>
+            <TableCell>
+              {getTranslatedPricingText({
+                fallback: item.price,
+                key: item.priceKey,
+                values: item.priceValues
+              })}
+            </TableCell>
+            <TableCell>
+              {getTranslatedPricingText({
+                fallback: item.details,
+                key: item.detailsKey,
+                values: item.detailsValues
+              })}
+            </TableCell>
           </TableRow>
         ))}
       </TableBody>

@@ -1,4 +1,26 @@
 import Stripe from 'stripe'
+import { parseFiniteNumber } from '@organigram/js'
+
+export const getAiBillingPricingSnapshot = (
+  env: Partial<NodeJS.ProcessEnv> = process.env
+) => ({
+  inputEurPer1MTokens: parseFiniteNumber(
+    env.AI_BILLING_INPUT_EUR_PER_1M_TOKENS,
+    2.5
+  ),
+  cachedInputEurPer1MTokens: parseFiniteNumber(
+    env.AI_BILLING_CACHED_INPUT_EUR_PER_1M_TOKENS,
+    0.25
+  ),
+  outputEurPer1MTokens: parseFiniteNumber(
+    env.AI_BILLING_OUTPUT_EUR_PER_1M_TOKENS,
+    15
+  ),
+  freeRequestLimit: Math.max(
+    0,
+    Math.trunc(parseFiniteNumber(env.AI_FREE_REQUEST_LIMIT, 5))
+  )
+})
 
 const IPFS_STORAGE_BYTES_PER_GB = 1_000_000_000
 
@@ -10,7 +32,8 @@ export const publicPricingKeys = [
   'soloMonthly',
   'sponsoredTransactions',
   'signatures',
-  'storage'
+  'storage',
+  'aiUsage'
 ] as const
 
 export type PublicPricingKey = (typeof publicPricingKeys)[number]
@@ -21,7 +44,11 @@ export interface PublicPricingItem {
   key: PublicPricingKey
   label: string
   price: string
+  priceKey?: string
+  priceValues?: Record<string, string>
   details?: string
+  detailsKey?: string
+  detailsValues?: Record<string, string>
   source: PublicPricingSource
 }
 
@@ -52,8 +79,10 @@ let cachedPricing:
   | undefined
 
 type PricingConfig = {
-  envKey: string
-  buildItem: (price: Stripe.Price) => PublicPricingItem
+  envKey?: string
+  buildItem: (
+    price?: Stripe.Price
+  ) => PublicPricingItem | Promise<PublicPricingItem>
 }
 
 const formatEuroAmount = (amount: number): string => {
@@ -64,6 +93,32 @@ const formatEuroAmount = (amount: number): string => {
   })}€`
 }
 
+const interpolatePricingText = (
+  template: string,
+  values: Record<string, string>
+): string =>
+  Object.entries(values).reduce(
+    (result, [key, value]) => result.replaceAll(`{{${key}}}`, value),
+    template
+  )
+
+const buildPriceFields = (
+  priceKey: string,
+  priceValues: Record<string, string>
+): Pick<PublicPricingItem, 'price' | 'priceKey' | 'priceValues'> => ({
+  price: interpolatePricingText(priceKey, priceValues),
+  priceKey,
+  priceValues
+})
+
+const buildUnavailablePriceFields = (): Pick<
+  PublicPricingItem,
+  'price' | 'priceKey'
+> => ({
+  price: 'Unavailable',
+  priceKey: 'Unavailable'
+})
+
 const getEuroAmountFromStripePrice = (price: Stripe.Price): number | null => {
   const rawAmount =
     price.unit_amount_decimal ??
@@ -73,25 +128,28 @@ const getEuroAmountFromStripePrice = (price: Stripe.Price): number | null => {
   return Number.isFinite(parsed) ? parsed / 100 : null
 }
 
-const getPerUnitPriceLabel = (
+const getPerUnitPriceFields = (
   price: Stripe.Price,
-  unitLabel?: string,
+  priceKey: string,
   multiplier?: number
-): string => {
+): Pick<PublicPricingItem, 'price' | 'priceKey' | 'priceValues'> => {
   const amount = getEuroAmountFromStripePrice(price)
-  if (amount == null) return 'Unavailable'
-  return `${formatEuroAmount(amount * (multiplier ?? 1))}${
-    unitLabel != null ? ` / ${unitLabel}` : ''
-  }`
+  if (amount == null) return buildUnavailablePriceFields()
+
+  return buildPriceFields(priceKey, {
+    price: formatEuroAmount(amount * (multiplier ?? 1))
+  })
 }
 
-const getStoragePriceLabel = (price: Stripe.Price): string => {
+const getStoragePriceFields = (
+  price: Stripe.Price
+): Pick<PublicPricingItem, 'price' | 'priceKey' | 'priceValues'> => {
   const amount = getEuroAmountFromStripePrice(price)
-  if (amount == null) return 'Unavailable'
+  if (amount == null) return buildUnavailablePriceFields()
 
-  return `${formatEuroAmount(
-    convertStripeStorageEuroPerUnitToEuroPerGb(amount)
-  )} / GB / month`
+  return buildPriceFields('{{price}} / GB / month', {
+    price: formatEuroAmount(convertStripeStorageEuroPerUnitToEuroPerGb(amount))
+  })
 }
 
 const getDocumentedGasMultiplier = (): string =>
@@ -100,56 +158,132 @@ const getDocumentedGasMultiplier = (): string =>
 const getDocumentedMinimumTransactionAmount = (): string =>
   process.env.NEXT_PUBLIC_MINIMUM_TRANSACTION_AMOUNT_EURO ?? '0.01'
 
+const AI_USAGE_PRICE_KEY = '{{inputRate}} input / {{outputRate}} output'
+
+const AI_USAGE_DETAILS_KEY =
+  'Workspace assistance and assisted organigram generation include {{freeRequestLimit}} successful requests before these rates apply.'
+
+const getAiUsageFields = async (): Promise<
+  Pick<
+    PublicPricingItem,
+    | 'price'
+    | 'priceKey'
+    | 'priceValues'
+    | 'details'
+    | 'detailsKey'
+    | 'detailsValues'
+  >
+> => {
+  const rates = await getAiBillingPricingSnapshot()
+  const priceValues = {
+    inputRate: formatEuroAmount(rates.inputEurPer1MTokens),
+    outputRate: formatEuroAmount(rates.outputEurPer1MTokens)
+  }
+  const detailsValues = {
+    freeRequestLimit: String(rates.freeRequestLimit)
+  }
+
+  return {
+    ...buildPriceFields(AI_USAGE_PRICE_KEY, priceValues),
+    details: interpolatePricingText(AI_USAGE_DETAILS_KEY, detailsValues),
+    detailsKey: AI_USAGE_DETAILS_KEY,
+    detailsValues
+  }
+}
+
 const pricingConfigs: Record<PublicPricingKey, PricingConfig> = {
   soloMonthly: {
     envKey: 'NEXT_PUBLIC_CERTIFIED_SOLO_MONTHLY_BASE_PRICE_ID',
-    buildItem: price => ({
-      key: 'soloMonthly',
-      label: 'ID Certificates',
-      price: getPerUnitPriceLabel(price, 'address / month'),
-      details:
-        "Minimum amount charged monthly to keep a certification active. This allows to generate advanced e-signatures tied to a user's wallet.",
-      source: 'stripe'
-    })
+    buildItem: price => {
+      const priceFields =
+        price == null
+          ? buildUnavailablePriceFields()
+          : getPerUnitPriceFields(price, '{{price}} / address / month')
+
+      return {
+        key: 'soloMonthly',
+        label: 'ID Certificates',
+        ...priceFields,
+        details:
+          "Minimum amount charged monthly to keep a certification active. This allows to generate advanced e-signatures tied to a user's wallet.",
+        source: 'stripe'
+      }
+    }
   },
   sponsoredTransactions: {
     envKey: 'NEXT_PUBLIC_GAS_PRICE_ID',
-    buildItem: () => ({
-      key: 'sponsoredTransactions',
-      label: 'Sponsored transactions',
-      price:
-        '~x' +
-        getDocumentedGasMultiplier() +
-        ' gas used, min. ' +
-        getDocumentedMinimumTransactionAmount() +
-        '€',
-      details: `Only the gas actually used is charged when sponsoring transactions, including relayer costs, processing fees and price fluctuations. Price is in Euro at currency rates updated every minute, with a minimum of ${getDocumentedMinimumTransactionAmount()}€.`,
-      source: 'stripe_usage'
-    })
+    buildItem: () => {
+      const priceValues = {
+        gasMultiplier: getDocumentedGasMultiplier(),
+        minimumAmount: `${getDocumentedMinimumTransactionAmount()}€`
+      }
+
+      return {
+        key: 'sponsoredTransactions',
+        label: 'Sponsored transactions',
+        ...buildPriceFields(
+          '~x{{gasMultiplier}} gas used, min. {{minimumAmount}}',
+          priceValues
+        ),
+        details: `Only the gas actually used is charged when sponsoring transactions, including relayer costs, processing fees and price fluctuations. Price is in Euro at currency rates updated every minute, with a minimum of ${getDocumentedMinimumTransactionAmount()}€.`,
+        source: 'stripe_usage'
+      }
+    }
   },
   signatures: {
     envKey: 'NEXT_PUBLIC_SIGNATURES_PRICE_ID',
-    buildItem: price => ({
-      key: 'signatures',
-      label: 'Advanced digital signatures',
-      price: getPerUnitPriceLabel(price, 'signature'),
-      details:
-        'Advanced signatures for legally binding actions included in both Certified Solo and Certified Entity plans.',
-      source: 'stripe'
-    })
+    buildItem: price => {
+      const priceFields =
+        price == null
+          ? buildUnavailablePriceFields()
+          : getPerUnitPriceFields(price, '{{price}} / signature')
+
+      return {
+        key: 'signatures',
+        label: 'Advanced digital signatures',
+        ...priceFields,
+        details:
+          'Advanced signatures for legally binding actions included in both Certified Solo and Certified Entity plans.',
+        source: 'stripe'
+      }
+    }
   },
   storage: {
     envKey: 'NEXT_PUBLIC_STORAGE_PRICE_ID',
-    buildItem: price => ({
-      key: 'storage',
-      label: 'Certified storage (above 1GB)',
-      price: getStoragePriceLabel(price),
-      details:
-        'Certified encrypted storage above 1GB is charged monthly for both organizations and personal workspaces.',
-      source: 'stripe'
+    buildItem: price => {
+      const priceFields =
+        price == null
+          ? buildUnavailablePriceFields()
+          : getStoragePriceFields(price)
+
+      return {
+        key: 'storage',
+        label: 'Certified storage (above 1GB)',
+        ...priceFields,
+        details:
+          'Certified encrypted storage above 1GB is charged monthly for both organizations and personal workspaces.',
+        source: 'stripe'
+      }
+    }
+  },
+  aiUsage: {
+    buildItem: async () => ({
+      key: 'aiUsage',
+      label: 'AI assistance (per 1M tokens)',
+      ...(await getAiUsageFields()),
+      source: 'documented'
     })
   }
 }
+
+export const getLocalPublicPricingItems = async (): Promise<
+  PublicPricingItem[]
+> =>
+  Promise.all(
+    publicPricingKeys
+      .filter(key => pricingConfigs[key].envKey == null)
+      .map(async key => pricingConfigs[key].buildItem())
+  )
 
 const getPriceId = (envKey: string): string => {
   const priceId = process.env[envKey]
@@ -168,9 +302,10 @@ export const getPublicPricing = async (): Promise<PublicPricingResponse> => {
     const items = await Promise.all(
       publicPricingKeys.map(async key => {
         const config = pricingConfigs[key]
-        const price = await getStripe().prices.retrieve(
-          getPriceId(config.envKey)
-        )
+        const price =
+          config.envKey == null
+            ? undefined
+            : await getStripe().prices.retrieve(getPriceId(config.envKey))
         return config.buildItem(price)
       })
     )

@@ -5,6 +5,10 @@
       "key": "soloMonthly",
       "label": "ID Certificates",
       "price": "0,89€ / address / month",
+      "priceKey": "{{price}} / address / month",
+      "priceValues": {
+        "price": "0,89€"
+      },
       "details": "Minimum amount charged monthly to keep a certification active. This allows to generate advanced e-signatures tied to a user's wallet.",
       "source": "documented"
     },
@@ -12,6 +16,11 @@
       "key": "sponsoredTransactions",
       "label": "Sponsored transactions",
       "price": "~x2 gas used, min. 0.01€",
+      "priceKey": "~x{{gasMultiplier}} gas used, min. {{minimumAmount}}",
+      "priceValues": {
+        "gasMultiplier": "2",
+        "minimumAmount": "0.01€"
+      },
       "details": "Only the gas actually used is charged when sponsoring transactions, including relayer costs, processing fees and price fluctuations. Price is in Euro at currency rates updated every minute, with a minimum of 0.01€.",
       "source": "documented"
     },
@@ -19,6 +28,10 @@
       "key": "signatures",
       "label": "Advanced digital signatures",
       "price": "0,89€ / signature",
+      "priceKey": "{{price}} / signature",
+      "priceValues": {
+        "price": "0,89€"
+      },
       "details": "Advanced signatures for legally binding actions included in both Certified Solo and Certified Entity plans.",
       "source": "documented"
     },
@@ -26,7 +39,27 @@
       "key": "storage",
       "label": "Certified storage (above 1GB)",
       "price": "0,89€ / GB / month",
+      "priceKey": "{{price}} / GB / month",
+      "priceValues": {
+        "price": "0,89€"
+      },
       "details": "Certified encrypted storage above 1GB is charged monthly for both organizations and personal workspaces.",
+      "source": "documented"
+    },
+    {
+      "key": "aiUsage",
+      "label": "AI assistance (per 1M tokens)",
+      "price": "2,50€ input / 15€ output",
+      "priceKey": "{{inputRate}} input / {{outputRate}} output",
+      "priceValues": {
+        "inputRate": "2,50€",
+        "outputRate": "15€"
+      },
+      "details": "Workspace assistance and assisted organigram generation include 5 successful requests before these rates apply.",
+      "detailsKey": "Workspace assistance and assisted organigram generation include {{freeRequestLimit}} successful requests before these rates apply.",
+      "detailsValues": {
+        "freeRequestLimit": "5"
+      },
       "source": "documented"
     }
   ]

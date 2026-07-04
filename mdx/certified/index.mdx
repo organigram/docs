@@ -1,5 +1,6 @@
 import Button from '@mui/material/Button'
 import Grid from '@mui/material/Grid'
+import { t } from '../../lib/i18n'
 
 import CertifiedSettingsButton from '@/components/CertifiedSettingsButton'
 import Link from '../../components/Link'
@@ -53,12 +54,12 @@ The fastest way to evaluate Organigram Certified is to run one real decision end
 4. sign with the required level of assurance
 5. keep the certified proof
 
-You can book a demo below if you want help choosing and setting up the first decision to certify.
+Start a Certified Governance Pilot for help choosing and setting up your first certified decision:
 
 <Grid container my={3} justifyContent='center'>
   <Grid item>
     <Link href={'/certified-governance-pilot'}>
-      <Button variant='contained'>Book a demo</Button>
+      <Button variant='contained'>{t('Start a pilot')}</Button>
     </Link>
   </Grid>
 </Grid>

@@ -22,10 +22,16 @@ import { Diagram, useOrganigramClient } from '@organigram/react'
 
 ### Components
 
+- [AgentPanel](/docs/reference/react#component_AgentPanel)
+- [AgentPreview](/docs/reference/react#component_AgentPreview)
+- [Animated](/docs/reference/react#component_Animated)
 - [AssetNode](/docs/reference/react#component_AssetNode)
+- [ChatMessage](/docs/reference/react#component_ChatMessage)
 - [ClassicOrgChart](/docs/reference/react#component_ClassicOrgChart)
 - [DecidersActions](/docs/reference/react#component_DecidersActions)
 - [defaultNodeTypes](/docs/reference/react#constant_defaultNodeTypes)
+- [defaultPanelLabels](/docs/reference/react#constant_defaultPanelLabels)
+- [defaultPreviewLabels](/docs/reference/react#constant_defaultPreviewLabels)
 - [Diagram](/docs/reference/react#component_Diagram)
 - [DiagramNode](/docs/reference/react#component_DiagramNode)
 - [ElectionComponent](/docs/reference/react#component_ElectionComponent)
@@ -34,6 +40,7 @@ import { Diagram, useOrganigramClient } from '@organigram/react'
 - [ProcedureIcon](/docs/reference/react#component_ProcedureIcon)
 - [ProcedureNode](/docs/reference/react#component_ProcedureNode)
 - [projectOrganigramToClassicForest](/docs/reference/react#constant_projectOrganigramToClassicForest)
+- [StreamBox](/docs/reference/react#component_StreamBox)
 - [Summit](/docs/reference/react#component_Summit)
 - [TimeLeft](/docs/reference/react#component_TimeLeft)
 - [Token](/docs/reference/react#component_Token)
@@ -74,6 +81,8 @@ import { Diagram, useOrganigramClient } from '@organigram/react'
 ### Types
 
 - [AssetNodeProps](/docs/reference/react#interface_AssetNodeProps)
+- [ChatRole](/docs/reference/react#type_ChatRole)
+- [Citation](/docs/reference/react#type_Citation)
 - [ClassicOrgChartNode](/docs/reference/react#interface_ClassicOrgChartNode)
 - [ClassicOrgChartProps](/docs/reference/react#interface_ClassicOrgChartProps)
 - [CreateProcedure](/docs/reference/react#type_CreateProcedure)
@@ -82,11 +91,22 @@ import { Diagram, useOrganigramClient } from '@organigram/react'
 - [DiagramProps](/docs/reference/react#interface_DiagramProps)
 - [ElectionComponentProps](/docs/reference/react#interface_ElectionComponentProps)
 - [Layer](/docs/reference/react#interface_Layer)
+- [MergeOrganigramPreview](/docs/reference/react#type_MergeOrganigramPreview)
+- [Message](/docs/reference/react#type_Message)
 - [ModalType](/docs/reference/react#type_ModalType)
+- [NewOrganigramPreview](/docs/reference/react#type_NewOrganigramPreview)
+- [OrganigramPreview](/docs/reference/react#type_OrganigramPreview)
 - [OrganNodeProps](/docs/reference/react#interface_OrganNodeProps)
+- [PanelLabels](/docs/reference/react#type_PanelLabels)
+- [PanelMessage](/docs/reference/react#type_PanelMessage)
+- [PreviewLabels](/docs/reference/react#type_PreviewLabels)
 - [ProcedureNodeProps](/docs/reference/react#interface_ProcedureNodeProps)
 - [ProposalFilter](/docs/reference/react#type_ProposalFilter)
+- [Response](/docs/reference/react#type_Response)
 - [SetModal](/docs/reference/react#type_SetModal)
+- [StoredMessage](/docs/reference/react#type_StoredMessage)
+- [Thread](/docs/reference/react#type_Thread)
+- [ThreadSource](/docs/reference/react#type_ThreadSource)
 
 ### Namespaces
 
@@ -95,12 +115,83 @@ import { Diagram, useOrganigramClient } from '@organigram/react'
 
 ## Components
 
+### component ++dnt++AgentPanel
+
+```tsx
+export const AgentPanel: React.FC<{
+  open: boolean
+  onClose: () => void
+  showThreadList: boolean
+  onShowThreadList: () => void
+  threads: Thread[]
+  selectedThreadId: string | null
+  historyLoading: boolean
+  onSelectThread: (threadId: string) => void
+  onStartNewThread: () => void
+  messages: PanelMessage[]
+  welcomeMessage: string
+  currentOrganigram: OrganigramJson | null
+  canAsk: boolean
+  canConfirmPreview: boolean
+  savingPreviewKey: string | null
+  dismissedPreviewIndexes: number[]
+  input: string
+  loading: boolean
+  error: string | null
+  onInputChange: (value: string) => void
+  onInputKeyDown: (event: KeyboardEvent<HTMLDivElement>) => void
+  onSubmit: (event: FormEvent<HTMLFormElement>) => void
+  onConfirmPreview: (preview: OrganigramPreview, messageIndex: number) => void
+  onCancelPreview: (messageIndex: number) => void
+  labels?: Partial<PanelLabels>
+}>
+```
+
+
+
+### component ++dnt++AgentPreview
+
+```tsx
+export const AgentPreview: React.FC<{
+  preview: OrganigramPreview
+  currentOrganigram: OrganigramJson | null
+  canConfirm: boolean
+  saving: boolean
+  onConfirm: () => void
+  onCancel: () => void
+  labels?: Partial<PreviewLabels>
+}>
+```
+
+
+
+### component ++dnt++Animated
+
+```tsx
+export const Animated: React.FC<AnimatedProps>
+```
+
+
+
 ### component ++dnt++AssetNode
 
 Default React Flow node used to display one asset inside a diagram.
 
 ```tsx
 export const AssetNode: React.FC<NodeProps & AssetNodeProps>
+```
+
+
+
+### component ++dnt++ChatMessage
+
+```tsx
+export const ChatMessage: React.FC<{
+  role: ChatRole
+  content: string
+  streaming?: boolean
+  thinkingLabel?: string
+}>
 ```
 
 
@@ -131,6 +222,22 @@ export const defaultNodeTypes = {
   organ: OrganNode as React.FC<NodeProps<{ organ: Organ }>>,
   asset: AssetNode as React.FC<NodeProps<{ asset: Asset }>>
 }
+```
+
+
+
+### constant ++dnt++defaultPanelLabels
+
+```tsx
+export const defaultLabels: PanelLabels
+```
+
+
+
+### constant ++dnt++defaultPreviewLabels
+
+```tsx
+export const defaultPreviewLabels: PreviewLabels
 ```
 
 
@@ -226,6 +333,17 @@ export const ProcedureNode: React.FC<
 
 ```tsx
 export const projectOrganigramToClassicForest: (organigram: OrganigramJson) => ClassicOrgChartNode[]
+```
+
+
+
+### component ++dnt++StreamBox
+
+```tsx
+export const StreamBox: React.FC<{
+  content: string
+  thinkingLabel?: string
+}>
 ```
 
 
@@ -650,6 +768,33 @@ export interface AssetNodeProps {
 | `hideHandles` | `boolean` |   |
 
 
+### type ++dnt++ChatRole
+
+```tsx
+export type ChatRole = 'user' | 'assistant'
+```
+
+
+
+### type ++dnt++Citation
+
+```tsx
+export type Citation = {
+  type:
+    | 'workspace'
+    | 'organigram'
+    | 'organ'
+    | 'procedure'
+    | 'asset'
+    | 'notification'
+    | 'file'
+  id: string
+  label: string
+}
+```
+
+
+
 ### interface ++dnt++ClassicOrgChartNode
 
 ```tsx
@@ -855,12 +1000,60 @@ export interface Layer {
 | `isHidden` | `boolean` |   |
 
 
+### type ++dnt++MergeOrganigramPreview
+
+```tsx
+export type MergeOrganigramPreview = {
+  type: 'organigram'
+  organigramId: string
+  persistence: 'merge-additive'
+  summary: string[]
+  organigram: OrganigramJson
+}
+```
+
+
+
+### type ++dnt++Message
+
+```tsx
+export type Message = {
+  role: 'user' | 'assistant'
+  content: string
+}
+```
+
+
+
 ### type ++dnt++ModalType
 
 React element currently mounted inside the shared modal slot.
 
 ```tsx
 export type ModalType = null | JSX.Element
+```
+
+
+
+### type ++dnt++NewOrganigramPreview
+
+```tsx
+export type NewOrganigramPreview = {
+  type: 'new-organigram'
+  persistence: 'create'
+  summary: string[]
+  organigram: OrganigramJson
+}
+```
+
+
+
+### type ++dnt++OrganigramPreview
+
+```tsx
+export type OrganigramPreview =
+  | MergeOrganigramPreview
+  | NewOrganigramPreview
 ```
 
 
@@ -886,6 +1079,58 @@ export interface OrganNodeProps {
 | --- | --- | --- |
 | `data` | `{ organ: Organ; position?: { x: number; y: number }; onClick?: () => void }` |   |
 | `hideHandles` | `boolean` |   |
+
+
+### type ++dnt++PanelLabels
+
+```tsx
+export type PanelLabels = PreviewLabels & {
+  title: string
+  close: string
+  threads: string
+  newChat: string
+  noConversationsYet: string
+  thinking: string
+  askPlaceholder: string
+  sourceHero: string
+  sourceWorkspace: string
+}
+```
+
+
+
+### type ++dnt++PanelMessage
+
+```tsx
+export type PanelMessage = Message & {
+  id?: string
+  response?: Response
+  streaming?: boolean
+}
+```
+
+
+
+### type ++dnt++PreviewLabels
+
+```tsx
+export type PreviewLabels = {
+  preview: string
+  confirmationNotice: string
+  organ: string
+  newOrgan: string
+  newProcedure: string
+  newAsset: string
+  newEntry: string
+  entry: string
+  organType: string
+  procedureType: string
+  assetType: string
+  cancel: string
+  confirm: string
+}
+```
+
 
 
 ### interface ++dnt++ProcedureNodeProps
@@ -917,12 +1162,61 @@ export type ProposalFilter = 'current' | 'drafts' | 'passed' | 'blocked' | ''
 
 
 
+### type ++dnt++Response
+
+```tsx
+export type Response = {
+  threadId?: string
+  message: string
+  citations: Citation[]
+  preview?: OrganigramPreview
+}
+```
+
+
+
 ### type ++dnt++SetModal
 
 React state setter signature for the shared modal slot.
 
 ```tsx
 export type SetModal = Dispatch<SetStateAction<ModalType>>
+```
+
+
+
+### type ++dnt++StoredMessage
+
+```tsx
+export type StoredMessage = Message & {
+  id: string
+  createdAt: string
+  response?: Response
+}
+```
+
+
+
+### type ++dnt++Thread
+
+```tsx
+export type Thread = {
+  id: string
+  title: string
+  source: ThreadSource
+  currentOrganigramId?: string | null
+  createdAt: string
+  updatedAt: string
+  messages: StoredMessage[]
+}
+```
+
+
+
+### type ++dnt++ThreadSource
+
+```tsx
+export type ThreadSource = 'workspace' | 'hero'
 ```
 
 

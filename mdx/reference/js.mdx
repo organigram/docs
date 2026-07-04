@@ -184,6 +184,7 @@ import { OrganigramClient } from '@organigram/js'
 - [normalizeOrganigramNodePositions](/docs/reference/js#function_normalizeOrganigramNodePositions)
 - [parseCidRef](/docs/reference/js#function_parseCidRef)
 - [parseEncryptionPublicKeySiweResource](/docs/reference/js#function_parseEncryptionPublicKeySiweResource)
+- [parseFiniteNumber](/docs/reference/js#function_parseFiniteNumber)
 - [populateInitializeProcedure](/docs/reference/js#function_populateInitializeProcedure)
 - [predictContractAddress](/docs/reference/js#function_predictContractAddress)
 - [prepareDeployOrgansInput](/docs/reference/js#function_prepareDeployOrgansInput)
@@ -1001,6 +1002,13 @@ parseCidRef: (value?: string | null) => ParsedCidRef | null
 
 ```typescript
 parseEncryptionPublicKeySiweResource: (resources: string[] | undefined, address: string) => EncryptionPublicKeySiweResource | null
+```
+
+
+## function ++dnt++parseFiniteNumber
+
+```typescript
+parseFiniteNumber: (value: number | string | null | undefined, fallback: number) => number
 ```
 
 
@@ -3513,6 +3521,13 @@ index: string;
 ```
 
 
+#### ++dnt++OrganEntry.name
+
+```typescript
+name?: string | null;
+```
+
+
 
 ## interface ++dnt++OrganInput
 
@@ -3560,6 +3575,7 @@ entries?: Array<{
         index: string;
         address: string;
         cid: string;
+        name?: string | null;
     }> | null;
 ```
 
