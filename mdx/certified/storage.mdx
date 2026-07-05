@@ -1,5 +1,6 @@
 import Button from '@mui/material/Button'
 import Grid from '@mui/material/Grid'
+import { t } from '../../lib/i18n'
 
 import Link from '../../components/Link'
 
@@ -56,7 +57,7 @@ Included storage is available for normal usage. Additional IPFS storage above 1G
 <Grid container my={3} justifyContent='center'>
   <Grid item>
     <Link href={'/pricing'}>
-      <Button variant='contained'>View storage pricing</Button>
+      <Button variant='contained'>{t('View pricing')}</Button>
     </Link>
   </Grid>
 </Grid>
