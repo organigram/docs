@@ -26,7 +26,7 @@
     },
     {
       "key": "signatures",
-      "label": "Advanced digital signatures",
+      "label": "Advanced e-signatures",
       "price": "0,89€ / signature",
       "priceKey": "{{price}} / signature",
       "priceValues": {

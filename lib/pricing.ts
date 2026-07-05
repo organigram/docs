@@ -240,7 +240,7 @@ const pricingConfigs: Record<PublicPricingKey, PricingConfig> = {
 
       return {
         key: 'signatures',
-        label: 'Advanced digital signatures',
+        label: 'Advanced e-signatures',
         ...priceFields,
         details:
           'Advanced signatures for legally binding actions included in both Certified Solo and Certified Entity plans.',
