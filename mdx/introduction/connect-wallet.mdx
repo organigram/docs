@@ -1,3 +1,5 @@
+import LoginMethodButton from '@/components/Nav/LoginMethodButton'
+
 export const metadata = { title: '🔑 Signing in', order: 1.3 }
 
 # Connecting to the app 🔑
@@ -10,25 +12,43 @@ workspace records, and, when needed, authorize encrypted storage access.
 
 You can sign in in a self-sovereign, privacy-preserving manner by clicking "Connect Wallet" on the top right corner of the screen. There, you can either:
 
-- Sign in with passkeys. Select 'Porto' in the recommended wallet list. This
-  option lets you store keys in your password manager, use biometric
-  credentials, connect across devices, and configure [recovery
-  options](https://id.porto.sh). It is the easiest and recommended option for most users.
+- Sign in with passkeys. This option creates an Ethereum-compatible wallet from a
+  passkey credential and stores an encrypted backup on Organigram servers. It is the
+  easiest and recommended option for most users on compatible browsers.
+
+<LoginMethodButton method='passkey' />
+
+- If your organization uses Google Workspace, you can verify that organization
+  identity from Account Settings after signing in. Google confirms your email
+  domain, but your wallet address remains the Organigram account used to sign in
+  and sign actions.
+
+<LoginMethodButton method='google' />
+
 - Use a crypto wallet such as Rabby, MetaMask, Rainbow, Trust Wallet, Ledger, or
   any supported wallet available through
   [WalletConnect](https://walletguide.walletconnect.network/).
 
+<LoginMethodButton method='wallet' />
+
+- Sign in with an email code. This option verifies that you control the email
+  address, then reuses the wallet address already linked to that email. If no
+  wallet is linked to that email, Organigram first verifies the email code, then
+  helps you create the wallet with a passkey.
+
+<LoginMethodButton method='email' />
+
 ## Compliance and non-custody
 
-With both connection options, your private keys and assets are never shared with
-the app. Organigram can ask your wallet to sign messages or transactions, but
-the final approval happens in your wallet interface.
+Whichever connection option, your private keys and assets are never shared with
+the app in clear text. With passkeys, Organigram stores encrypted vault envelopes
+only; Google and email can recover an Organigram session, but they cannot decrypt
+or sign with your wallet.
 
 You can also verify your identity with an [ID
 certificate](/docs/certified/id-certificates) to get access to [advanced
 signatures](/docs/certified/advanced-signatures) and [legally-binding
-actions](/docs/certified/binding-actions). In that case, we recommend using new
-addresses that have never been used on a public network before.
+actions](/docs/certified/binding-actions). In that case, we recommend using new addresses that have never been used on a public network before, such as with passkey-generated wallets.
 
 For the full list of the information we access and how we use it in these services, you can refer to our [privacy policy](/docs/reference/privacy).
 

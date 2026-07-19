@@ -80,6 +80,7 @@ Account, profile, and privacy operations for the current signed-in user.
 | `requestNotificationEmailVerification` | Session required | Sends a verification code before persisting the account email address. |
 | `updateNotificationPreferences` | Session required | Persists notification event email toggles for the current user. |
 | `verifyNotificationEmailCode` | Session required | Validates an account email verification code for the current user. |
+| `unlinkGoogleWorkspaceIdentity` | Session required | Disconnects the current user Google Workspace identity and revokes administrator proofs. |
 
 
 <span id="route_apiworkspace"></span>
@@ -110,6 +111,7 @@ Workspace reads and mutations, including membership and ownership changes.
 | `getWorkspaceUserEntries` | Session required | Lists workspace member entry identities with encrypted profile content references only. |
 | `transferWorkspaceOwnership` | Session required | Transfers workspace ownership to an organization. |
 | `enableGoogleWorkspaceAccessForWorkspace` | Session required | Allows users from a verified Google Workspace tenant to access a workspace. |
+| `disableGoogleWorkspaceAccessForWorkspace` | Session required | Revokes Google Workspace tenant access for a workspace without removing the verified administrator proof. |
 
 
 <span id="route_apiorganigram"></span>

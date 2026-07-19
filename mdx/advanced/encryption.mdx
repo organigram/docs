@@ -10,8 +10,9 @@ After you choose a wallet, Organigram asks it to sign a message. The signed mess
 
 During first sign-in, Organigram also prepares an encryption key for your browser when
 possible. The public part of this key can be included in the sign-in
-message and registered on your account. The private part stays local to your
-device.
+message and registered on your account. The private part is kept in runtime
+memory while the wallet is unlocked, and can be stored server-side only as an
+encrypted vault envelope protected by a password chosen by the user or by a passkey.
 
 ## Registering an encryption key
 
@@ -21,14 +22,12 @@ without learning your private key.
 
 You can manage this key from Account Settings:
 
-- export an encrypted backup protected by a passphrase
-- import that backup on another device
-- restore access to encrypted workspace content after changing browsers or
-  devices
+- save or refresh the encrypted server vault by entering the vault password or passkey
+- export the IPFS private key from Developer settings after unlocking that vault
 
-If you do not have the private encryption key on the current device, you may
-still be signed in, but private workspace files encrypted for that key cannot be
-opened until the backup is restored.
+If the private encryption key is not available in runtime memory, you may still
+be signed in, but private workspace files encrypted for that key cannot be
+opened until the encrypted vault is unlocked.
 
 ## Workspace envelopes
 
@@ -85,9 +84,9 @@ the opposite direction:
 4. The workspace envelope key unwraps the file content key.
 5. The encrypted payload is downloaded from IPFS and decrypted locally.
 
-If the connected user is not part of the current access group, does not have a
-local private encryption key, or has not restored their backup on the device,
-the encrypted payload cannot be opened from that browser.
+If the connected user is not part of the current access group, or does not have
+the private encryption key available in runtime memory, the encrypted payload
+cannot be opened from that browser.
 
 ## How this integrates to your workspace
 
@@ -98,7 +97,8 @@ to create an access group epoch.
 
 For each epoch, a workspace group key is generated and wrapped separately for
 each recipient public key. A member can decrypt the group key only with their
-own local private encryption key. If the workspace membership changes, or a
-member rotates their encryption key, the access group becomes stale and a new
-epoch is created, ensuring that only current members can access the latest
-encrypted content while keeping the audit trail intact for previous versions.
+own private encryption key after unlocking it locally. If the workspace
+membership changes, or a member rotates their encryption key, the access group
+becomes stale and a new epoch is created, ensuring that only current members can
+access the latest encrypted content while keeping the audit trail intact for
+previous versions.
