@@ -46,6 +46,9 @@ export interface PublicPricingItem {
   price: string
   priceKey?: string
   priceValues?: Record<string, string>
+  annualPrice?: string
+  annualPriceKey?: string
+  annualPriceValues?: Record<string, string>
   details?: string
   detailsKey?: string
   detailsValues?: Record<string, string>
@@ -80,8 +83,10 @@ let cachedPricing:
 
 type PricingConfig = {
   envKey?: string
+  annualEnvKey?: string
   buildItem: (
-    price?: Stripe.Price
+    price?: Stripe.Price,
+    annualPrice?: Stripe.Price
   ) => PublicPricingItem | Promise<PublicPricingItem>
 }
 
@@ -142,15 +147,30 @@ const getPerUnitPriceFields = (
 }
 
 const getStoragePriceFields = (
-  price: Stripe.Price
+  price: Stripe.Price,
+  priceKey = '{{price}} / GB / month'
 ): Pick<PublicPricingItem, 'price' | 'priceKey' | 'priceValues'> => {
   const amount = getEuroAmountFromStripePrice(price)
   if (amount == null) return buildUnavailablePriceFields()
 
-  return buildPriceFields('{{price}} / GB / month', {
+  return buildPriceFields(priceKey, {
     price: formatEuroAmount(convertStripeStorageEuroPerUnitToEuroPerGb(amount))
   })
 }
+
+const buildAnnualPriceFields = (
+  priceFields?: Pick<PublicPricingItem, 'price' | 'priceKey' | 'priceValues'>
+): Pick<
+  PublicPricingItem,
+  'annualPrice' | 'annualPriceKey' | 'annualPriceValues'
+> =>
+  priceFields == null
+    ? {}
+    : {
+        annualPrice: priceFields.price,
+        annualPriceKey: priceFields.priceKey,
+        annualPriceValues: priceFields.priceValues
+      }
 
 const getDocumentedGasMultiplier = (): string =>
   process.env.NEXT_PUBLIC_GAS_SERVICE_FEE_MULTIPLIER ?? '2'
@@ -194,16 +214,22 @@ const getAiUsageFields = async (): Promise<
 const pricingConfigs: Record<PublicPricingKey, PricingConfig> = {
   soloMonthly: {
     envKey: 'NEXT_PUBLIC_CERTIFIED_SOLO_MONTHLY_BASE_PRICE_ID',
-    buildItem: price => {
+    annualEnvKey: 'NEXT_PUBLIC_CERTIFIED_SOLO_YEARLY_BASE_PRICE_ID',
+    buildItem: (price, annualPrice) => {
       const priceFields =
         price == null
           ? buildUnavailablePriceFields()
           : getPerUnitPriceFields(price, '{{price}} / address / month')
+      const annualPriceFields =
+        annualPrice == null
+          ? undefined
+          : getPerUnitPriceFields(annualPrice, '{{price}} / address / year')
 
       return {
         key: 'soloMonthly',
         label: 'ID Certificates',
         ...priceFields,
+        ...buildAnnualPriceFields(annualPriceFields),
         details:
           "Minimum amount charged monthly to keep a certification active. This allows to generate advanced e-signatures tied to a user's wallet.",
         source: 'stripe'
@@ -243,25 +269,31 @@ const pricingConfigs: Record<PublicPricingKey, PricingConfig> = {
         label: 'Advanced e-signatures',
         ...priceFields,
         details:
-          'Advanced digital signatures for legally binding actions included in both Certified Solo and Certified Entity plans.',
+          'Advanced digital signatures with qualified certificates for signing legally binding actions that require high proof security.',
         source: 'stripe'
       }
     }
   },
   storage: {
     envKey: 'NEXT_PUBLIC_STORAGE_PRICE_ID',
-    buildItem: price => {
+    annualEnvKey: 'NEXT_PUBLIC_STORAGE_YEARLY_PRICE_ID',
+    buildItem: (price, annualPrice) => {
       const priceFields =
         price == null
           ? buildUnavailablePriceFields()
           : getStoragePriceFields(price)
+      const annualPriceFields =
+        annualPrice == null
+          ? undefined
+          : getStoragePriceFields(annualPrice, '{{price}} / GB / year')
 
       return {
         key: 'storage',
-        label: 'Certified storage (above 1GB)',
+        label: 'Certified storage (1GB free)',
         ...priceFields,
+        ...buildAnnualPriceFields(annualPriceFields),
         details:
-          'Certified encrypted storage above 1GB is charged monthly for both organizations and personal workspaces.',
+          "Certified encrypted storage above 1GB is charged monthly for both organizations and personal workspaces. Data is timestamped, versioned, encrypted with keys derived from workspace members' wallets and pinned to a decentralized storage network. Your data is always backed up publicly and only workspace members can decrypt or modify it.",
         source: 'stripe'
       }
     }
@@ -285,13 +317,39 @@ export const getLocalPublicPricingItems = async (): Promise<
       .map(async key => pricingConfigs[key].buildItem())
   )
 
-const getPriceId = (envKey: string): string => {
-  const priceId = process.env[envKey]
+const getPriceId = (
+  envKey: string,
+  env: Partial<NodeJS.ProcessEnv> = process.env
+): string => {
+  const priceId = env[envKey]
   if (priceId == null || priceId === '') {
     throw new Error(`Missing pricing environment variable: ${envKey}`)
   }
   return priceId
 }
+
+export const buildPublicPricingItems = async ({
+  env = process.env,
+  retrievePrice
+}: {
+  env?: Partial<NodeJS.ProcessEnv>
+  retrievePrice: (priceId: string) => Promise<Stripe.Price>
+}): Promise<PublicPricingItem[]> =>
+  Promise.all(
+    publicPricingKeys.map(async key => {
+      const config = pricingConfigs[key]
+      const price =
+        config.envKey == null
+          ? undefined
+          : await retrievePrice(getPriceId(config.envKey, env))
+      const annualPrice =
+        config.annualEnvKey == null
+          ? undefined
+          : await retrievePrice(getPriceId(config.annualEnvKey, env))
+
+      return config.buildItem(price, annualPrice)
+    })
+  )
 
 export const getPublicPricing = async (): Promise<PublicPricingResponse> => {
   if (cachedPricing != null && cachedPricing.expiresAt > Date.now()) {
@@ -299,16 +357,9 @@ export const getPublicPricing = async (): Promise<PublicPricingResponse> => {
   }
 
   try {
-    const items = await Promise.all(
-      publicPricingKeys.map(async key => {
-        const config = pricingConfigs[key]
-        const price =
-          config.envKey == null
-            ? undefined
-            : await getStripe().prices.retrieve(getPriceId(config.envKey))
-        return config.buildItem(price)
-      })
-    )
+    const items = await buildPublicPricingItems({
+      retrievePrice: async priceId => getStripe().prices.retrieve(priceId)
+    })
 
     const value = {
       generatedAt: new Date().toISOString(),

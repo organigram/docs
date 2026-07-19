@@ -1,16 +1,21 @@
 {
-  "generatedAt": "2026-05-31T20:06:27.845Z",
+  "generatedAt": "2026-07-18T19:51:28.969Z",
   "items": [
     {
       "key": "soloMonthly",
       "label": "ID Certificates",
-      "price": "0,89€ / address / month",
+      "price": "1,89€ / address / month",
       "priceKey": "{{price}} / address / month",
       "priceValues": {
-        "price": "0,89€"
+        "price": "1,89€"
+      },
+      "annualPrice": "18,90€ / address / year",
+      "annualPriceKey": "{{price}} / address / year",
+      "annualPriceValues": {
+        "price": "18,90€"
       },
       "details": "Minimum amount charged monthly to keep a certification active. This allows to generate advanced e-signatures tied to a user's wallet.",
-      "source": "documented"
+      "source": "stripe"
     },
     {
       "key": "sponsoredTransactions",
@@ -22,7 +27,7 @@
         "minimumAmount": "0.01€"
       },
       "details": "Only the gas actually used is charged when sponsoring transactions, including relayer costs, processing fees and price fluctuations. Price is in Euro at currency rates updated every minute, with a minimum of 0.01€.",
-      "source": "documented"
+      "source": "stripe_usage"
     },
     {
       "key": "signatures",
@@ -32,19 +37,24 @@
       "priceValues": {
         "price": "0,89€"
       },
-      "details": "Advanced signatures for legally binding actions included in both Certified Solo and Certified Entity plans.",
-      "source": "documented"
+      "details": "Advanced digital signatures with qualified certificates for signing legally binding actions that require high proof security.",
+      "source": "stripe"
     },
     {
       "key": "storage",
-      "label": "Certified storage (above 1GB)",
+      "label": "Certified storage (1GB free)",
       "price": "0,89€ / GB / month",
       "priceKey": "{{price}} / GB / month",
       "priceValues": {
         "price": "0,89€"
       },
-      "details": "Certified encrypted storage above 1GB is charged monthly for both organizations and personal workspaces.",
-      "source": "documented"
+      "annualPrice": "8,90€ / GB / year",
+      "annualPriceKey": "{{price}} / GB / year",
+      "annualPriceValues": {
+        "price": "8,90€"
+      },
+      "details": "Certified encrypted storage above 1GB is charged monthly for both organizations and personal workspaces. Data is timestamped, versioned, encrypted with keys derived from workspace members' wallets and pinned to a decentralized storage network. Your data is always backed up publicly and only workspace members can decrypt or modify it.",
+      "source": "stripe"
     },
     {
       "key": "aiUsage",
