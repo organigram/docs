@@ -77,9 +77,9 @@ Account, profile, and privacy operations for the current signed-in user.
 | `updatePrivacySettings` | Session required | Persists the current user privacy settings. |
 | `getUserContacts` | Session required | Returns the contacts linked to the current user. |
 | `getNotificationPreferences` | Session required | Loads the notification preferences attached to the current user. |
-| `requestNotificationEmailVerification` | Session required | Sends a verification code before persisting a notification email address. |
-| `updateNotificationPreferences` | Session required | Persists notification email settings for the current user. |
-| `verifyNotificationEmailCode` | Session required | Validates a notification email verification code for the current user. |
+| `requestNotificationEmailVerification` | Session required | Sends a verification code before persisting the account email address. |
+| `updateNotificationPreferences` | Session required | Persists notification event email toggles for the current user. |
+| `verifyNotificationEmailCode` | Session required | Validates an account email verification code for the current user. |
 
 
 <span id="route_apiworkspace"></span>
@@ -109,6 +109,7 @@ Workspace reads and mutations, including membership and ownership changes.
 | `editUserRoleInWorkspace` | Session required | Changes a member role inside a workspace. |
 | `getWorkspaceUserEntries` | Session required | Lists workspace member entry identities with encrypted profile content references only. |
 | `transferWorkspaceOwnership` | Session required | Transfers workspace ownership to an organization. |
+| `enableGoogleWorkspaceAccessForWorkspace` | Session required | Allows users from a verified Google Workspace tenant to access a workspace. |
 
 
 <span id="route_apiorganigram"></span>
@@ -286,7 +287,7 @@ Answers questions about a workspace and can return additive organigram previews.
 | Operation | Trigger | Auth | Description |
 | --- | --- | --- | --- |
 | `ask workspace agent` |   | Session with workspace access required | Builds a safe workspace snapshot, persists the exchange in a workspace thread, and asks the configured inference service for a structured answer. |
-| `list workspace agent threads` |   | Session with workspace access required | Lists persisted workspace agent conversations for the workspace. |
+| `list workspace agent threads` |   | Session with workspace access required | Lists persisted workspace agent conversations for the signed-in user across workspaces. |
 | `record workspace agent thread` |   | Session with workspace access required | Stores a workspace agent conversation created by another surface, such as the home hero. |
 
 

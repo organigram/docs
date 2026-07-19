@@ -1,0 +1,355 @@
+export const metadata = { title: "🤖 Agent", order: 5.5 }
+
+# Agent reference 🤖
+
+The official TypeScript documentation for the Organigram workspace agent primitives.
+
+
+## @organigram/agent
+
+### Install
+
+```bash
+pnpm add @organigram/agent
+```
+
+### Quick start
+
+```ts
+import { buildPrompt, normalizeResponse } from '@organigram/agent'
+```
+
+### Classes
+
+
+
+### Interfaces
+
+
+
+### Types
+
+- [AgentRequest](/docs/reference/agent#type_AgentRequest)
+- [AgentResponse](/docs/reference/agent#type_AgentResponse)
+- [AiModelUsage](/docs/reference/agent#type_AiModelUsage)
+- [Citation](/docs/reference/agent#type_Citation)
+- [Context](/docs/reference/agent#type_Context)
+- [File_2](/docs/reference/agent#type_File_2)
+- [MergeOrganigramPreview](/docs/reference/agent#type_MergeOrganigramPreview)
+- [Message](/docs/reference/agent#type_Message)
+- [NewOrganigramPreview](/docs/reference/agent#type_NewOrganigramPreview)
+- [Notification_2](/docs/reference/agent#type_Notification_2)
+- [OrganigramPreview](/docs/reference/agent#type_OrganigramPreview)
+- [RecordThreadRequest](/docs/reference/agent#type_RecordThreadRequest)
+- [StoredMessage](/docs/reference/agent#type_StoredMessage)
+- [Thread](/docs/reference/agent#type_Thread)
+- [ThreadSource](/docs/reference/agent#type_ThreadSource)
+- [ThreadsResponse](/docs/reference/agent#type_ThreadsResponse)
+- [ThreadWorkspace](/docs/reference/agent#type_ThreadWorkspace)
+- [UploadedDocument](/docs/reference/agent#type_UploadedDocument)
+- [Workspace](/docs/reference/agent#type_Workspace)
+
+### Enums
+
+
+
+### Functions
+
+- [buildPrompt](/docs/reference/agent#function_buildPrompt)
+- [buildSnapshot](/docs/reference/agent#function_buildSnapshot)
+- [extractModelUsage](/docs/reference/agent#function_extractModelUsage)
+- [extractTextFromUploadedDocument](/docs/reference/agent#function_extractTextFromUploadedDocument)
+- [isDocxDocument](/docs/reference/agent#function_isDocxDocument)
+- [isMessage](/docs/reference/agent#function_isMessage)
+- [isPdfDocument](/docs/reference/agent#function_isPdfDocument)
+- [normalizeResponse](/docs/reference/agent#function_normalizeResponse)
+
+
+## Utility functions
+
+## function ++dnt++buildPrompt
+
+```typescript
+buildPrompt: (input: {
+    messages: Message[];
+    context: Context;
+}) => string
+```
+
+
+## function ++dnt++buildSnapshot
+
+```typescript
+buildSnapshot: (context: Context) => Record<string, unknown>
+```
+
+
+## function ++dnt++extractModelUsage
+
+```typescript
+extractModelUsage: (input: {
+    payload: unknown;
+    prompt: string;
+    completion: string;
+    provider: string;
+    model: string;
+}) => AiModelUsage
+```
+
+
+## function ++dnt++extractTextFromUploadedDocument
+
+```typescript
+extractTextFromUploadedDocument: (file: UploadedDocument) => Promise<string>
+```
+
+
+## function ++dnt++isDocxDocument
+
+```typescript
+isDocxDocument: (file: Pick<UploadedDocument, "name" | "type">) => boolean
+```
+
+
+## function ++dnt++isMessage
+
+```typescript
+isMessage: (value: unknown) => value is Message
+```
+
+
+## function ++dnt++isPdfDocument
+
+```typescript
+isPdfDocument: (file: Pick<UploadedDocument, "name" | "type">) => boolean
+```
+
+
+## function ++dnt++normalizeResponse
+
+```typescript
+normalizeResponse: (input: unknown, context: Context) => AgentResponse
+```
+
+
+## type ++dnt++AgentRequest
+
+```typescript
+export type AgentRequest = {
+    threadId?: string | null;
+    message?: string;
+    messages?: Message[];
+    currentOrganigramId?: string | null;
+    source?: ThreadSource;
+};
+```
+
+
+## type ++dnt++AgentResponse
+
+```typescript
+export type AgentResponse = {
+    threadId?: string;
+    message: string;
+    citations: Citation[];
+    preview?: OrganigramPreview;
+};
+```
+
+
+## type ++dnt++AiModelUsage
+
+```typescript
+export type AiModelUsage = {
+    provider: string;
+    model: string;
+    inputTokens: number;
+    cachedInputTokens: number;
+    outputTokens: number;
+    totalTokens: number;
+    estimatedTokens: boolean;
+};
+```
+
+
+## type ++dnt++Citation
+
+```typescript
+export type Citation = {
+    type: 'workspace' | 'organigram' | 'organ' | 'procedure' | 'asset' | 'notification' | 'file';
+    id: string;
+    label: string;
+};
+```
+
+
+## type ++dnt++Context
+
+```typescript
+export type Context = {
+    workspace: Workspace;
+    files: File[];
+    notifications: Notification[];
+    currentOrganigram: OrganigramJson | null;
+};
+```
+
+
+## type ++dnt++File_2
+
+```typescript
+export type File = {
+    cid: string;
+    name?: string | null;
+};
+```
+
+
+## type ++dnt++MergeOrganigramPreview
+
+```typescript
+export type MergeOrganigramPreview = {
+    type: 'organigram';
+    organigramId: string;
+    persistence: 'merge-additive';
+    summary: string[];
+    organigram: OrganigramJson;
+};
+```
+
+
+## type ++dnt++Message
+
+```typescript
+export type Message = {
+    role: 'user' | 'assistant';
+    content: string;
+};
+```
+
+
+## type ++dnt++NewOrganigramPreview
+
+```typescript
+export type NewOrganigramPreview = {
+    type: 'new-organigram';
+    persistence: 'create';
+    summary: string[];
+    organigram: OrganigramJson;
+};
+```
+
+
+## type ++dnt++Notification_2
+
+```typescript
+export type Notification = {
+    id: string;
+    type: string;
+    title?: string | null;
+    body?: string | null;
+    href?: string | null;
+    createdAt: Date | string;
+};
+```
+
+
+## type ++dnt++OrganigramPreview
+
+```typescript
+export type OrganigramPreview = MergeOrganigramPreview | NewOrganigramPreview;
+```
+
+
+## type ++dnt++RecordThreadRequest
+
+```typescript
+export type RecordThreadRequest = {
+    action: 'recordThread';
+    source: ThreadSource;
+    userMessage: string;
+    assistantMessage: string;
+    currentOrganigramId?: string | null;
+};
+```
+
+
+## type ++dnt++StoredMessage
+
+```typescript
+export type StoredMessage = Message & {
+    id: string;
+    createdAt: string;
+    response?: AgentResponse;
+};
+```
+
+
+## type ++dnt++Thread
+
+```typescript
+export type Thread = {
+    id: string;
+    title: string;
+    source: ThreadSource;
+    workspace?: ThreadWorkspace | null;
+    currentOrganigramId?: string | null;
+    createdAt: string;
+    updatedAt: string;
+    messages: StoredMessage[];
+};
+```
+
+
+## type ++dnt++ThreadSource
+
+```typescript
+export type ThreadSource = 'workspace' | 'hero';
+```
+
+
+## type ++dnt++ThreadsResponse
+
+```typescript
+export type ThreadsResponse = {
+    threads: Thread[];
+};
+```
+
+
+## type ++dnt++ThreadWorkspace
+
+```typescript
+export type ThreadWorkspace = {
+    id: string;
+    name?: string | null;
+};
+```
+
+
+## type ++dnt++UploadedDocument
+
+```typescript
+export type UploadedDocument = Pick<File, 'name' | 'type' | 'arrayBuffer' | 'text'>;
+```
+
+
+## type ++dnt++Workspace
+
+```typescript
+export type Workspace = {
+    id: string;
+    slug: string;
+    name?: string | null;
+    description?: string | null;
+    admins: string[];
+    ownerUserAddress?: string | null;
+    ownerOrganizationId?: string | null;
+    ownerOrganization?: {
+        id?: string | null;
+    } | null;
+    organigrams: OrganigramInput[];
+};
+```
+
+

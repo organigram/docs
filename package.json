@@ -6,7 +6,7 @@
   "type": "module",
   "scripts": {
     "generate:docs-modules": "env-cmd --silent tsx scripts/generateDocsModules.ts",
-    "generate:pricing-module": "env-cmd --silent tsx scripts/generatePricingModule.ts",
+    "generate:pricing-module": "env-cmd --silent -f ../../.env tsx scripts/generatePricingModule.ts",
     "generate:rest-api": "env-cmd --silent tsx scripts/generateRestApiDocs.ts",
     "docs:generate": "pnpm generate:docs-modules && pnpm generate:rest-api && pnpm generate:pricing-module",
     "linkcheck": "find mdx -name '*.mdx' -print0 | xargs -0 -n1 markdown-link-check --quiet",
@@ -28,6 +28,8 @@
   "devDependencies": {
     "@code-hike/mdx": "^0.9.0",
     "@mdx-js/loader": "^3.1.1",
+    "@microsoft/api-documenter": "^7.25.9",
+    "@microsoft/api-extractor": "^7.47.4",
     "@mui/icons-material": "^5.18.0",
     "@mui/material": "^5.18.0",
     "@mui/x-tree-view": "^7.29.10",
@@ -48,7 +50,7 @@
     "stripe": "^16.12.0",
     "tsx": "^4.21.0",
     "typescript": "^5.9.3",
-    "viem": "^2.18.2"
+    "viem": "2.55.2"
   },
   "exports": {
     ".": "./index.ts",
@@ -59,6 +61,7 @@
     "./components/PricingTable": "./components/PricingTable.tsx",
     "./components/*": "./components/*",
     "./lib/*": "./lib/*",
+    "./lib/showcases/organigramSas": "./lib/showcases/organigramSas.ts",
     "./modules": "./lib/modules.ts",
     "./pricing": "./lib/pricing.ts",
     "./server": "./lib/server.ts",

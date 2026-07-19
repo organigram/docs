@@ -1,0 +1,641 @@
+export const metadata = { title: "🫆 Passkey Wallet", order: 5.4 }
+
+# Passkey Wallet reference 🫆
+
+The official TypeScript documentation for the Organigram Passkey Wallet primitives.
+
+
+## @organigram/passkey-wallet
+
+### Install
+
+```bash
+pnpm add @organigram/passkey-wallet
+```
+
+### Quick start
+
+```ts
+import { buildPasskeyWalletCapabilities } from '@organigram/passkey-wallet'
+```
+
+### Classes
+
+- [PasskeyPrfUnavailableError](/docs/reference/passkey-wallet#class_PasskeyPrfUnavailableError)
+- [PasskeyVaultDecryptError](/docs/reference/passkey-wallet#class_PasskeyVaultDecryptError)
+
+### Interfaces
+
+
+
+### Types
+
+- [CreateOrganigramPasskeyWalletInput](/docs/reference/passkey-wallet#type_CreateOrganigramPasskeyWalletInput)
+- [IdentityPasskeyCapabilities](/docs/reference/passkey-wallet#type_IdentityPasskeyCapabilities)
+- [OrganigramPasskeyCapabilities](/docs/reference/passkey-wallet#type_OrganigramPasskeyCapabilities)
+- [OrganigramPasskeyProvider](/docs/reference/passkey-wallet#type_OrganigramPasskeyProvider)
+- [OrganigramPasskeyProviderActions](/docs/reference/passkey-wallet#type_OrganigramPasskeyProviderActions)
+- [PasskeyProviderEvent](/docs/reference/passkey-wallet#type_PasskeyProviderEvent)
+- [PasskeyProviderListener](/docs/reference/passkey-wallet#type_PasskeyProviderListener)
+- [PasskeyRegistrationResult](/docs/reference/passkey-wallet#type_PasskeyRegistrationResult)
+- [PasskeyVaultEnvelopeData](/docs/reference/passkey-wallet#type_PasskeyVaultEnvelopeData)
+- [PasskeyVaultEnvelopeInput](/docs/reference/passkey-wallet#type_PasskeyVaultEnvelopeInput)
+- [PasskeyWalletApiClient](/docs/reference/passkey-wallet#type_PasskeyWalletApiClient)
+- [PasskeyWalletCapabilities](/docs/reference/passkey-wallet#type_PasskeyWalletCapabilities)
+- [PasskeyWalletLoginCapabilities](/docs/reference/passkey-wallet#type_PasskeyWalletLoginCapabilities)
+- [PasskeyWalletRegistrationCapabilities](/docs/reference/passkey-wallet#type_PasskeyWalletRegistrationCapabilities)
+- [PasskeyWalletVaultPayload](/docs/reference/passkey-wallet#type_PasskeyWalletVaultPayload)
+- [UnlockedPasskeyWallet](/docs/reference/passkey-wallet#type_UnlockedPasskeyWallet)
+
+### Enums
+
+
+
+### Functions
+
+- [base64UrlToBytes](/docs/reference/passkey-wallet#function_base64UrlToBytes)
+- [buildEmailPasskeyCapabilities](/docs/reference/passkey-wallet#function_buildEmailPasskeyCapabilities)
+- [buildIdentityPasskeyCapabilities](/docs/reference/passkey-wallet#function_buildIdentityPasskeyCapabilities)
+- [buildPasskeyWalletCapabilities](/docs/reference/passkey-wallet#function_buildPasskeyWalletCapabilities)
+- [bytesToBase64Url](/docs/reference/passkey-wallet#function_bytesToBase64Url)
+- [createFetchPasskeyWalletApiClient](/docs/reference/passkey-wallet#function_createFetchPasskeyWalletApiClient)
+- [createNewPasskeyWalletVault](/docs/reference/passkey-wallet#function_createNewPasskeyWalletVault)
+- [createOrganigramPasskeyWallet](/docs/reference/passkey-wallet#function_createOrganigramPasskeyWallet)
+- [createPasskeyAuthenticationOptions](/docs/reference/passkey-wallet#function_createPasskeyAuthenticationOptions)
+- [createPasskeyChallengeExpiry](/docs/reference/passkey-wallet#function_createPasskeyChallengeExpiry)
+- [createPasskeyRegistrationOptions](/docs/reference/passkey-wallet#function_createPasskeyRegistrationOptions)
+- [createPasskeyWalletProvider](/docs/reference/passkey-wallet#function_createPasskeyWalletProvider)
+- [createPasskeyWalletVaultPayload](/docs/reference/passkey-wallet#function_createPasskeyWalletVaultPayload)
+- [createUnlockedPasskeyWallet](/docs/reference/passkey-wallet#function_createUnlockedPasskeyWallet)
+- [decryptPasskeyVaultSecret](/docs/reference/passkey-wallet#function_decryptPasskeyVaultSecret)
+- [derivePasskeyVaultKey](/docs/reference/passkey-wallet#function_derivePasskeyVaultKey)
+- [encryptPasskeyVaultSecret](/docs/reference/passkey-wallet#function_encryptPasskeyVaultSecret)
+- [exportPasskeyWalletRecoveryPhrase](/docs/reference/passkey-wallet#function_exportPasskeyWalletRecoveryPhrase)
+- [getWebAuthnClientDataChallenge](/docs/reference/passkey-wallet#function_getWebAuthnClientDataChallenge)
+- [hydratePasskeyPrfOptions](/docs/reference/passkey-wallet#function_hydratePasskeyPrfOptions)
+- [isOrganigramPasskeyConnector](/docs/reference/passkey-wallet#function_isOrganigramPasskeyConnector)
+- [isPasskeyPrfSupported](/docs/reference/passkey-wallet#function_isPasskeyPrfSupported)
+- [normalizePasskeyWalletAddress](/docs/reference/passkey-wallet#function_normalizePasskeyWalletAddress)
+- [parsePasskeyWalletVaultPayload](/docs/reference/passkey-wallet#function_parsePasskeyWalletVaultPayload)
+- [registerAdditionalPasskeyCredential](/docs/reference/passkey-wallet#function_registerAdditionalPasskeyCredential)
+- [registerPasskeyCredentialEnvelope](/docs/reference/passkey-wallet#function_registerPasskeyCredentialEnvelope)
+- [registerPasskeyWallet](/docs/reference/passkey-wallet#function_registerPasskeyWallet)
+- [serializePasskeyWalletVaultPayload](/docs/reference/passkey-wallet#function_serializePasskeyWalletVaultPayload)
+- [toPasskeyVaultEnvelopeData](/docs/reference/passkey-wallet#function_toPasskeyVaultEnvelopeData)
+- [unlockOrCreatePasskeyWallet](/docs/reference/passkey-wallet#function_unlockOrCreatePasskeyWallet)
+- [unlockPasskeyWallet](/docs/reference/passkey-wallet#function_unlockPasskeyWallet)
+- [validatePasskeyVaultEnvelopeInput](/docs/reference/passkey-wallet#function_validatePasskeyVaultEnvelopeInput)
+- [verifyPasskeyAuthentication](/docs/reference/passkey-wallet#function_verifyPasskeyAuthentication)
+- [verifyPasskeyRegistration](/docs/reference/passkey-wallet#function_verifyPasskeyRegistration)
+
+
+## Utility functions
+
+## function ++dnt++base64UrlToBytes
+
+```typescript
+base64UrlToBytes: (value: string) => Uint8Array
+```
+
+
+## function ++dnt++buildEmailPasskeyCapabilities
+
+```typescript
+buildEmailPasskeyCapabilities: (email: string) => IdentityPasskeyCapabilities
+```
+
+
+## function ++dnt++buildIdentityPasskeyCapabilities
+
+```typescript
+buildIdentityPasskeyCapabilities: (email: string) => IdentityPasskeyCapabilities
+```
+
+
+## function ++dnt++buildPasskeyWalletCapabilities
+
+```typescript
+buildPasskeyWalletCapabilities: () => PasskeyWalletCapabilities
+```
+
+
+## function ++dnt++bytesToBase64Url
+
+```typescript
+bytesToBase64Url: (bytes: Uint8Array) => string
+```
+
+
+## function ++dnt++createFetchPasskeyWalletApiClient
+
+```typescript
+createFetchPasskeyWalletApiClient: (basePath?: string) => PasskeyWalletApiClient
+```
+
+
+## function ++dnt++createNewPasskeyWalletVault
+
+```typescript
+createNewPasskeyWalletVault: (input: {
+    capabilities: OrganigramPasskeyCapabilities;
+}) => Promise<{
+    address: `0x${string}`;
+    vaultPayload: PasskeyWalletVaultPayload;
+}>
+```
+
+
+## function ++dnt++createOrganigramPasskeyWallet
+
+```typescript
+createOrganigramPasskeyWallet: (input: CreateOrganigramPasskeyWalletInput) => Wallet
+```
+
+
+## function ++dnt++createPasskeyAuthenticationOptions
+
+```typescript
+createPasskeyAuthenticationOptions: (input: {
+    rpId: string;
+    credentials?: Array<{
+        credentialId: string;
+        transports: string[];
+    }>;
+}) => Promise<import("@simplewebauthn/server").PublicKeyCredentialRequestOptionsJSON>
+```
+
+
+## function ++dnt++createPasskeyChallengeExpiry
+
+```typescript
+createPasskeyChallengeExpiry: () => Date
+```
+
+
+## function ++dnt++createPasskeyRegistrationOptions
+
+```typescript
+createPasskeyRegistrationOptions: (input: {
+    rpId: string;
+    userAddress?: string | null;
+    email?: string | null;
+}) => Promise<import("@simplewebauthn/server").PublicKeyCredentialCreationOptionsJSON>
+```
+
+
+## function ++dnt++createPasskeyWalletProvider
+
+```typescript
+createPasskeyWalletProvider: (input: {
+    wallet: UnlockedPasskeyWallet;
+    chain: Chain;
+    rpcUrl: string;
+    switchChain: (chainId: number) => Chain;
+    actions: OrganigramPasskeyProviderActions;
+}) => OrganigramPasskeyProvider
+```
+
+
+## function ++dnt++createPasskeyWalletVaultPayload
+
+```typescript
+createPasskeyWalletVaultPayload: (recoveryPhrase: string) => Promise<PasskeyWalletVaultPayload>
+```
+
+
+## function ++dnt++createUnlockedPasskeyWallet
+
+```typescript
+createUnlockedPasskeyWallet: (input: {
+    address: `0x${string}`;
+    credentialId: string;
+    vaultPayload: PasskeyWalletVaultPayload;
+    now?: number;
+}) => UnlockedPasskeyWallet
+```
+
+
+## function ++dnt++decryptPasskeyVaultSecret
+
+```typescript
+decryptPasskeyVaultSecret: (input: DecryptPasskeyVaultSecretInput) => Promise<string>
+```
+
+
+## function ++dnt++derivePasskeyVaultKey
+
+```typescript
+derivePasskeyVaultKey: (input: DerivePasskeyVaultKeyInput) => Promise<CryptoKey>
+```
+
+
+## function ++dnt++encryptPasskeyVaultSecret
+
+```typescript
+encryptPasskeyVaultSecret: (input: EncryptPasskeyVaultSecretInput) => Promise<PasskeyVaultEnvelopeData>
+```
+
+
+## function ++dnt++exportPasskeyWalletRecoveryPhrase
+
+```typescript
+exportPasskeyWalletRecoveryPhrase: (input: {
+    api: PasskeyWalletApiClient;
+    expectedAddress: `0x${string}`;
+}) => Promise<string>
+```
+
+
+## function ++dnt++getWebAuthnClientDataChallenge
+
+```typescript
+getWebAuthnClientDataChallenge: (response: unknown) => string
+```
+
+
+## function ++dnt++hydratePasskeyPrfOptions
+
+```typescript
+hydratePasskeyPrfOptions: <T extends {
+    extensions?: unknown;
+}>(options: T) => T
+```
+
+
+## function ++dnt++isOrganigramPasskeyConnector
+
+```typescript
+isOrganigramPasskeyConnector: (input: {
+    id: string;
+}) => boolean
+```
+
+
+## function ++dnt++isPasskeyPrfSupported
+
+```typescript
+isPasskeyPrfSupported: (input: {
+    credential: PrfSupportCredential | null;
+}) => Promise<boolean>
+```
+
+
+## function ++dnt++normalizePasskeyWalletAddress
+
+```typescript
+normalizePasskeyWalletAddress: (address: `0x${string}`) => `0x${string}`
+```
+
+
+## function ++dnt++parsePasskeyWalletVaultPayload
+
+```typescript
+parsePasskeyWalletVaultPayload: (plaintext: string) => PasskeyWalletVaultPayload
+```
+
+
+## function ++dnt++registerAdditionalPasskeyCredential
+
+```typescript
+registerAdditionalPasskeyCredential: (input: {
+    api: PasskeyWalletApiClient;
+    wallet: UnlockedPasskeyWallet;
+    name?: string;
+}) => Promise<PasskeyRegistrationResult>
+```
+
+
+## function ++dnt++registerPasskeyCredentialEnvelope
+
+```typescript
+export declare function registerPasskeyCredentialEnvelope(input: {
+    api: PasskeyWalletApiClient;
+    address: `0x${string}`;
+    vaultPayload: PasskeyWalletVaultPayload;
+    email?: string | null;
+    name?: string | null;
+}): Promise<PasskeyRegistrationResult>;
+```
+
+
+## function ++dnt++registerPasskeyWallet
+
+```typescript
+registerPasskeyWallet: (input: {
+    api: PasskeyWalletApiClient;
+    capabilities: OrganigramPasskeyCapabilities;
+}) => Promise<UnlockedPasskeyWallet>
+```
+
+
+## function ++dnt++serializePasskeyWalletVaultPayload
+
+```typescript
+serializePasskeyWalletVaultPayload: (input: Omit<PasskeyWalletVaultPayload, "version">) => string
+```
+
+
+## function ++dnt++toPasskeyVaultEnvelopeData
+
+```typescript
+toPasskeyVaultEnvelopeData: (input: {
+    encryptedMnemonic: string;
+    salt: string;
+    nonce: string;
+    algorithm: string;
+    keyVersion: number;
+}) => PasskeyVaultEnvelopeData
+```
+
+
+## function ++dnt++unlockOrCreatePasskeyWallet
+
+```typescript
+unlockOrCreatePasskeyWallet: (input: {
+    api: PasskeyWalletApiClient;
+    capabilities: OrganigramPasskeyCapabilities;
+    targetChainId: number;
+}) => Promise<UnlockedPasskeyWallet>
+```
+
+
+## function ++dnt++unlockPasskeyWallet
+
+```typescript
+unlockPasskeyWallet: (input: {
+    api: PasskeyWalletApiClient;
+}) => Promise<UnlockedPasskeyWallet | null>
+```
+
+
+## function ++dnt++validatePasskeyVaultEnvelopeInput
+
+```typescript
+validatePasskeyVaultEnvelopeInput: (input: PasskeyVaultEnvelopeInput) => PasskeyVaultEnvelopeInput & {
+    address: `0x${string}`;
+}
+```
+
+
+## function ++dnt++verifyPasskeyAuthentication
+
+```typescript
+verifyPasskeyAuthentication: (input: {
+    response: unknown;
+    expectedChallenge: string;
+    expectedOrigin: string;
+    expectedRpId: string;
+    credential: {
+        credentialId: string;
+        publicKey: string;
+        signCount: number;
+    };
+}) => Promise<Awaited<ReturnType<typeof verifyAuthenticationResponse>>>
+```
+
+
+## function ++dnt++verifyPasskeyRegistration
+
+```typescript
+verifyPasskeyRegistration: (input: {
+    response: unknown;
+    expectedChallenge: string;
+    expectedOrigin: string;
+    expectedRpId: string;
+    envelope: PasskeyVaultEnvelopeInput;
+}) => Promise<{
+    verification: VerifiedPasskeyRegistrationResponse;
+    vaultEnvelope: PasskeyVaultEnvelopeInput & {
+        address: `0x${string}`;
+    };
+}>
+```
+
+
+## class ++dnt++PasskeyPrfUnavailableError
+
+### Constructors
+
+#### ++dnt++constructor
+
+Constructs a new instance of the `PasskeyPrfUnavailableError` class
+
+```typescript
+constructor(message?: string);
+```
+
+
+
+## class ++dnt++PasskeyVaultDecryptError
+
+### Constructors
+
+#### ++dnt++constructor
+
+Constructs a new instance of the `PasskeyVaultDecryptError` class
+
+```typescript
+constructor(message?: string);
+```
+
+
+
+## type ++dnt++CreateOrganigramPasskeyWalletInput
+
+```typescript
+export type CreateOrganigramPasskeyWalletInput = OrganigramPasskeyProviderActions & {
+    unlockOrCreatePasskeyWallet: (input: {
+        capabilities: OrganigramPasskeyCapabilities;
+        targetChainId: number;
+    }) => Promise<UnlockedPasskeyWallet>;
+};
+```
+
+
+## type ++dnt++IdentityPasskeyCapabilities
+
+```typescript
+export type IdentityPasskeyCapabilities = PasskeyWalletRegistrationCapabilities & {
+    identity: {
+        email: string;
+    };
+};
+```
+
+
+## type ++dnt++OrganigramPasskeyCapabilities
+
+```typescript
+export type OrganigramPasskeyCapabilities = {
+    method?: 'login' | 'register';
+    name?: string;
+    identity?: {
+        email: string;
+    };
+};
+```
+
+
+## type ++dnt++OrganigramPasskeyProvider
+
+```typescript
+export type OrganigramPasskeyProvider = {
+    request: EIP1193RequestFn;
+    on: (event: PasskeyProviderEvent, listener: PasskeyProviderListener) => void;
+    removeListener: (event: PasskeyProviderEvent, listener: PasskeyProviderListener) => void;
+};
+```
+
+
+## type ++dnt++OrganigramPasskeyProviderActions
+
+```typescript
+export type OrganigramPasskeyProviderActions = {
+    registerAdditionalPasskeyCredential: (input: {
+        wallet: UnlockedPasskeyWallet;
+        name?: string;
+    }) => Promise<PasskeyRegistrationResult>;
+    exportPasskeyWalletRecoveryPhrase: (input: {
+        expectedAddress: `0x${string}`;
+    }) => Promise<string>;
+};
+```
+
+
+## type ++dnt++PasskeyProviderEvent
+
+```typescript
+export type PasskeyProviderEvent = 'accountsChanged' | 'chainChanged' | 'disconnect';
+```
+
+
+## type ++dnt++PasskeyProviderListener
+
+```typescript
+export type PasskeyProviderListener = (...args: unknown[]) => void;
+```
+
+
+## type ++dnt++PasskeyRegistrationResult
+
+```typescript
+export type PasskeyRegistrationResult = {
+    address: `0x${string}`;
+    credentialId: string;
+};
+```
+
+
+## type ++dnt++PasskeyVaultEnvelopeData
+
+```typescript
+export type PasskeyVaultEnvelopeData = {
+    algorithm: typeof passkeyVaultAlgorithm;
+    keyVersion: typeof passkeyVaultKeyVersion;
+    ciphertext: string;
+    salt: string;
+    nonce: string;
+};
+```
+
+
+## type ++dnt++PasskeyVaultEnvelopeInput
+
+```typescript
+export type PasskeyVaultEnvelopeInput = {
+    address: string;
+    encryptedMnemonic: string;
+    salt: string;
+    nonce: string;
+    algorithm: string;
+    keyVersion: number;
+};
+```
+
+
+## type ++dnt++PasskeyWalletApiClient
+
+```typescript
+export type PasskeyWalletApiClient = {
+    registerOptions: (input: {
+        address: `0x${string}`;
+        email?: string | null;
+        name?: string | null;
+    }) => Promise<PasskeyRegisterOptionsResponse>;
+    registerVerify: (input: {
+        response: unknown;
+        envelope: {
+            address: `0x${string}`;
+            encryptedMnemonic: string;
+            salt: string;
+            nonce: string;
+            algorithm: string;
+            keyVersion: number;
+        };
+    }) => Promise<PasskeyRegistrationResult>;
+    unlockOptions: () => Promise<PasskeyUnlockOptionsResponse>;
+    unlockVerify: (input: {
+        response: unknown;
+    }) => Promise<PasskeyUnlockVerifyResponse>;
+};
+```
+
+
+## type ++dnt++PasskeyWalletCapabilities
+
+```typescript
+export type PasskeyWalletCapabilities = PasskeyWalletLoginCapabilities | PasskeyWalletRegistrationCapabilities;
+```
+
+
+## type ++dnt++PasskeyWalletLoginCapabilities
+
+```typescript
+export type PasskeyWalletLoginCapabilities = {
+    method: 'login';
+};
+```
+
+
+## type ++dnt++PasskeyWalletRegistrationCapabilities
+
+```typescript
+export type PasskeyWalletRegistrationCapabilities = {
+    method: 'register';
+    name: string;
+    identity?: {
+        email: string;
+    };
+};
+```
+
+
+## type ++dnt++PasskeyWalletVaultPayload
+
+```typescript
+export type PasskeyWalletVaultPayload = {
+    version: 1;
+    recoveryPhrase: string;
+    userEncryptionPrivateKey: JsonWebKey;
+    userEncryptionPublicKey: JsonWebKey;
+    userEncryptionKeyVersion: number;
+};
+```
+
+
+## type ++dnt++UnlockedPasskeyWallet
+
+```typescript
+export type UnlockedPasskeyWallet = {
+    address: `0x${string}`;
+    account: HDAccount;
+    recoveryPhrase: string;
+    userEncryptionPrivateKey: JsonWebKey;
+    userEncryptionPublicKey: JsonWebKey;
+    userEncryptionKeyVersion: number;
+    credentialId: string;
+    expiresAt: number;
+};
+```
+
+

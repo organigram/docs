@@ -69,7 +69,6 @@ import { OrganigramClient } from '@organigram/js'
 - [SignedProposalInput](/docs/reference/js#interface_SignedProposalInput)
 - [StoredUserEncryptionKeyPair](/docs/reference/js#interface_StoredUserEncryptionKeyPair)
 - [TransactionOptions](/docs/reference/js#interface_TransactionOptions)
-- [UserEncryptionKeyBackup](/docs/reference/js#interface_UserEncryptionKeyBackup)
 - [WrappedContentKey](/docs/reference/js#interface_WrappedContentKey)
 - [WrappedGroupKey](/docs/reference/js#interface_WrappedGroupKey)
 
@@ -137,9 +136,7 @@ import { OrganigramClient } from '@organigram/js'
 - [decryptBytes](/docs/reference/js#function_decryptBytes)
 - [encodeProcedureInitialization](/docs/reference/js#function_encodeProcedureInitialization)
 - [encryptBytes](/docs/reference/js#function_encryptBytes)
-- [ensureUserEncryptionKeyPair](/docs/reference/js#function_ensureUserEncryptionKeyPair)
 - [exportSymmetricKey](/docs/reference/js#function_exportSymmetricKey)
-- [exportUserEncryptionKeyBackup](/docs/reference/js#function_exportUserEncryptionKeyBackup)
 - [exportUserPrivateKey](/docs/reference/js#function_exportUserPrivateKey)
 - [exportUserPublicKey](/docs/reference/js#function_exportUserPublicKey)
 - [formatCidRef](/docs/reference/js#function_formatCidRef)
@@ -167,7 +164,6 @@ import { OrganigramClient } from '@organigram/js'
 - [handleJsonBigInt](/docs/reference/js#function_handleJsonBigInt)
 - [importExtractableUserPublicKey](/docs/reference/js#function_importExtractableUserPublicKey)
 - [importSymmetricKey](/docs/reference/js#function_importSymmetricKey)
-- [importUserEncryptionKeyBackup](/docs/reference/js#function_importUserEncryptionKeyBackup)
 - [importUserPrivateKey](/docs/reference/js#function_importUserPrivateKey)
 - [importUserPublicKey](/docs/reference/js#function_importUserPublicKey)
 - [isCidRef](/docs/reference/js#function_isCidRef)
@@ -178,7 +174,6 @@ import { OrganigramClient } from '@organigram/js'
 - [isScopeEnvelopeManifest](/docs/reference/js#function_isScopeEnvelopeManifest)
 - [isSupportedChainId](/docs/reference/js#function_isSupportedChainId)
 - [isValidEncryptionKeyVersion](/docs/reference/js#function_isValidEncryptionKeyVersion)
-- [loadUserEncryptionKeyPair](/docs/reference/js#function_loadUserEncryptionKeyPair)
 - [normalizeEncryptionKeyVersion](/docs/reference/js#function_normalizeEncryptionKeyVersion)
 - [normalizeOrganigramEdgeType](/docs/reference/js#function_normalizeOrganigramEdgeType)
 - [normalizeOrganigramNodePositions](/docs/reference/js#function_normalizeOrganigramNodePositions)
@@ -191,7 +186,6 @@ import { OrganigramClient } from '@organigram/js'
 - [prepareDeployProceduresInput](/docs/reference/js#function_prepareDeployProceduresInput)
 - [renewSaltsAndAddresses](/docs/reference/js#function_renewSaltsAndAddresses)
 - [resolveDeployment](/docs/reference/js#function_resolveDeployment)
-- [saveUserEncryptionKeyPair](/docs/reference/js#function_saveUserEncryptionKeyPair)
 - [sha256Hex](/docs/reference/js#function_sha256Hex)
 - [stableStringify](/docs/reference/js#function_stableStringify)
 - [textToBytes](/docs/reference/js#function_textToBytes)
@@ -475,24 +469,10 @@ encryptBytes: (bytes: ArrayBuffer | Uint8Array, key: CryptoKey) => Promise<{
 ```
 
 
-## function ++dnt++ensureUserEncryptionKeyPair
-
-```typescript
-ensureUserEncryptionKeyPair: (address: string) => Promise<StoredUserEncryptionKeyPair>
-```
-
-
 ## function ++dnt++exportSymmetricKey
 
 ```typescript
 exportSymmetricKey: (key: CryptoKey) => Promise<Uint8Array>
-```
-
-
-## function ++dnt++exportUserEncryptionKeyBackup
-
-```typescript
-exportUserEncryptionKeyBackup: (address: string, passphrase: string) => Promise<UserEncryptionKeyBackup>
 ```
 
 
@@ -886,13 +866,6 @@ importSymmetricKey: (rawKey: ArrayBuffer | Uint8Array) => Promise<CryptoKey>
 ```
 
 
-## function ++dnt++importUserEncryptionKeyBackup
-
-```typescript
-importUserEncryptionKeyBackup: (backup: UserEncryptionKeyBackup, passphrase: string) => Promise<StoredUserEncryptionKeyPair>
-```
-
-
 ## function ++dnt++importUserPrivateKey
 
 ```typescript
@@ -960,13 +933,6 @@ isSupportedChainId: (chainId: string | number | bigint | null | undefined) => bo
 
 ```typescript
 isValidEncryptionKeyVersion: (keyVersion: number) => boolean
-```
-
-
-## function ++dnt++loadUserEncryptionKeyPair
-
-```typescript
-loadUserEncryptionKeyPair: (address: string) => Promise<StoredUserEncryptionKeyPair | null>
 ```
 
 
@@ -1069,13 +1035,6 @@ renewSaltsAndAddresses: (organigram: OrganigramInput, chainId: string) => Organi
 
 ```typescript
 resolveDeployment: (chainId: string | number | bigint | null | undefined, deploymentName: ProtocolDeploymentName) => string | undefined
-```
-
-
-## function ++dnt++saveUserEncryptionKeyPair
-
-```typescript
-saveUserEncryptionKeyPair: (address: string, value: StoredUserEncryptionKeyPair) => Promise<void>
 ```
 
 
@@ -4756,59 +4715,6 @@ nonce?: number;
 
 ```typescript
 onTransaction?: (tx: OrganigramTransaction, description: string) => void;
-```
-
-
-
-## interface ++dnt++UserEncryptionKeyBackup
-
-### Properties
-
-#### ++dnt++UserEncryptionKeyBackup.address
-
-```typescript
-address: string;
-```
-
-
-#### ++dnt++UserEncryptionKeyBackup.createdAt
-
-```typescript
-createdAt: string;
-```
-
-
-#### ++dnt++UserEncryptionKeyBackup.keyVersion
-
-```typescript
-keyVersion: number;
-```
-
-
-#### ++dnt++UserEncryptionKeyBackup.kind
-
-```typescript
-kind: typeof USER_ENCRYPTION_KEY_BACKUP_KIND;
-```
-
-
-#### ++dnt++UserEncryptionKeyBackup.privateKey
-
-```typescript
-privateKey: {
-        algorithm: 'PBKDF2-SHA256+A256GCM';
-        iterations: number;
-        salt: string;
-        iv: string;
-        ciphertext: string;
-    };
-```
-
-
-#### ++dnt++UserEncryptionKeyBackup.publicKey
-
-```typescript
-publicKey: JsonWebKey;
 ```
 
 

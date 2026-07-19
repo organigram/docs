@@ -107,6 +107,7 @@ import { Diagram, useOrganigramClient } from '@organigram/react'
 - [StoredMessage](/docs/reference/react#type_StoredMessage)
 - [Thread](/docs/reference/react#type_Thread)
 - [ThreadSource](/docs/reference/react#type_ThreadSource)
+- [ThreadWorkspace](/docs/reference/react#type_ThreadWorkspace)
 
 ### Namespaces
 
@@ -138,8 +139,10 @@ export const AgentPanel: React.FC<{
   input: string
   loading: boolean
   error: string | null
+  documentName: string | null
   onInputChange: (value: string) => void
   onInputKeyDown: (event: KeyboardEvent<HTMLDivElement>) => void
+  onDocumentChange: (file: File | null) => void
   onSubmit: (event: FormEvent<HTMLFormElement>) => void
   onConfirmPreview: (preview: OrganigramPreview, messageIndex: number) => void
   onCancelPreview: (messageIndex: number) => void
@@ -1094,6 +1097,9 @@ export type PanelLabels = PreviewLabels & {
   noConversationsYet: string
   thinking: string
   askPlaceholder: string
+  attachDocument: string
+  selectedDocument: string
+  removeDocument: string
   sourceHero: string
   sourceWorkspace: string
 }
@@ -1206,6 +1212,7 @@ export type Thread = {
   id: string
   title: string
   source: ThreadSource
+  workspace?: ThreadWorkspace | null
   currentOrganigramId?: string | null
   createdAt: string
   updatedAt: string
@@ -1219,6 +1226,17 @@ export type Thread = {
 
 ```tsx
 export type ThreadSource = 'workspace' | 'hero'
+```
+
+
+
+### type ++dnt++ThreadWorkspace
+
+```tsx
+export type ThreadWorkspace = {
+  id: string
+  name?: string | null
+}
 ```
 
 
