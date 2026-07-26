@@ -129,7 +129,7 @@ const referenceConfigBySlug: Record<
       'The official TypeScript documentation for the Organigram Passkey Wallet primitives.',
     quickStartTitle: 'Quick start',
     quickStartLanguage: 'ts',
-    quickStartImport: `import { buildPasskeyWalletCapabilities } from '${packageName}'`
+    quickStartImport: `import { registerBrowserPasskeyVault } from '${packageName}/browser-wallet'`
   },
   agent: {
     title: '🤖 Agent',

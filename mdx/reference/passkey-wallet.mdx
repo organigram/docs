@@ -16,7 +16,7 @@ pnpm add @organigram/passkey-wallet
 ### Quick start
 
 ```ts
-import { buildPasskeyWalletCapabilities } from '@organigram/passkey-wallet'
+import { registerBrowserPasskeyVault } from '@organigram/passkey-wallet/browser-wallet'
 ```
 
 ### Classes
@@ -30,22 +30,51 @@ import { buildPasskeyWalletCapabilities } from '@organigram/passkey-wallet'
 
 ### Types
 
-- [CreateOrganigramPasskeyWalletInput](/docs/reference/passkey-wallet#type_CreateOrganigramPasskeyWalletInput)
-- [IdentityPasskeyCapabilities](/docs/reference/passkey-wallet#type_IdentityPasskeyCapabilities)
-- [OrganigramPasskeyCapabilities](/docs/reference/passkey-wallet#type_OrganigramPasskeyCapabilities)
-- [OrganigramPasskeyProvider](/docs/reference/passkey-wallet#type_OrganigramPasskeyProvider)
-- [OrganigramPasskeyProviderActions](/docs/reference/passkey-wallet#type_OrganigramPasskeyProviderActions)
+- [AuthorizePasskeyWalletCredentialsInput](/docs/reference/passkey-wallet#type_AuthorizePasskeyWalletCredentialsInput)
+- [BrowserPasskeyWalletVaultPayload](/docs/reference/passkey-wallet#type_BrowserPasskeyWalletVaultPayload)
+- [CreateOrganigramRemotePasskeyWalletInput](/docs/reference/passkey-wallet#type_CreateOrganigramRemotePasskeyWalletInput)
+- [HydrateOrganigramRemoteWalletConnectionConnector](/docs/reference/passkey-wallet#type_HydrateOrganigramRemoteWalletConnectionConnector)
+- [HydrateOrganigramRemoteWalletConnectionInput](/docs/reference/passkey-wallet#type_HydrateOrganigramRemoteWalletConnectionInput)
+- [HydrateOrganigramRemoteWalletConnectionOptions](/docs/reference/passkey-wallet#type_HydrateOrganigramRemoteWalletConnectionOptions)
+- [OrganigramRemotePasskeyWalletConnection](/docs/reference/passkey-wallet#type_OrganigramRemotePasskeyWalletConnection)
 - [PasskeyProviderEvent](/docs/reference/passkey-wallet#type_PasskeyProviderEvent)
 - [PasskeyProviderListener](/docs/reference/passkey-wallet#type_PasskeyProviderListener)
 - [PasskeyRegistrationResult](/docs/reference/passkey-wallet#type_PasskeyRegistrationResult)
 - [PasskeyVaultEnvelopeData](/docs/reference/passkey-wallet#type_PasskeyVaultEnvelopeData)
-- [PasskeyVaultEnvelopeInput](/docs/reference/passkey-wallet#type_PasskeyVaultEnvelopeInput)
-- [PasskeyWalletApiClient](/docs/reference/passkey-wallet#type_PasskeyWalletApiClient)
-- [PasskeyWalletCapabilities](/docs/reference/passkey-wallet#type_PasskeyWalletCapabilities)
-- [PasskeyWalletLoginCapabilities](/docs/reference/passkey-wallet#type_PasskeyWalletLoginCapabilities)
-- [PasskeyWalletRegistrationCapabilities](/docs/reference/passkey-wallet#type_PasskeyWalletRegistrationCapabilities)
+- [PasskeyWalletChallenge](/docs/reference/passkey-wallet#type_PasskeyWalletChallenge)
+- [PasskeyWalletConnectPopupInput](/docs/reference/passkey-wallet#type_PasskeyWalletConnectPopupInput)
+- [PasskeyWalletConnectRequest](/docs/reference/passkey-wallet#type_PasskeyWalletConnectRequest)
+- [PasskeyWalletConnectResult](/docs/reference/passkey-wallet#type_PasskeyWalletConnectResult)
+- [PasskeyWalletDisconnectRequest](/docs/reference/passkey-wallet#type_PasskeyWalletDisconnectRequest)
+- [PasskeyWalletErrorResult](/docs/reference/passkey-wallet#type_PasskeyWalletErrorResult)
+- [PasskeyWalletManifest](/docs/reference/passkey-wallet#type_PasskeyWalletManifest)
+- [PasskeyWalletNextAuthCredentials](/docs/reference/passkey-wallet#type_PasskeyWalletNextAuthCredentials)
+- [PasskeyWalletPopupInput](/docs/reference/passkey-wallet#type_PasskeyWalletPopupInput)
+- [PasskeyWalletRemotePopupInput](/docs/reference/passkey-wallet#type_PasskeyWalletRemotePopupInput)
+- [PasskeyWalletRemoteRequest](/docs/reference/passkey-wallet#type_PasskeyWalletRemoteRequest)
+- [PasskeyWalletRemoteRequestType](/docs/reference/passkey-wallet#type_PasskeyWalletRemoteRequestType)
+- [PasskeyWalletRemoteResult](/docs/reference/passkey-wallet#type_PasskeyWalletRemoteResult)
+- [PasskeyWalletSignInRequest](/docs/reference/passkey-wallet#type_PasskeyWalletSignInRequest)
+- [PasskeyWalletSignInResult](/docs/reference/passkey-wallet#type_PasskeyWalletSignInResult)
+- [PasskeyWalletSignMessagePopupInput](/docs/reference/passkey-wallet#type_PasskeyWalletSignMessagePopupInput)
+- [PasskeyWalletSignMessageRequest](/docs/reference/passkey-wallet#type_PasskeyWalletSignMessageRequest)
+- [PasskeyWalletSignMessageResult](/docs/reference/passkey-wallet#type_PasskeyWalletSignMessageResult)
 - [PasskeyWalletVaultPayload](/docs/reference/passkey-wallet#type_PasskeyWalletVaultPayload)
+- [PasskeyWalletVerifiedSiwe](/docs/reference/passkey-wallet#type_PasskeyWalletVerifiedSiwe)
+- [PasskeyWalletVerifySiweInput](/docs/reference/passkey-wallet#type_PasskeyWalletVerifySiweInput)
+- [RemoteVaultBackupPackage](/docs/reference/passkey-wallet#type_RemoteVaultBackupPackage)
+- [RemoteVaultBackupRecord](/docs/reference/passkey-wallet#type_RemoteVaultBackupRecord)
+- [SignInWithPasskeyWalletInput](/docs/reference/passkey-wallet#type_SignInWithPasskeyWalletInput)
+- [StoredVaultAccount](/docs/reference/passkey-wallet#type_StoredVaultAccount)
+- [StoredVaultRecord](/docs/reference/passkey-wallet#type_StoredVaultRecord)
 - [UnlockedPasskeyWallet](/docs/reference/passkey-wallet#type_UnlockedPasskeyWallet)
+- [VaultRegistry](/docs/reference/passkey-wallet#type_VaultRegistry)
+- [VaultRegistryGroup](/docs/reference/passkey-wallet#type_VaultRegistryGroup)
+- [WalletDecryptedFile](/docs/reference/passkey-wallet#type_WalletDecryptedFile)
+- [WalletEncryptedFilePackage](/docs/reference/passkey-wallet#type_WalletEncryptedFilePackage)
+- [WalletEncryptionKeyPairPayload](/docs/reference/passkey-wallet#type_WalletEncryptionKeyPairPayload)
+- [WalletEncryptionPublicKeySiweResource](/docs/reference/passkey-wallet#type_WalletEncryptionPublicKeySiweResource)
+- [WalletGroup](/docs/reference/passkey-wallet#type_WalletGroup)
 
 ### Enums
 
@@ -53,43 +82,125 @@ import { buildPasskeyWalletCapabilities } from '@organigram/passkey-wallet'
 
 ### Functions
 
+- [addAccountToVaultRecords](/docs/reference/passkey-wallet#function_addAccountToVaultRecords)
+- [assertSignInDomainMatches](/docs/reference/passkey-wallet#function_assertSignInDomainMatches)
+- [authorizePasskeyWalletCredentials](/docs/reference/passkey-wallet#function_authorizePasskeyWalletCredentials)
 - [base64UrlToBytes](/docs/reference/passkey-wallet#function_base64UrlToBytes)
-- [buildEmailPasskeyCapabilities](/docs/reference/passkey-wallet#function_buildEmailPasskeyCapabilities)
-- [buildIdentityPasskeyCapabilities](/docs/reference/passkey-wallet#function_buildIdentityPasskeyCapabilities)
-- [buildPasskeyWalletCapabilities](/docs/reference/passkey-wallet#function_buildPasskeyWalletCapabilities)
+- [buildPasskeyWalletDisconnectUrl](/docs/reference/passkey-wallet#function_buildPasskeyWalletDisconnectUrl)
+- [buildPasskeyWalletPopupUrl](/docs/reference/passkey-wallet#function_buildPasskeyWalletPopupUrl)
+- [buildPasskeyWalletRemotePopupUrl](/docs/reference/passkey-wallet#function_buildPasskeyWalletRemotePopupUrl)
+- [buildPasskeyWalletSignInPopupUrl](/docs/reference/passkey-wallet#function_buildPasskeyWalletSignInPopupUrl)
 - [bytesToBase64Url](/docs/reference/passkey-wallet#function_bytesToBase64Url)
-- [createFetchPasskeyWalletApiClient](/docs/reference/passkey-wallet#function_createFetchPasskeyWalletApiClient)
+- [clearOrganigramRemotePasskeyWalletConnection](/docs/reference/passkey-wallet#function_clearOrganigramRemotePasskeyWalletConnection)
+- [createBrowserPasskeyWalletVaultPayload](/docs/reference/passkey-wallet#function_createBrowserPasskeyWalletVaultPayload)
+- [createGeneratedRecoveryPhrase](/docs/reference/passkey-wallet#function_createGeneratedRecoveryPhrase)
 - [createNewPasskeyWalletVault](/docs/reference/passkey-wallet#function_createNewPasskeyWalletVault)
-- [createOrganigramPasskeyWallet](/docs/reference/passkey-wallet#function_createOrganigramPasskeyWallet)
-- [createPasskeyAuthenticationOptions](/docs/reference/passkey-wallet#function_createPasskeyAuthenticationOptions)
-- [createPasskeyChallengeExpiry](/docs/reference/passkey-wallet#function_createPasskeyChallengeExpiry)
-- [createPasskeyRegistrationOptions](/docs/reference/passkey-wallet#function_createPasskeyRegistrationOptions)
-- [createPasskeyWalletProvider](/docs/reference/passkey-wallet#function_createPasskeyWalletProvider)
+- [createOrganigramRemotePasskeyWallet](/docs/reference/passkey-wallet#function_createOrganigramRemotePasskeyWallet)
+- [createPasskeyWalletChallenge](/docs/reference/passkey-wallet#function_createPasskeyWalletChallenge)
+- [createPasskeyWalletManifest](/docs/reference/passkey-wallet#function_createPasskeyWalletManifest)
 - [createPasskeyWalletVaultPayload](/docs/reference/passkey-wallet#function_createPasskeyWalletVaultPayload)
+- [createRemoteVaultBackupPackage](/docs/reference/passkey-wallet#function_createRemoteVaultBackupPackage)
+- [createRemoteVaultBackupRecord](/docs/reference/passkey-wallet#function_createRemoteVaultBackupRecord)
 - [createUnlockedPasskeyWallet](/docs/reference/passkey-wallet#function_createUnlockedPasskeyWallet)
+- [createVaultBackupDigest](/docs/reference/passkey-wallet#function_createVaultBackupDigest)
+- [createVaultBackupSignatureMessage](/docs/reference/passkey-wallet#function_createVaultBackupSignatureMessage)
+- [createVaultRegistry](/docs/reference/passkey-wallet#function_createVaultRegistry)
+- [createWalletEncryptionKeyPair](/docs/reference/passkey-wallet#function_createWalletEncryptionKeyPair)
+- [createWalletEncryptionPublicKeySiweResource](/docs/reference/passkey-wallet#function_createWalletEncryptionPublicKeySiweResource)
+- [decryptFileWithWalletEncryptionKey](/docs/reference/passkey-wallet#function_decryptFileWithWalletEncryptionKey)
 - [decryptPasskeyVaultSecret](/docs/reference/passkey-wallet#function_decryptPasskeyVaultSecret)
+- [decryptRemoteVaultBackupRecord](/docs/reference/passkey-wallet#function_decryptRemoteVaultBackupRecord)
 - [derivePasskeyVaultKey](/docs/reference/passkey-wallet#function_derivePasskeyVaultKey)
+- [derivePasskeyWalletAccount](/docs/reference/passkey-wallet#function_derivePasskeyWalletAccount)
+- [deriveStoredVaultAccount](/docs/reference/passkey-wallet#function_deriveStoredVaultAccount)
+- [encryptFileWithWalletEncryptionKey](/docs/reference/passkey-wallet#function_encryptFileWithWalletEncryptionKey)
 - [encryptPasskeyVaultSecret](/docs/reference/passkey-wallet#function_encryptPasskeyVaultSecret)
-- [exportPasskeyWalletRecoveryPhrase](/docs/reference/passkey-wallet#function_exportPasskeyWalletRecoveryPhrase)
-- [getWebAuthnClientDataChallenge](/docs/reference/passkey-wallet#function_getWebAuthnClientDataChallenge)
-- [hydratePasskeyPrfOptions](/docs/reference/passkey-wallet#function_hydratePasskeyPrfOptions)
-- [isOrganigramPasskeyConnector](/docs/reference/passkey-wallet#function_isOrganigramPasskeyConnector)
+- [formatAddress](/docs/reference/passkey-wallet#function_formatAddress)
+- [formatCredentialId](/docs/reference/passkey-wallet#function_formatCredentialId)
+- [getDerivationPath](/docs/reference/passkey-wallet#function_getDerivationPath)
+- [getDiscoverablePasskeyPrfOutput](/docs/reference/passkey-wallet#function_getDiscoverablePasskeyPrfOutput)
+- [getNextAddressIndex](/docs/reference/passkey-wallet#function_getNextAddressIndex)
+- [getOrganigramRemotePasskeyWalletConnection](/docs/reference/passkey-wallet#function_getOrganigramRemotePasskeyWalletConnection)
+- [getPasskeyWalletCorsAllowedOrigins](/docs/reference/passkey-wallet#function_getPasskeyWalletCorsAllowedOrigins)
+- [getPasskeyWalletCorsOrigin](/docs/reference/passkey-wallet#function_getPasskeyWalletCorsOrigin)
+- [getPasskeyWalletRequestOrigin](/docs/reference/passkey-wallet#function_getPasskeyWalletRequestOrigin)
+- [getVaultAccount](/docs/reference/passkey-wallet#function_getVaultAccount)
+- [getVaultRegistryGroupId](/docs/reference/passkey-wallet#function_getVaultRegistryGroupId)
+- [groupVaultRecordsBySeed](/docs/reference/passkey-wallet#function_groupVaultRecordsBySeed)
+- [groupVaultsByWallet](/docs/reference/passkey-wallet#function_groupVaultsByWallet)
+- [hexEncodeMessage](/docs/reference/passkey-wallet#function_hexEncodeMessage)
+- [hydrateOrganigramRemoteWalletConnection](/docs/reference/passkey-wallet#function_hydrateOrganigramRemoteWalletConnection)
+- [inferPasskeyRpId](/docs/reference/passkey-wallet#function_inferPasskeyRpId)
+- [isHostnameCompatibleWithRpId](/docs/reference/passkey-wallet#function_isHostnameCompatibleWithRpId)
+- [isLocalHostname](/docs/reference/passkey-wallet#function_isLocalHostname)
 - [isPasskeyPrfSupported](/docs/reference/passkey-wallet#function_isPasskeyPrfSupported)
-- [normalizePasskeyWalletAddress](/docs/reference/passkey-wallet#function_normalizePasskeyWalletAddress)
+- [isStoredVaultRecord](/docs/reference/passkey-wallet#function_isStoredVaultRecord)
+- [isWalletSignInOriginAllowed](/docs/reference/passkey-wallet#function_isWalletSignInOriginAllowed)
+- [markVaultRecordUsed](/docs/reference/passkey-wallet#function_markVaultRecordUsed)
+- [mergeVaults](/docs/reference/passkey-wallet#function_mergeVaults)
+- [normalizeBackupAddress](/docs/reference/passkey-wallet#function_normalizeBackupAddress)
+- [normalizeHostname](/docs/reference/passkey-wallet#function_normalizeHostname)
+- [notifyCurrentTabNextAuthSessionChanged](/docs/reference/passkey-wallet#function_notifyCurrentTabNextAuthSessionChanged)
+- [notifyOrganigramRemotePasskeyWalletDisconnect](/docs/reference/passkey-wallet#function_notifyOrganigramRemotePasskeyWalletDisconnect)
+- [parseBrowserPasskeyWalletVaultPayload](/docs/reference/passkey-wallet#function_parseBrowserPasskeyWalletVaultPayload)
+- [parsePasskeyWalletDisconnectRequest](/docs/reference/passkey-wallet#function_parsePasskeyWalletDisconnectRequest)
+- [parsePasskeyWalletRemoteRequest](/docs/reference/passkey-wallet#function_parsePasskeyWalletRemoteRequest)
+- [parsePasskeyWalletSignInRequest](/docs/reference/passkey-wallet#function_parsePasskeyWalletSignInRequest)
 - [parsePasskeyWalletVaultPayload](/docs/reference/passkey-wallet#function_parsePasskeyWalletVaultPayload)
-- [registerAdditionalPasskeyCredential](/docs/reference/passkey-wallet#function_registerAdditionalPasskeyCredential)
-- [registerPasskeyCredentialEnvelope](/docs/reference/passkey-wallet#function_registerPasskeyCredentialEnvelope)
-- [registerPasskeyWallet](/docs/reference/passkey-wallet#function_registerPasskeyWallet)
+- [parseRemoteVaultBackupPackage](/docs/reference/passkey-wallet#function_parseRemoteVaultBackupPackage)
+- [parseVaultRegistry](/docs/reference/passkey-wallet#function_parseVaultRegistry)
+- [parseWalletEncryptedFilePackage](/docs/reference/passkey-wallet#function_parseWalletEncryptedFilePackage)
+- [parseWalletEncryptionKeyPair](/docs/reference/passkey-wallet#function_parseWalletEncryptionKeyPair)
+- [parseWalletEncryptionPublicKeySiweResource](/docs/reference/passkey-wallet#function_parseWalletEncryptionPublicKeySiweResource)
+- [registerAdditionalBrowserPasskeyVault](/docs/reference/passkey-wallet#function_registerAdditionalBrowserPasskeyVault)
+- [registerBrowserPasskeyVault](/docs/reference/passkey-wallet#function_registerBrowserPasskeyVault)
+- [rememberOrganigramRemotePasskeyWalletConnection](/docs/reference/passkey-wallet#function_rememberOrganigramRemotePasskeyWalletConnection)
+- [removeAccountFromVaultRecords](/docs/reference/passkey-wallet#function_removeAccountFromVaultRecords)
+- [removeVaultRecord](/docs/reference/passkey-wallet#function_removeVaultRecord)
+- [removeVaultRecords](/docs/reference/passkey-wallet#function_removeVaultRecords)
+- [requestPasskeyWalletConnect](/docs/reference/passkey-wallet#function_requestPasskeyWalletConnect)
+- [requestPasskeyWalletSignIn](/docs/reference/passkey-wallet#function_requestPasskeyWalletSignIn)
+- [requestPasskeyWalletSignMessage](/docs/reference/passkey-wallet#function_requestPasskeyWalletSignMessage)
+- [resolveSiweDomain](/docs/reference/passkey-wallet#function_resolveSiweDomain)
 - [serializePasskeyWalletVaultPayload](/docs/reference/passkey-wallet#function_serializePasskeyWalletVaultPayload)
-- [toPasskeyVaultEnvelopeData](/docs/reference/passkey-wallet#function_toPasskeyVaultEnvelopeData)
-- [unlockOrCreatePasskeyWallet](/docs/reference/passkey-wallet#function_unlockOrCreatePasskeyWallet)
-- [unlockPasskeyWallet](/docs/reference/passkey-wallet#function_unlockPasskeyWallet)
-- [validatePasskeyVaultEnvelopeInput](/docs/reference/passkey-wallet#function_validatePasskeyVaultEnvelopeInput)
-- [verifyPasskeyAuthentication](/docs/reference/passkey-wallet#function_verifyPasskeyAuthentication)
-- [verifyPasskeyRegistration](/docs/reference/passkey-wallet#function_verifyPasskeyRegistration)
+- [serializeVaultRegistry](/docs/reference/passkey-wallet#function_serializeVaultRegistry)
+- [signInWithPasskeyWallet](/docs/reference/passkey-wallet#function_signInWithPasskeyWallet)
+- [signPersonalMessage](/docs/reference/passkey-wallet#function_signPersonalMessage)
+- [unlockBrowserPasskeyVault](/docs/reference/passkey-wallet#function_unlockBrowserPasskeyVault)
+- [updateStaticPasskeyVaultEncryptionKey](/docs/reference/passkey-wallet#function_updateStaticPasskeyVaultEncryptionKey)
+- [upsertVaultRecord](/docs/reference/passkey-wallet#function_upsertVaultRecord)
+- [validatePasskeyWalletManifest](/docs/reference/passkey-wallet#function_validatePasskeyWalletManifest)
+- [vaultHasAccount](/docs/reference/passkey-wallet#function_vaultHasAccount)
+- [verifyPasskeyWalletSiwe](/docs/reference/passkey-wallet#function_verifyPasskeyWalletSiwe)
+- [withPasskeyWalletCorsHeaders](/docs/reference/passkey-wallet#function_withPasskeyWalletCorsHeaders)
 
 
 ## Utility functions
+
+## function ++dnt++addAccountToVaultRecords
+
+```typescript
+addAccountToVaultRecords: (input: {
+    vaults: StoredVaultRecord[];
+    sourceAddress: `0x${string}`;
+    account: StoredVaultAccount;
+}) => StoredVaultRecord[]
+```
+
+
+## function ++dnt++assertSignInDomainMatches
+
+```typescript
+assertSignInDomainMatches: (message: string, expectedDomain: string) => void
+```
+
+
+## function ++dnt++authorizePasskeyWalletCredentials
+
+```typescript
+authorizePasskeyWalletCredentials: (input: AuthorizePasskeyWalletCredentialsInput) => Promise<PasskeyWalletVerifiedSiwe | null>
+```
+
 
 ## function ++dnt++base64UrlToBytes
 
@@ -98,24 +209,44 @@ base64UrlToBytes: (value: string) => Uint8Array
 ```
 
 
-## function ++dnt++buildEmailPasskeyCapabilities
+## function ++dnt++buildPasskeyWalletDisconnectUrl
 
 ```typescript
-buildEmailPasskeyCapabilities: (email: string) => IdentityPasskeyCapabilities
+buildPasskeyWalletDisconnectUrl: (input: PasskeyWalletRemotePopupInput & {
+    address: `0x${string}`;
+}) => URL
 ```
 
 
-## function ++dnt++buildIdentityPasskeyCapabilities
+## function ++dnt++buildPasskeyWalletPopupUrl
 
 ```typescript
-buildIdentityPasskeyCapabilities: (email: string) => IdentityPasskeyCapabilities
+buildPasskeyWalletPopupUrl: (input: {
+    walletOrigin: string;
+    domain: string;
+    challengeUrl: string;
+    requestId?: string;
+    requestedAt?: string;
+    returnUrl?: string;
+}) => URL
 ```
 
 
-## function ++dnt++buildPasskeyWalletCapabilities
+## function ++dnt++buildPasskeyWalletRemotePopupUrl
 
 ```typescript
-buildPasskeyWalletCapabilities: () => PasskeyWalletCapabilities
+buildPasskeyWalletRemotePopupUrl: (input: PasskeyWalletRemotePopupInput & {
+    type: PasskeyWalletRemoteRequestType;
+    address?: `0x${string}`;
+    message?: string;
+}) => URL
+```
+
+
+## function ++dnt++buildPasskeyWalletSignInPopupUrl
+
+```typescript
+buildPasskeyWalletSignInPopupUrl: (input: PasskeyWalletPopupInput) => URL
 ```
 
 
@@ -126,73 +257,64 @@ bytesToBase64Url: (bytes: Uint8Array) => string
 ```
 
 
-## function ++dnt++createFetchPasskeyWalletApiClient
+## function ++dnt++clearOrganigramRemotePasskeyWalletConnection
 
 ```typescript
-createFetchPasskeyWalletApiClient: (basePath?: string) => PasskeyWalletApiClient
+clearOrganigramRemotePasskeyWalletConnection: () => void
+```
+
+
+## function ++dnt++createBrowserPasskeyWalletVaultPayload
+
+```typescript
+createBrowserPasskeyWalletVaultPayload: (recoveryPhrase: string) => Promise<BrowserPasskeyWalletVaultPayload>
+```
+
+
+## function ++dnt++createGeneratedRecoveryPhrase
+
+```typescript
+createGeneratedRecoveryPhrase: () => string
 ```
 
 
 ## function ++dnt++createNewPasskeyWalletVault
 
 ```typescript
-createNewPasskeyWalletVault: (input: {
-    capabilities: OrganigramPasskeyCapabilities;
-}) => Promise<{
+createNewPasskeyWalletVault: () => Promise<{
     address: `0x${string}`;
     vaultPayload: PasskeyWalletVaultPayload;
 }>
 ```
 
 
-## function ++dnt++createOrganigramPasskeyWallet
+## function ++dnt++createOrganigramRemotePasskeyWallet
 
 ```typescript
-createOrganigramPasskeyWallet: (input: CreateOrganigramPasskeyWalletInput) => Wallet
+createOrganigramRemotePasskeyWallet: (input?: CreateOrganigramRemotePasskeyWalletInput) => Wallet
 ```
 
 
-## function ++dnt++createPasskeyAuthenticationOptions
+## function ++dnt++createPasskeyWalletChallenge
 
 ```typescript
-createPasskeyAuthenticationOptions: (input: {
-    rpId: string;
-    credentials?: Array<{
-        credentialId: string;
-        transports: string[];
-    }>;
-}) => Promise<import("@simplewebauthn/server").PublicKeyCredentialRequestOptionsJSON>
+createPasskeyWalletChallenge: (input: {
+    request: Request;
+    address: `0x${string}`;
+    chainId: number;
+    encryptionPublicKeyResource?: string;
+    nonce?: string;
+    now?: Date;
+    statement?: string;
+    uri?: string;
+}) => PasskeyWalletChallenge
 ```
 
 
-## function ++dnt++createPasskeyChallengeExpiry
+## function ++dnt++createPasskeyWalletManifest
 
 ```typescript
-createPasskeyChallengeExpiry: () => Date
-```
-
-
-## function ++dnt++createPasskeyRegistrationOptions
-
-```typescript
-createPasskeyRegistrationOptions: (input: {
-    rpId: string;
-    userAddress?: string | null;
-    email?: string | null;
-}) => Promise<import("@simplewebauthn/server").PublicKeyCredentialCreationOptionsJSON>
-```
-
-
-## function ++dnt++createPasskeyWalletProvider
-
-```typescript
-createPasskeyWalletProvider: (input: {
-    wallet: UnlockedPasskeyWallet;
-    chain: Chain;
-    rpcUrl: string;
-    switchChain: (chainId: number) => Chain;
-    actions: OrganigramPasskeyProviderActions;
-}) => OrganigramPasskeyProvider
+createPasskeyWalletManifest: (request: Request) => PasskeyWalletManifest
 ```
 
 
@@ -200,6 +322,27 @@ createPasskeyWalletProvider: (input: {
 
 ```typescript
 createPasskeyWalletVaultPayload: (recoveryPhrase: string) => Promise<PasskeyWalletVaultPayload>
+```
+
+
+## function ++dnt++createRemoteVaultBackupPackage
+
+```typescript
+createRemoteVaultBackupPackage: (input: {
+    address: `0x${string}`;
+    backups: RemoteVaultBackupRecord[];
+}) => RemoteVaultBackupPackage
+```
+
+
+## function ++dnt++createRemoteVaultBackupRecord
+
+```typescript
+createRemoteVaultBackupRecord: (input: {
+    address: `0x${string}`;
+    record: StoredVaultRecord;
+    prfOutput: Uint8Array;
+}) => Promise<RemoteVaultBackupRecord>
 ```
 
 
@@ -215,10 +358,73 @@ createUnlockedPasskeyWallet: (input: {
 ```
 
 
+## function ++dnt++createVaultBackupDigest
+
+```typescript
+createVaultBackupDigest: (backups: RemoteVaultBackupRecord[]) => Promise<string>
+```
+
+
+## function ++dnt++createVaultBackupSignatureMessage
+
+```typescript
+createVaultBackupSignatureMessage: (input: {
+    address: `0x${string}`;
+    vaultCount: number;
+    digest: string;
+}) => string
+```
+
+
+## function ++dnt++createVaultRegistry
+
+```typescript
+createVaultRegistry: (vaults: StoredVaultRecord[]) => VaultRegistry
+```
+
+
+## function ++dnt++createWalletEncryptionKeyPair
+
+```typescript
+createWalletEncryptionKeyPair: () => Promise<WalletEncryptionKeyPairPayload>
+```
+
+
+## function ++dnt++createWalletEncryptionPublicKeySiweResource
+
+```typescript
+createWalletEncryptionPublicKeySiweResource: (input: {
+    address: `0x${string}`;
+    keyPair: WalletEncryptionKeyPairPayload;
+}) => string
+```
+
+
+## function ++dnt++decryptFileWithWalletEncryptionKey
+
+```typescript
+decryptFileWithWalletEncryptionKey: (input: {
+    encryptedPackage: WalletEncryptedFilePackage;
+    keyPair: WalletEncryptionKeyPairPayload;
+}) => Promise<WalletDecryptedFile>
+```
+
+
 ## function ++dnt++decryptPasskeyVaultSecret
 
 ```typescript
 decryptPasskeyVaultSecret: (input: DecryptPasskeyVaultSecretInput) => Promise<string>
+```
+
+
+## function ++dnt++decryptRemoteVaultBackupRecord
+
+```typescript
+decryptRemoteVaultBackupRecord: (input: {
+    address: `0x${string}`;
+    backup: RemoteVaultBackupRecord;
+    prfOutput: Uint8Array;
+}) => Promise<StoredVaultRecord>
 ```
 
 
@@ -229,6 +435,38 @@ derivePasskeyVaultKey: (input: DerivePasskeyVaultKeyInput) => Promise<CryptoKey>
 ```
 
 
+## function ++dnt++derivePasskeyWalletAccount
+
+```typescript
+derivePasskeyWalletAccount: (input: {
+    wallet: UnlockedPasskeyWallet;
+    account: StoredVaultAccount;
+}) => UnlockedPasskeyWallet
+```
+
+
+## function ++dnt++deriveStoredVaultAccount
+
+```typescript
+deriveStoredVaultAccount: (input: {
+    recoveryPhrase: string;
+    addressIndex: number;
+    name: string;
+}) => StoredVaultAccount
+```
+
+
+## function ++dnt++encryptFileWithWalletEncryptionKey
+
+```typescript
+encryptFileWithWalletEncryptionKey: (input: {
+    address: `0x${string}`;
+    file: File;
+    keyPair: WalletEncryptionKeyPairPayload;
+}) => Promise<WalletEncryptedFilePackage>
+```
+
+
 ## function ++dnt++encryptPasskeyVaultSecret
 
 ```typescript
@@ -236,38 +474,142 @@ encryptPasskeyVaultSecret: (input: EncryptPasskeyVaultSecretInput) => Promise<Pa
 ```
 
 
-## function ++dnt++exportPasskeyWalletRecoveryPhrase
+## function ++dnt++formatAddress
 
 ```typescript
-exportPasskeyWalletRecoveryPhrase: (input: {
-    api: PasskeyWalletApiClient;
-    expectedAddress: `0x${string}`;
-}) => Promise<string>
+formatAddress: (address: string) => string
 ```
 
 
-## function ++dnt++getWebAuthnClientDataChallenge
+## function ++dnt++formatCredentialId
 
 ```typescript
-getWebAuthnClientDataChallenge: (response: unknown) => string
+formatCredentialId: (credentialId: string) => string
 ```
 
 
-## function ++dnt++hydratePasskeyPrfOptions
+## function ++dnt++getDerivationPath
 
 ```typescript
-hydratePasskeyPrfOptions: <T extends {
-    extensions?: unknown;
-}>(options: T) => T
+getDerivationPath: (addressIndex: number) => string
 ```
 
 
-## function ++dnt++isOrganigramPasskeyConnector
+## function ++dnt++getDiscoverablePasskeyPrfOutput
 
 ```typescript
-isOrganigramPasskeyConnector: (input: {
-    id: string;
+getDiscoverablePasskeyPrfOutput: (input?: {
+    rpId?: string;
+}) => Promise<Uint8Array>
+```
+
+
+## function ++dnt++getNextAddressIndex
+
+```typescript
+getNextAddressIndex: (records: StoredVaultRecord[]) => number
+```
+
+
+## function ++dnt++getOrganigramRemotePasskeyWalletConnection
+
+```typescript
+getOrganigramRemotePasskeyWalletConnection: () => OrganigramRemotePasskeyWalletConnection | null
+```
+
+
+## function ++dnt++getPasskeyWalletCorsAllowedOrigins
+
+```typescript
+getPasskeyWalletCorsAllowedOrigins: (input: {
+    request: Request;
+    walletUrl?: string;
+    allowedOrigins?: string;
+}) => string[]
+```
+
+
+## function ++dnt++getPasskeyWalletCorsOrigin
+
+```typescript
+getPasskeyWalletCorsOrigin: (input: {
+    request: Request;
+    walletUrl?: string;
+    allowedOrigins?: string;
+}) => string | null
+```
+
+
+## function ++dnt++getPasskeyWalletRequestOrigin
+
+```typescript
+getPasskeyWalletRequestOrigin: (request: Request) => string
+```
+
+
+## function ++dnt++getVaultAccount
+
+```typescript
+getVaultAccount: (vault: StoredVaultRecord, address: string) => StoredVaultAccount | null
+```
+
+
+## function ++dnt++getVaultRegistryGroupId
+
+```typescript
+getVaultRegistryGroupId: (vault: StoredVaultRecord) => string
+```
+
+
+## function ++dnt++groupVaultRecordsBySeed
+
+```typescript
+groupVaultRecordsBySeed: (vaults: StoredVaultRecord[]) => VaultRegistryGroup[]
+```
+
+
+## function ++dnt++groupVaultsByWallet
+
+```typescript
+groupVaultsByWallet: (vaults: StoredVaultRecord[]) => WalletGroup[]
+```
+
+
+## function ++dnt++hexEncodeMessage
+
+```typescript
+hexEncodeMessage: (message: string) => `0x${string}`
+```
+
+
+## function ++dnt++hydrateOrganigramRemoteWalletConnection
+
+```typescript
+hydrateOrganigramRemoteWalletConnection: <TConnector extends HydrateOrganigramRemoteWalletConnectionConnector>(input: HydrateOrganigramRemoteWalletConnectionOptions<TConnector>) => Promise<void>
+```
+
+
+## function ++dnt++inferPasskeyRpId
+
+```typescript
+inferPasskeyRpId: (hostname?: string) => string
+```
+
+
+## function ++dnt++isHostnameCompatibleWithRpId
+
+```typescript
+isHostnameCompatibleWithRpId: (input: {
+    hostname: string;
+    rpId: string;
 }) => boolean
+```
+
+
+## function ++dnt++isLocalHostname
+
+```typescript
+isLocalHostname: (hostname: string) => boolean
 ```
 
 
@@ -280,10 +622,95 @@ isPasskeyPrfSupported: (input: {
 ```
 
 
-## function ++dnt++normalizePasskeyWalletAddress
+## function ++dnt++isStoredVaultRecord
 
 ```typescript
-normalizePasskeyWalletAddress: (address: `0x${string}`) => `0x${string}`
+isStoredVaultRecord: (value: unknown) => value is StoredVaultRecord
+```
+
+
+## function ++dnt++isWalletSignInOriginAllowed
+
+```typescript
+isWalletSignInOriginAllowed: (origin: string, allowedOrigins: readonly string[]) => boolean
+```
+
+
+## function ++dnt++markVaultRecordUsed
+
+```typescript
+markVaultRecordUsed: (input: {
+    vaults: StoredVaultRecord[];
+    credentialId: string;
+    usedAt?: string;
+}) => StoredVaultRecord[]
+```
+
+
+## function ++dnt++mergeVaults
+
+```typescript
+mergeVaults: (localVaults: StoredVaultRecord[], importedVaults: StoredVaultRecord[]) => StoredVaultRecord[]
+```
+
+
+## function ++dnt++normalizeBackupAddress
+
+```typescript
+normalizeBackupAddress: (value: string) => `0x${string}`
+```
+
+
+## function ++dnt++normalizeHostname
+
+```typescript
+normalizeHostname: (hostname: unknown) => string
+```
+
+
+## function ++dnt++notifyCurrentTabNextAuthSessionChanged
+
+```typescript
+notifyCurrentTabNextAuthSessionChanged: () => void
+```
+
+
+## function ++dnt++notifyOrganigramRemotePasskeyWalletDisconnect
+
+```typescript
+notifyOrganigramRemotePasskeyWalletDisconnect: (input: {
+    walletOrigin?: string;
+    address: `0x${string}`;
+    chainId: number;
+}) => void
+```
+
+
+## function ++dnt++parseBrowserPasskeyWalletVaultPayload
+
+```typescript
+parseBrowserPasskeyWalletVaultPayload: (plaintext: string) => BrowserPasskeyWalletVaultPayload
+```
+
+
+## function ++dnt++parsePasskeyWalletDisconnectRequest
+
+```typescript
+parsePasskeyWalletDisconnectRequest: (params: URLSearchParams) => PasskeyWalletDisconnectRequest
+```
+
+
+## function ++dnt++parsePasskeyWalletRemoteRequest
+
+```typescript
+parsePasskeyWalletRemoteRequest: (params: URLSearchParams) => PasskeyWalletRemoteRequest
+```
+
+
+## function ++dnt++parsePasskeyWalletSignInRequest
+
+```typescript
+parsePasskeyWalletSignInRequest: (params: URLSearchParams) => PasskeyWalletSignInRequest
 ```
 
 
@@ -294,37 +721,146 @@ parsePasskeyWalletVaultPayload: (plaintext: string) => PasskeyWalletVaultPayload
 ```
 
 
-## function ++dnt++registerAdditionalPasskeyCredential
+## function ++dnt++parseRemoteVaultBackupPackage
 
 ```typescript
-registerAdditionalPasskeyCredential: (input: {
-    api: PasskeyWalletApiClient;
+parseRemoteVaultBackupPackage: (value: unknown) => RemoteVaultBackupPackage
+```
+
+
+## function ++dnt++parseVaultRegistry
+
+```typescript
+parseVaultRegistry: (value: unknown) => VaultRegistry
+```
+
+
+## function ++dnt++parseWalletEncryptedFilePackage
+
+```typescript
+parseWalletEncryptedFilePackage: (value: unknown) => WalletEncryptedFilePackage
+```
+
+
+## function ++dnt++parseWalletEncryptionKeyPair
+
+```typescript
+parseWalletEncryptionKeyPair: (value: unknown) => WalletEncryptionKeyPairPayload
+```
+
+
+## function ++dnt++parseWalletEncryptionPublicKeySiweResource
+
+```typescript
+parseWalletEncryptionPublicKeySiweResource: (input: {
+    address: string;
+    resources: string[] | undefined;
+}) => WalletEncryptionPublicKeySiweResource | null
+```
+
+
+## function ++dnt++registerAdditionalBrowserPasskeyVault
+
+```typescript
+registerAdditionalBrowserPasskeyVault: (input: {
     wallet: UnlockedPasskeyWallet;
-    name?: string;
-}) => Promise<PasskeyRegistrationResult>
+    name: string;
+    accounts: StoredVaultAccount[];
+    rpId?: string;
+    rpName?: string;
+}) => Promise<{
+    record: StoredVaultRecord;
+    wallet: UnlockedPasskeyWallet;
+}>
 ```
 
 
-## function ++dnt++registerPasskeyCredentialEnvelope
+## function ++dnt++registerBrowserPasskeyVault
 
 ```typescript
-export declare function registerPasskeyCredentialEnvelope(input: {
-    api: PasskeyWalletApiClient;
+registerBrowserPasskeyVault: (input: {
+    recoveryPhrase: string;
+    name: string;
+    rpId?: string;
+    rpName?: string;
+}) => Promise<{
+    record: StoredVaultRecord;
+    wallet: UnlockedPasskeyWallet;
+}>
+```
+
+
+## function ++dnt++rememberOrganigramRemotePasskeyWalletConnection
+
+```typescript
+rememberOrganigramRemotePasskeyWalletConnection: (input: {
     address: `0x${string}`;
-    vaultPayload: PasskeyWalletVaultPayload;
-    email?: string | null;
-    name?: string | null;
-}): Promise<PasskeyRegistrationResult>;
+    chainId: number;
+}) => void
 ```
 
 
-## function ++dnt++registerPasskeyWallet
+## function ++dnt++removeAccountFromVaultRecords
 
 ```typescript
-registerPasskeyWallet: (input: {
-    api: PasskeyWalletApiClient;
-    capabilities: OrganigramPasskeyCapabilities;
-}) => Promise<UnlockedPasskeyWallet>
+removeAccountFromVaultRecords: (input: {
+    vaults: StoredVaultRecord[];
+    address: `0x${string}`;
+}) => StoredVaultRecord[]
+```
+
+
+## function ++dnt++removeVaultRecord
+
+```typescript
+removeVaultRecord: (input: {
+    vaults: StoredVaultRecord[];
+    credentialId: string;
+}) => StoredVaultRecord[]
+```
+
+
+## function ++dnt++removeVaultRecords
+
+```typescript
+removeVaultRecords: (input: {
+    vaults: StoredVaultRecord[];
+    credentialIds: Set<string>;
+}) => StoredVaultRecord[]
+```
+
+
+## function ++dnt++requestPasskeyWalletConnect
+
+```typescript
+requestPasskeyWalletConnect: (input: PasskeyWalletConnectPopupInput & {
+    timeoutMs?: number;
+}) => Promise<PasskeyWalletConnectResult>
+```
+
+
+## function ++dnt++requestPasskeyWalletSignIn
+
+```typescript
+requestPasskeyWalletSignIn: (input: PasskeyWalletPopupInput & {
+    timeoutMs?: number;
+}) => Promise<PasskeyWalletSignInResult>
+```
+
+
+## function ++dnt++requestPasskeyWalletSignMessage
+
+```typescript
+requestPasskeyWalletSignMessage: (input: PasskeyWalletSignMessagePopupInput & {
+    timeoutMs?: number;
+}) => Promise<PasskeyWalletSignMessageResult>
+```
+
+
+## function ++dnt++resolveSiweDomain
+
+```typescript
+resolveSiweDomain: (message: string) => string
 ```
 
 
@@ -335,80 +871,99 @@ serializePasskeyWalletVaultPayload: (input: Omit<PasskeyWalletVaultPayload, "ver
 ```
 
 
-## function ++dnt++toPasskeyVaultEnvelopeData
+## function ++dnt++serializeVaultRegistry
 
 ```typescript
-toPasskeyVaultEnvelopeData: (input: {
-    encryptedMnemonic: string;
-    salt: string;
-    nonce: string;
-    algorithm: string;
-    keyVersion: number;
-}) => PasskeyVaultEnvelopeData
+serializeVaultRegistry: (vaults: StoredVaultRecord[], space?: number) => string
 ```
 
 
-## function ++dnt++unlockOrCreatePasskeyWallet
+## function ++dnt++signInWithPasskeyWallet
 
 ```typescript
-unlockOrCreatePasskeyWallet: (input: {
-    api: PasskeyWalletApiClient;
-    capabilities: OrganigramPasskeyCapabilities;
-    targetChainId: number;
-}) => Promise<UnlockedPasskeyWallet>
+signInWithPasskeyWallet: (input: SignInWithPasskeyWalletInput) => Promise<PasskeyWalletSignInResult>
 ```
 
 
-## function ++dnt++unlockPasskeyWallet
+## function ++dnt++signPersonalMessage
 
 ```typescript
-unlockPasskeyWallet: (input: {
-    api: PasskeyWalletApiClient;
-}) => Promise<UnlockedPasskeyWallet | null>
+signPersonalMessage: (input: {
+    wallet: UnlockedPasskeyWallet;
+    message: string;
+}) => Promise<`0x${string}`>
 ```
 
 
-## function ++dnt++validatePasskeyVaultEnvelopeInput
+## function ++dnt++unlockBrowserPasskeyVault
 
 ```typescript
-validatePasskeyVaultEnvelopeInput: (input: PasskeyVaultEnvelopeInput) => PasskeyVaultEnvelopeInput & {
-    address: `0x${string}`;
-}
-```
-
-
-## function ++dnt++verifyPasskeyAuthentication
-
-```typescript
-verifyPasskeyAuthentication: (input: {
-    response: unknown;
-    expectedChallenge: string;
-    expectedOrigin: string;
-    expectedRpId: string;
-    credential: {
-        credentialId: string;
-        publicKey: string;
-        signCount: number;
-    };
-}) => Promise<Awaited<ReturnType<typeof verifyAuthenticationResponse>>>
-```
-
-
-## function ++dnt++verifyPasskeyRegistration
-
-```typescript
-verifyPasskeyRegistration: (input: {
-    response: unknown;
-    expectedChallenge: string;
-    expectedOrigin: string;
-    expectedRpId: string;
-    envelope: PasskeyVaultEnvelopeInput;
+unlockBrowserPasskeyVault: (input: {
+    records: StoredVaultRecord[];
+    rpId?: string;
 }) => Promise<{
-    verification: VerifiedPasskeyRegistrationResponse;
-    vaultEnvelope: PasskeyVaultEnvelopeInput & {
-        address: `0x${string}`;
-    };
+    record: StoredVaultRecord;
+    wallet: UnlockedPasskeyWallet;
+    prfOutput: Uint8Array;
 }>
+```
+
+
+## function ++dnt++updateStaticPasskeyVaultEncryptionKey
+
+```typescript
+updateStaticPasskeyVaultEncryptionKey: (input: {
+    records: StoredVaultRecord[];
+    walletEncryptionKey: WalletEncryptionKeyPairPayload;
+    rpId?: string;
+}) => Promise<{
+    record: StoredVaultRecord;
+    wallet: UnlockedPasskeyWallet;
+}>
+```
+
+
+## function ++dnt++upsertVaultRecord
+
+```typescript
+upsertVaultRecord: (input: {
+    vaults: StoredVaultRecord[];
+    record: StoredVaultRecord;
+}) => StoredVaultRecord[]
+```
+
+
+## function ++dnt++validatePasskeyWalletManifest
+
+```typescript
+validatePasskeyWalletManifest: (manifest: unknown, servingHost: string) => PasskeyWalletManifest
+```
+
+
+## function ++dnt++vaultHasAccount
+
+```typescript
+vaultHasAccount: (vault: StoredVaultRecord, address: string) => boolean
+```
+
+
+## function ++dnt++verifyPasskeyWalletSiwe
+
+```typescript
+verifyPasskeyWalletSiwe: (input: PasskeyWalletVerifySiweInput) => Promise<PasskeyWalletVerifiedSiwe | null>
+```
+
+
+## function ++dnt++withPasskeyWalletCorsHeaders
+
+```typescript
+withPasskeyWalletCorsHeaders: <Response extends {
+    headers: Headers;
+}>(request: Request, response: Response, options?: {
+    allowedMethods?: string;
+    walletUrl?: string;
+    allowedOrigins?: string;
+}) => Response
 ```
 
 
@@ -440,64 +995,82 @@ constructor(message?: string);
 
 
 
-## type ++dnt++CreateOrganigramPasskeyWalletInput
+## type ++dnt++AuthorizePasskeyWalletCredentialsInput
 
 ```typescript
-export type CreateOrganigramPasskeyWalletInput = OrganigramPasskeyProviderActions & {
-    unlockOrCreatePasskeyWallet: (input: {
-        capabilities: OrganigramPasskeyCapabilities;
-        targetChainId: number;
-    }) => Promise<UnlockedPasskeyWallet>;
+export type AuthorizePasskeyWalletCredentialsInput = {
+    credentials: PasskeyWalletNextAuthCredentials | undefined;
+    domain: string;
+    nonce: string | null | undefined;
+    chain?: Chain;
+    transportUrl: string;
+    transportOptions?: Parameters<typeof import('viem').http>[1];
 };
 ```
 
 
-## type ++dnt++IdentityPasskeyCapabilities
+## type ++dnt++BrowserPasskeyWalletVaultPayload
 
 ```typescript
-export type IdentityPasskeyCapabilities = PasskeyWalletRegistrationCapabilities & {
-    identity: {
-        email: string;
-    };
+export type BrowserPasskeyWalletVaultPayload = {
+    version: 1;
+    recoveryPhrase: string;
+    walletEncryptionKey?: WalletEncryptionKeyPairPayload;
 };
 ```
 
 
-## type ++dnt++OrganigramPasskeyCapabilities
+## type ++dnt++CreateOrganigramRemotePasskeyWalletInput
 
 ```typescript
-export type OrganigramPasskeyCapabilities = {
-    method?: 'login' | 'register';
-    name?: string;
-    identity?: {
-        email: string;
-    };
+export type CreateOrganigramRemotePasskeyWalletInput = {
+    walletOrigin?: string;
+    requestConnect?: RemoteRequestConnect;
+    requestPersonalSign?: RemoteRequestPersonalSign;
 };
 ```
 
 
-## type ++dnt++OrganigramPasskeyProvider
+## type ++dnt++HydrateOrganigramRemoteWalletConnectionConnector
 
 ```typescript
-export type OrganigramPasskeyProvider = {
-    request: EIP1193RequestFn;
-    on: (event: PasskeyProviderEvent, listener: PasskeyProviderListener) => void;
-    removeListener: (event: PasskeyProviderEvent, listener: PasskeyProviderListener) => void;
+export type HydrateOrganigramRemoteWalletConnectionConnector = {
+    id: string;
 };
 ```
 
 
-## type ++dnt++OrganigramPasskeyProviderActions
+## type ++dnt++HydrateOrganigramRemoteWalletConnectionInput
 
 ```typescript
-export type OrganigramPasskeyProviderActions = {
-    registerAdditionalPasskeyCredential: (input: {
-        wallet: UnlockedPasskeyWallet;
-        name?: string;
-    }) => Promise<PasskeyRegistrationResult>;
-    exportPasskeyWalletRecoveryPhrase: (input: {
-        expectedAddress: `0x${string}`;
-    }) => Promise<string>;
+export type HydrateOrganigramRemoteWalletConnectionInput = {
+    address: `0x${string}`;
+    chainId?: number;
+};
+```
+
+
+## type ++dnt++HydrateOrganigramRemoteWalletConnectionOptions
+
+```typescript
+export type HydrateOrganigramRemoteWalletConnectionOptions<TConnector extends HydrateOrganigramRemoteWalletConnectionConnector> = HydrateOrganigramRemoteWalletConnectionInput & {
+    connectors: readonly TConnector[];
+    connectAsync: (input: {
+        connector: TConnector;
+    }) => Promise<unknown>;
+    defaultChainId?: number;
+};
+```
+
+
+## type ++dnt++OrganigramRemotePasskeyWalletConnection
+
+```typescript
+export type OrganigramRemotePasskeyWalletConnection = {
+    version: 1;
+    address: `0x${string}`;
+    chainId: number;
+    connectedAt: string;
 };
 ```
 
@@ -539,73 +1112,198 @@ export type PasskeyVaultEnvelopeData = {
 ```
 
 
-## type ++dnt++PasskeyVaultEnvelopeInput
+## type ++dnt++PasskeyWalletChallenge
 
 ```typescript
-export type PasskeyVaultEnvelopeInput = {
-    address: string;
-    encryptedMnemonic: string;
-    salt: string;
+export type PasskeyWalletChallenge = {
+    domain: string;
     nonce: string;
-    algorithm: string;
-    keyVersion: number;
+    issuedAt: string;
+    expiresAt: string;
+    message: string;
 };
 ```
 
 
-## type ++dnt++PasskeyWalletApiClient
+## type ++dnt++PasskeyWalletConnectPopupInput
 
 ```typescript
-export type PasskeyWalletApiClient = {
-    registerOptions: (input: {
-        address: `0x${string}`;
-        email?: string | null;
-        name?: string | null;
-    }) => Promise<PasskeyRegisterOptionsResponse>;
-    registerVerify: (input: {
-        response: unknown;
-        envelope: {
-            address: `0x${string}`;
-            encryptedMnemonic: string;
-            salt: string;
-            nonce: string;
-            algorithm: string;
-            keyVersion: number;
-        };
-    }) => Promise<PasskeyRegistrationResult>;
-    unlockOptions: () => Promise<PasskeyUnlockOptionsResponse>;
-    unlockVerify: (input: {
-        response: unknown;
-    }) => Promise<PasskeyUnlockVerifyResponse>;
+export type PasskeyWalletConnectPopupInput = PasskeyWalletRemotePopupInput;
+```
+
+
+## type ++dnt++PasskeyWalletConnectRequest
+
+```typescript
+export type PasskeyWalletConnectRequest = PasskeyWalletRemoteRequestBase & {
+    type: typeof passkeyWalletConnectType;
 };
 ```
 
 
-## type ++dnt++PasskeyWalletCapabilities
+## type ++dnt++PasskeyWalletConnectResult
 
 ```typescript
-export type PasskeyWalletCapabilities = PasskeyWalletLoginCapabilities | PasskeyWalletRegistrationCapabilities;
-```
-
-
-## type ++dnt++PasskeyWalletLoginCapabilities
-
-```typescript
-export type PasskeyWalletLoginCapabilities = {
-    method: 'login';
+export type PasskeyWalletConnectResult = PasskeyWalletRemoteResultBase & {
+    type: typeof passkeyWalletConnectResultType;
 };
 ```
 
 
-## type ++dnt++PasskeyWalletRegistrationCapabilities
+## type ++dnt++PasskeyWalletDisconnectRequest
 
 ```typescript
-export type PasskeyWalletRegistrationCapabilities = {
-    method: 'register';
-    name: string;
-    identity?: {
-        email: string;
-    };
+export type PasskeyWalletDisconnectRequest = PasskeyWalletRemoteRequestBase & {
+    type: typeof passkeyWalletDisconnectType;
+    address: `0x${string}`;
+};
+```
+
+
+## type ++dnt++PasskeyWalletErrorResult
+
+```typescript
+export type PasskeyWalletErrorResult = {
+    type: typeof passkeyWalletErrorType;
+    version: 1;
+    requestId: string;
+    code: 'user_rejected' | 'challenge_unavailable' | 'domain_mismatch' | 'wallet_locked' | 'unsupported_origin' | 'internal_error';
+    message: string;
+};
+```
+
+
+## type ++dnt++PasskeyWalletManifest
+
+```typescript
+export type PasskeyWalletManifest = {
+    version: 1;
+    domain: string;
+    signInChallengeUrl: string;
+    signInCompletionUrl?: string;
+};
+```
+
+
+## type ++dnt++PasskeyWalletNextAuthCredentials
+
+```typescript
+export type PasskeyWalletNextAuthCredentials = {
+    message?: unknown;
+    signature?: unknown;
+    csrfToken?: unknown;
+};
+```
+
+
+## type ++dnt++PasskeyWalletPopupInput
+
+```typescript
+export type PasskeyWalletPopupInput = {
+    walletOrigin?: string;
+    appOrigin?: string;
+    nonce: string;
+    chainId: number;
+    requestId?: string;
+    requestedAt?: string;
+    popup?: Window | null;
+};
+```
+
+
+## type ++dnt++PasskeyWalletRemotePopupInput
+
+```typescript
+export type PasskeyWalletRemotePopupInput = {
+    walletOrigin?: string;
+    appOrigin?: string;
+    chainId: number;
+    requestId?: string;
+    requestedAt?: string;
+};
+```
+
+
+## type ++dnt++PasskeyWalletRemoteRequest
+
+```typescript
+export type PasskeyWalletRemoteRequest = PasskeyWalletConnectRequest | PasskeyWalletSignMessageRequest;
+```
+
+
+## type ++dnt++PasskeyWalletRemoteRequestType
+
+```typescript
+export type PasskeyWalletRemoteRequestType = typeof passkeyWalletConnectType | typeof passkeyWalletSignMessageType | typeof passkeyWalletDisconnectType;
+```
+
+
+## type ++dnt++PasskeyWalletRemoteResult
+
+```typescript
+export type PasskeyWalletRemoteResult = PasskeyWalletConnectResult | PasskeyWalletSignMessageResult;
+```
+
+
+## type ++dnt++PasskeyWalletSignInRequest
+
+```typescript
+export type PasskeyWalletSignInRequest = {
+    type: typeof passkeyWalletSignInType;
+    version: 1;
+    requestId: string;
+    domain: string;
+    challengeUrl: string;
+    returnUrl?: string;
+    requestedAt: string;
+};
+```
+
+
+## type ++dnt++PasskeyWalletSignInResult
+
+```typescript
+export type PasskeyWalletSignInResult = {
+    type: typeof passkeyWalletSignInResultType;
+    version: 1;
+    requestId: string;
+    domain: string;
+    address: `0x${string}`;
+    message: string;
+    signature: `0x${string}`;
+    completedAt: string;
+};
+```
+
+
+## type ++dnt++PasskeyWalletSignMessagePopupInput
+
+```typescript
+export type PasskeyWalletSignMessagePopupInput = PasskeyWalletRemotePopupInput & {
+    address: `0x${string}`;
+    message: string;
+};
+```
+
+
+## type ++dnt++PasskeyWalletSignMessageRequest
+
+```typescript
+export type PasskeyWalletSignMessageRequest = PasskeyWalletRemoteRequestBase & {
+    type: typeof passkeyWalletSignMessageType;
+    address: `0x${string}`;
+    message: string;
+};
+```
+
+
+## type ++dnt++PasskeyWalletSignMessageResult
+
+```typescript
+export type PasskeyWalletSignMessageResult = PasskeyWalletRemoteResultBase & {
+    type: typeof passkeyWalletSignMessageResultType;
+    message: string;
+    signature: `0x${string}`;
 };
 ```
 
@@ -616,9 +1314,109 @@ export type PasskeyWalletRegistrationCapabilities = {
 export type PasskeyWalletVaultPayload = {
     version: 1;
     recoveryPhrase: string;
-    userEncryptionPrivateKey: JsonWebKey;
-    userEncryptionPublicKey: JsonWebKey;
-    userEncryptionKeyVersion: number;
+    walletEncryptionKey?: WalletEncryptionKeyPairPayload;
+};
+```
+
+
+## type ++dnt++PasskeyWalletVerifiedSiwe
+
+```typescript
+export type PasskeyWalletVerifiedSiwe = {
+    address: `0x${string}`;
+    chainId: number;
+    domain: string;
+    uri: string;
+    nonce: string;
+    encryptionPublicKeyResource: WalletEncryptionPublicKeySiweResource | null;
+};
+```
+
+
+## type ++dnt++PasskeyWalletVerifySiweInput
+
+```typescript
+export type PasskeyWalletVerifySiweInput = {
+    message: string;
+    signature: Hex;
+    domain: string;
+    nonce: string;
+    chain?: Chain;
+    transportUrl: string;
+    transportOptions?: Parameters<typeof http>[1];
+};
+```
+
+
+## type ++dnt++RemoteVaultBackupPackage
+
+```typescript
+export type RemoteVaultBackupPackage = {
+    version: 1;
+    address: `0x${string}`;
+    backups: RemoteVaultBackupRecord[];
+    exportedAt: string;
+};
+```
+
+
+## type ++dnt++RemoteVaultBackupRecord
+
+```typescript
+export type RemoteVaultBackupRecord = {
+    version: 1;
+    backupId: string;
+    salt: string;
+    iv: string;
+    ciphertext: string;
+    createdAt: string;
+};
+```
+
+
+## type ++dnt++SignInWithPasskeyWalletInput
+
+```typescript
+export type SignInWithPasskeyWalletInput = {
+    chainId?: number;
+    walletOrigin?: string;
+    getCsrfToken: () => Promise<string | null | undefined>;
+    requestWalletSignIn?: (input: WalletSignInInput) => Promise<PasskeyWalletSignInResult>;
+    submitCredentials?: SubmitCredentials;
+};
+```
+
+
+## type ++dnt++StoredVaultAccount
+
+```typescript
+export type StoredVaultAccount = {
+    address: `0x${string}`;
+    name: string;
+    addressIndex: number;
+    derivationPath: string;
+};
+```
+
+
+## type ++dnt++StoredVaultRecord
+
+```typescript
+export type StoredVaultRecord = {
+    version: 1;
+    address: `0x${string}`;
+    accounts: StoredVaultAccount[];
+    credentialId: string;
+    rawCredentialId?: string;
+    name: string;
+    transports: string[];
+    passkeyDevice: {
+        kind: 'macos' | 'ios' | 'ipados' | 'windows' | 'android' | 'linux' | 'security-key' | 'cross-device' | 'platform' | 'passkey';
+        label: string;
+    };
+    createdAt: string;
+    lastUsedAt: string | null;
+    envelope: PasskeyVaultEnvelopeData;
 };
 ```
 
@@ -630,11 +1428,106 @@ export type UnlockedPasskeyWallet = {
     address: `0x${string}`;
     account: HDAccount;
     recoveryPhrase: string;
-    userEncryptionPrivateKey: JsonWebKey;
-    userEncryptionPublicKey: JsonWebKey;
-    userEncryptionKeyVersion: number;
+    walletEncryptionKey?: WalletEncryptionKeyPairPayload;
     credentialId: string;
     expiresAt: number;
+};
+```
+
+
+## type ++dnt++VaultRegistry
+
+```typescript
+export type VaultRegistry = {
+    version: 1;
+    vaults: StoredVaultRecord[];
+};
+```
+
+
+## type ++dnt++VaultRegistryGroup
+
+```typescript
+export type VaultRegistryGroup = {
+    id: string;
+    accounts: StoredVaultAccount[];
+    passkeys: StoredVaultRecord[];
+    createdAt: string;
+};
+```
+
+
+## type ++dnt++WalletDecryptedFile
+
+```typescript
+export type WalletDecryptedFile = {
+    name: string;
+    type: string;
+    bytes: Uint8Array;
+    lastModified?: number;
+};
+```
+
+
+## type ++dnt++WalletEncryptedFilePackage
+
+```typescript
+export type WalletEncryptedFilePackage = {
+    version: 1;
+    kind: 'organigram:wallet-encrypted-file';
+    algorithm: 'ECDH-P256+A256GCM';
+    recipient: {
+        address: `0x${string}`;
+        publicKey: JsonWebKey;
+        keyVersion: number;
+    };
+    file: {
+        name: string;
+        type: string;
+        size: number;
+        lastModified?: number;
+    };
+    iv: string;
+    ciphertext: string;
+    encryptedAt: string;
+};
+```
+
+
+## type ++dnt++WalletEncryptionKeyPairPayload
+
+```typescript
+export type WalletEncryptionKeyPairPayload = {
+    version: 1;
+    algorithm: 'ECDH-P256';
+    privateKey: JsonWebKey;
+    publicKey: JsonWebKey;
+    keyVersion: number;
+};
+```
+
+
+## type ++dnt++WalletEncryptionPublicKeySiweResource
+
+```typescript
+export type WalletEncryptionPublicKeySiweResource = {
+    kind: typeof encryptionPublicKeyResourceKind;
+    address: string;
+    publicKey: JsonWebKey;
+    keyVersion: number;
+};
+```
+
+
+## type ++dnt++WalletGroup
+
+```typescript
+export type WalletGroup = {
+    address: `0x${string}`;
+    name: string;
+    addressIndex: number;
+    derivationPath: string;
+    passkeys: StoredVaultRecord[];
 };
 ```
 

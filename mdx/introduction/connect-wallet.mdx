@@ -16,27 +16,26 @@ You can sign in in a self-sovereign, privacy-preserving manner by clicking "Conn
   passkey credential and stores an encrypted backup on Organigram servers. It is the
   easiest and recommended option for most users on compatible browsers.
 
-<LoginMethodButton method='passkey' />
+<LoginMethodButton sx={{ mb: 5 }} method='passkey' />
 
 - If your organization uses Google Workspace, you can verify that organization
   identity from Account Settings after signing in. Google confirms your email
   domain, but your wallet address remains the Organigram account used to sign in
   and sign actions.
 
-<LoginMethodButton method='google' />
+<LoginMethodButton sx={{ mb: 5 }} method='google' />
 
 - Use a crypto wallet such as Rabby, MetaMask, Rainbow, Trust Wallet, Ledger, or
   any supported wallet available through
   [WalletConnect](https://walletguide.walletconnect.network/).
 
-<LoginMethodButton method='wallet' />
+<LoginMethodButton sx={{ mb: 5 }} method='wallet' />
 
 - Sign in with an email code. This option verifies that you control the email
   address, then reuses the wallet address already linked to that email. If no
-  wallet is linked to that email, Organigram first verifies the email code, then
-  helps you create the wallet with a passkey.
+  wallet is linked to that email, Organigram helps you create the wallet with a passkey.
 
-<LoginMethodButton method='email' />
+<LoginMethodButton sx={{ mb: 5 }} method='email' />
 
 ## Compliance and non-custody
 
