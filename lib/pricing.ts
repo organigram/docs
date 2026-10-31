@@ -30,9 +30,9 @@ const convertStripeStorageEuroPerUnitToEuroPerGb = (
 
 export const publicPricingKeys = [
   'soloMonthly',
-  'sponsoredTransactions',
   'signatures',
   'storage',
+  'sponsoredTransactions',
   'aiUsage'
 ] as const
 
@@ -172,9 +172,6 @@ const buildAnnualPriceFields = (
         annualPriceValues: priceFields.priceValues
       }
 
-const getDocumentedGasMultiplier = (): string =>
-  process.env.NEXT_PUBLIC_GAS_SERVICE_FEE_MULTIPLIER ?? '2'
-
 const getDocumentedMinimumTransactionAmount = (): string =>
   process.env.NEXT_PUBLIC_MINIMUM_TRANSACTION_AMOUNT_EURO ?? '0.01'
 
@@ -219,15 +216,15 @@ const pricingConfigs: Record<PublicPricingKey, PricingConfig> = {
       const priceFields =
         price == null
           ? buildUnavailablePriceFields()
-          : getPerUnitPriceFields(price, '{{price}} / address / month')
+          : getPerUnitPriceFields(price, '{{price}} / month')
       const annualPriceFields =
         annualPrice == null
           ? undefined
-          : getPerUnitPriceFields(annualPrice, '{{price}} / address / year')
+          : getPerUnitPriceFields(annualPrice, '{{price}} / year')
 
       return {
         key: 'soloMonthly',
-        label: 'ID Certificates',
+        label: 'Qualified ID Certificates',
         ...priceFields,
         ...buildAnnualPriceFields(annualPriceFields),
         details:
@@ -237,20 +234,15 @@ const pricingConfigs: Record<PublicPricingKey, PricingConfig> = {
     }
   },
   sponsoredTransactions: {
-    envKey: 'NEXT_PUBLIC_GAS_PRICE_ID',
     buildItem: () => {
       const priceValues = {
-        gasMultiplier: getDocumentedGasMultiplier(),
         minimumAmount: `${getDocumentedMinimumTransactionAmount()}€`
       }
 
       return {
         key: 'sponsoredTransactions',
         label: 'Sponsored transactions',
-        ...buildPriceFields(
-          '~x{{gasMultiplier}} gas used, min. {{minimumAmount}}',
-          priceValues
-        ),
+        ...buildPriceFields('From {{minimumAmount}}', priceValues),
         details: `Only the gas actually used is charged when sponsoring transactions, including relayer costs, processing fees and price fluctuations. Price is in Euro at currency rates updated every minute, with a minimum of ${getDocumentedMinimumTransactionAmount()}€.`,
         source: 'stripe_usage'
       }
@@ -289,7 +281,7 @@ const pricingConfigs: Record<PublicPricingKey, PricingConfig> = {
 
       return {
         key: 'storage',
-        label: 'Certified storage (1GB free)',
+        label: 'Additional certified storage',
         ...priceFields,
         ...buildAnnualPriceFields(annualPriceFields),
         details:
@@ -301,7 +293,7 @@ const pricingConfigs: Record<PublicPricingKey, PricingConfig> = {
   aiUsage: {
     buildItem: async () => ({
       key: 'aiUsage',
-      label: 'AI assistance (per 1M tokens)',
+      label: 'Workspace Agent (per 1M tokens)',
       ...(await getAiUsageFields()),
       source: 'documented'
     })
@@ -328,6 +320,14 @@ const getPriceId = (
   return priceId
 }
 
+const getOptionalPriceId = (
+  envKey: string,
+  env: Partial<NodeJS.ProcessEnv> = process.env
+): string | undefined => {
+  const priceId = env[envKey]
+  return priceId == null || priceId === '' ? undefined : priceId
+}
+
 export const buildPublicPricingItems = async ({
   env = process.env,
   retrievePrice
@@ -342,10 +342,12 @@ export const buildPublicPricingItems = async ({
         config.envKey == null
           ? undefined
           : await retrievePrice(getPriceId(config.envKey, env))
-      const annualPrice =
+      const annualPriceId =
         config.annualEnvKey == null
           ? undefined
-          : await retrievePrice(getPriceId(config.annualEnvKey, env))
+          : getOptionalPriceId(config.annualEnvKey, env)
+      const annualPrice =
+        annualPriceId == null ? undefined : await retrievePrice(annualPriceId)
 
       return config.buildItem(price, annualPrice)
     })

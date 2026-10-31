@@ -6,7 +6,7 @@
   "type": "module",
   "scripts": {
     "generate:docs-modules": "env-cmd --silent tsx scripts/generateDocsModules.ts",
-    "generate:pricing-module": "env-cmd --silent -f ../../.env tsx scripts/generatePricingModule.ts",
+    "generate:pricing-module": "tsx scripts/generatePricingModule.ts",
     "generate:rest-api": "env-cmd --silent tsx scripts/generateRestApiDocs.ts",
     "docs:generate": "pnpm generate:docs-modules && pnpm generate:rest-api && pnpm generate:pricing-module",
     "linkcheck": "find mdx -name '*.mdx' -print0 | xargs -0 -n1 markdown-link-check --quiet",
@@ -61,7 +61,6 @@
     "./components/PricingTable": "./components/PricingTable.tsx",
     "./components/*": "./components/*",
     "./lib/*": "./lib/*",
-    "./lib/showcases/organigramSas": "./lib/showcases/organigramSas.ts",
     "./modules": "./lib/modules.ts",
     "./pricing": "./lib/pricing.ts",
     "./server": "./lib/server.ts",

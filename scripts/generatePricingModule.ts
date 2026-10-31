@@ -10,6 +10,39 @@ const outputFile = path.resolve(
   '../lib/generatedPricing.json'
 )
 
+const loadEnvironmentFile = async (environmentFile: string): Promise<void> => {
+  try {
+    const contents = await fs.readFile(environmentFile, 'utf8')
+
+    for (const line of contents.split(/\r?\n/u)) {
+      const match = line.match(
+        /^\s*(?:export\s+)?([A-Za-z_][A-Za-z0-9_]*)\s*=\s*(.*?)\s*$/u
+      )
+      if (match == null) continue
+
+      const [, key, rawValue] = match
+      const value =
+        (rawValue.startsWith('"') && rawValue.endsWith('"')) ||
+        (rawValue.startsWith("'") && rawValue.endsWith("'"))
+          ? rawValue.slice(1, -1)
+          : rawValue
+
+      process.env[key] ??= value
+    }
+  } catch (error: unknown) {
+    if ((error as NodeJS.ErrnoException).code !== 'ENOENT') throw error
+  }
+}
+
+const loadLocalEnvironment = async (): Promise<void> => {
+  const repositoryRoot = path.resolve(import.meta.dirname, '../../..')
+
+  await loadEnvironmentFile(path.join(repositoryRoot, '.env'))
+  await loadEnvironmentFile(
+    path.join(repositoryRoot, '.vercel/.env.development.local')
+  )
+}
+
 const readExistingPricing = async (
   file: string
 ): Promise<PublicPricingResponse | undefined> => {
@@ -116,6 +149,7 @@ export const generatePricingModule = async ({
 }
 
 const main = async (): Promise<void> => {
+  await loadLocalEnvironment()
   await generatePricingModule({ outputFile })
 }
 

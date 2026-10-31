@@ -22,16 +22,45 @@ import TableHead from '@mui/material/TableHead'
 import TableRow from '@mui/material/TableRow'
 import { t } from './i18n'
 
-export const findPostByOrder: (
+/** The page URL of a docs file, relative to `/docs/`. */
+export const getDocsSlug = (path: string): string =>
+  path.endsWith('index.mdx') ? path.slice(1, -9) : path.slice(1, -4)
+
+/** A page shows its title; a folder, the name its pages give it. */
+export const getTreeLabel = (tree: FileTree): string | undefined =>
+  tree.children == null
+    ? (tree.metadata?.title ?? tree.text)
+    : tree.children.find(child => child.metadata?.folderName != null)
+      ?.metadata?.folderName
+
+/** By `order`, then by path: pages sharing an order keep a stable place. */
+export const compareTrees = (a: FileTree, b: FileTree): number =>
+  (a.metadata?.order ?? 0) - (b.metadata?.order ?? 0) ||
+  (a.path ?? '').localeCompare(b.path ?? '')
+
+/** The folders leading to `target`, then `target` itself. */
+export const findTreeTrail = (
   trees: FileTree[],
-  order: number
-) => FileTree | undefined = (trees, order) => {
+  target: FileTree
+): FileTree[] | null => {
+  for (const tree of trees) {
+    if (tree === target) return [tree]
+    const trail = tree.children == null ? null : findTreeTrail(tree.children, target)
+    if (trail != null) return [tree, ...trail]
+  }
+  return null
+}
+
+export const findPostByPath: (
+  trees: FileTree[],
+  path: string
+) => FileTree | undefined = (trees, path) => {
   let post
   trees.forEach(tree => {
-    if (tree.metadata?.order === order) {
+    if (tree.children == null && tree.path === path) {
       post = tree
     } else if (tree.children != null) {
-      const _post = findPostByOrder(tree.children, order)
+      const _post = findPostByPath(tree.children, path)
       if (_post != null) post = _post
     }
   })
@@ -68,12 +97,13 @@ const getMarkdownHeaderComponent: (
         variant={`h${headingLevel}` as 'h1'}
         textTransform='none'
         sx={{
-          mt: headingLevel === 1 ? 0 : 4,
+          mt: headingLevel === 1 ? 0 : headingLevel === 2 ? 5 : 4,
           mb: headingLevel >= 4 ? 1.5 : 2,
-          lineHeight: headingLevel === 1 ? 1.1 : headingLevel === 2 ? 1.2 : 1.3,
+          lineHeight:
+            headingLevel === 1 ? 1 : headingLevel === 2 ? 1.15 : 1.3,
           fontSize:
             headingLevel === 1
-              ? '40px'
+              ? ['42px', '56px']
               : headingLevel === 2
                 ? '32px'
                 : headingLevel === 3
@@ -230,8 +260,8 @@ export const CustomParagraph: React.FC<{
     sx={{
       my: isLi === true ? 0 : 2,
       color: 'text.primary',
-      lineHeight: 1.9
-      // fontSize: ['16px', '17px']
+      fontSize: '15px',
+      lineHeight: 1.75
     }}
   >
     {translateNode(children)}
@@ -304,10 +334,10 @@ export const CustomPre: React.FC<{
     component='pre'
     sx={{
       my: 3,
-      p: 2.5,
+      p: 2,
       overflowX: 'auto',
-      borderRadius: '20px',
-      backgroundColor: 'grey.light4',
+      borderRadius: '8px',
+      backgroundColor: 'white',
       border: ({ palette }) => `1px solid ${palette.grey.light2 as string}`,
       '& code': {
         backgroundColor: 'transparent',

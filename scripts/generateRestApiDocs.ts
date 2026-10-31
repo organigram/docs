@@ -334,7 +334,11 @@ const prepareRoute = async (
   const routePath = getRoutePath(relativePath)
   const notes = [...(apiDocs.notes ?? [])]
 
-  if (apiDocs.actions != null && routePath !== '/api') {
+  if (
+    apiDocs.actions != null &&
+    routePath !== '/api' &&
+    apiDocs.legacyApiAlias !== false
+  ) {
     notes.push('Also reachable through `/api` with the same `action` payload.')
   }
 
@@ -515,9 +519,9 @@ ${renderSummaryList(section.routes)}
 
   const details: string = preparedSections.map(renderSection).join('\n\n')
 
-  const document = `export const metadata = { title: "🌐 Web API", order: 5.35 }
+  const document = `export const metadata = { title: "Web API", order: 5.35 }
 
-# Web API 🌐
+# Web API
 
 The official reference for the API routes used by Organigram.ai. Unlike the package references, these endpoints document the application layer itself, including RPC-style JSON routes, uploads, authentication callbacks, webhooks, and server-side integrations.
 

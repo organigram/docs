@@ -3,19 +3,19 @@ import Grid from '@mui/material/Grid'
 import Button from '@mui/material/Button'
 
 import Link from '../../components/Link'
-export const metadata = { title: '⬇ Getting started', order: 1.2 }
+import { t } from '../../lib/i18n'
+export const metadata = { title: 'Installation', order: 1.2 }
 
-# Getting started ⬇
+# Installation
 
-## Installation
+## 
 
-Organigram's technical stack is composed of 5 layers:
+Organigram's technical stack is composed of 4 layers:
 
-- [Organigram.ai](/docs/introduction/get-started#Organigram.ai): A no-code platform using NLP techniques to create and manage organigrams easily from legal documentation;
-- The [Organigram Protocol](/docs/introduction/get-started#Organigram_Protocol): A suite of [Ethereum smart contracts](/docs/introduction/get-started#Smart_contracts_suite) serving as the backbone of the system;
-- [Organigram JS](/docs/introduction/get-started#Organigram_JS): A [TypeScript library](/docs/reference/js) to interact with the protocol in any JavaScript environment;
-- [Organigram React](/docs/introduction/get-started#Organigram_React): A set of [hooks and components](/docs/reference/react) to build React apps on top of the protocol and JS client;
-- [Organigram Web API](/docs/introduction/get-started#Web_API): A [REST API](/docs/reference/rest-api) serving public data and [hosted services](/docs/certified);
+- [Organigram.ai](/docs/introduction/get-started#Organigram.ai): A no-code platform and [Web API](/docs/introduction/get-started#Web_API) using NLP techniques to create and manage organigrams easily from legal documentation;
+- The [Organigram Protocol](/docs/introduction/get-started#Organigram_Protocol): A suite of [Ethereum smart contracts](/docs/introduction/get-started#Smart_contracts_suite) serving as the backbone of the system, with [JavaScript/TypeScript](/docs/introduction/get-started#Organigram_JS) and [React](/docs/introduction/get-started#Organigram_React) implementations;
+- [Passkey Wallet]()
+- [hosted services](/docs/certified);
 
 ### Organigram.ai
 
@@ -24,12 +24,12 @@ The easiest way to get started is to use the web application. You can dive right
 <Grid container my={3} justifyContent='center'>
   <Grid item>
     <Link href={'/workspace'} target='_blank'>
-      <Button variant='contained'>Launch app</Button>
+      <Button variant='contained'>{t('Launch app')}</Button>
     </Link>
   </Grid>
 </Grid>
 
-You can also follow our [guide to create a legal organization in under 5 minutes](/docs/guides/for-profit), to have a more complete overview of the platform.
+You can also follow our [guide to create a French commercial company in under 5 minutes](/docs/guides/commercial-companies), to have a more complete overview of the platform.
 
 ### Organigram Protocol
 
@@ -72,7 +72,7 @@ You can refer to the [corresponding section](/docs/reference/react) of the docum
 
 ### Web API
 
-[⚡️ Organigram Transactions](/docs/certified/sponsored-transactions) facilitate the use of decentralized networks for any non-financial operations.
+[Organigram Transactions](/docs/certified/sponsored-transactions) facilitate the use of decentralized networks for any non-financial operations.
 
 Organigram Web API can be accessed at:
 

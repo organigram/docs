@@ -1,0 +1,180 @@
+export const metadata = { title: 'Passkey wallet security', order: 3.7 }
+
+# Passkey wallet security
+
+The Organigram Passkey Wallet is a non-custodial Ethereum wallet. Its recovery
+phrase is generated in the browser and stored only encrypted. A passkey is the
+only thing that can decrypt it. This page describes what protects the wallet,
+what Organigram servers can see, and the risks the wallet cannot remove.
+
+## How the recovery phrase is protected
+
+- Each passkey is created with user verification required: unlocking always
+  asks for the device biometric, PIN or password.
+- Each encrypted vault uses its own random PRF salt. The passkey turns that
+  salt into 32 secret bytes (the WebAuthn PRF output), from which an
+  AES-256-GCM key is derived with HKDF-SHA-256. No two vaults share a key.
+- The PRF output and the derived keys are never stored. Buffers holding them
+  are zeroed as soon as the key is derived.
+- Several passkeys can unlock the same wallet: each one encrypts its own copy
+  of the vault. Removing a passkey removes its copy only.
+
+## Where the wallet runs
+
+- Passkeys are bound to the exact host serving the wallet, such as
+  `wallet.organigram.ai`. The Organigram application at `organigram.ai`, or any
+  other site, cannot run a passkey prompt for them.
+- The wallet origin loads no third-party script and cannot be embedded in
+  another page. Its Content Security Policy enforces both.
+- Applications reach the wallet through a popup. Requests to sign a message or
+  typed data, send a transaction, or encrypt and decrypt data are delivered by
+  `postMessage`. The browser authenticates the sender, so the origin shown in
+  the approval screen cannot be spoofed by a link.
+- Transactions are relayed through the RPC proxy configured for the wallet,
+  never through a node chosen by the requesting application.
+
+## What Organigram servers see
+
+A remote backup holds, for each passkey of the wallet, its encrypted vault and
+its credential ID, which any of those passkeys can open. The rest of the
+record (derived addresses, account names, devices) is encrypted with a key
+derived from the recovery phrase. Organigram therefore sees the wallet address
+and the credential IDs, which are not secret, and nothing else. Backups are
+only accepted with a signature from the wallet address they belong to.
+
+## Why you can trust this wallet
+
+A wallet that runs in the browser is only as trustworthy as the code the
+browser receives. You do not have to take Organigram's word for it:
+
+- **The source is public.** The wallet code lives in the public
+  [organigram/passkey-wallet](https://github.com/organigram/passkey-wallet)
+  repository.
+- **Every production build is published.** Before a new version reaches
+  `wallet.organigram.ai`, its files and a manifest listing the SHA-256 hash of
+  every file are published as a release of that public repository. The release
+  points at the exact public commit the files were built from, and a published
+  release stays visible to everyone.
+- **What is served can be checked against what is published.** The command
+  below downloads the wallet as your browser receives it and compares every
+  file with the matching release. It runs on your machine, so it does not rely
+  on anything the wallet host says about itself.
+- **Every release can be rebuilt by anyone.** The public repository holds
+  its own lockfile, and production is built from exactly those public files,
+  outside Organigram's private workspace. Rebuilding a release commit gives
+  the same files, byte for byte.
+- **Nothing else can run in the page.** The wallet's Content Security Policy
+  forbids third-party scripts and embedding the wallet in another site.
+
+### Run the wallet on your own computer
+
+The code of the wallet is public, so you can also run it yourself, on your own
+computer. Your copy opens at `https://local.wallet.organigram.ai:3002` and unlocks the same
+passkeys as wallet.organigram.ai: you reach the same accounts. Turn on the
+“Your own wallet” setting in the wallet, and the apps you use send their
+requests to your copy instead.
+
+This works because `https://local.wallet.organigram.ai` is a special address: Organigram
+configured it to point to 127.0.0.1, which every computer understands as “this
+computer”. When you open it, your browser does not contact Organigram at all:
+it asks your own machine, which serves the copy you started. You can see it for
+yourself: change some text in the code of the wallet, and the page shows the
+change right away.
+
+This is the strongest guarantee the wallet can offer. The page that handles
+your keys is served by your own computer, from code anyone can read, and no
+longer depends on wallet.organigram.ai. Neither Organigram nor someone who
+took over its servers could change what it does.
+
+It is also the only case in which you may type your recovery phrase into a web
+page. Never enter it on a website: a fake page can look exactly like your
+wallet and send what you type anywhere. On a copy running on your own
+computer, the code that receives the phrase is the code you run, and no remote
+server can replace it. You will rarely need it there: once your
+encrypted vault is restored in your copy, your passkeys unlock it as usual.
+
+Before you type your recovery phrase there, you can also declare local.wallet.organigram.ai
+in the hosts file of your computer. The name then always leads to your
+machine, whatever a DNS server answers. Without it, the name depends on public
+DNS like any other website.
+
+To install and start your copy, edit your hosts file and restore your vault,
+follow [the instructions in the wallet README](https://github.com/organigram/passkey-wallet#run-your-own-wallet).
+
+### Verify the wallet you are using
+
+With Node.js 20 or later:
+
+```sh
+git clone https://github.com/organigram/passkey-wallet
+cd passkey-wallet
+node scripts/verify-runtime-dist.mjs --url https://wallet.organigram.ai
+```
+
+The command finds the release whose `index.html` is the one served, then checks
+every file of that release, the runtime configuration included (it sets the
+passkey host, the Organigram server and the blockchain RPC endpoints). It ends
+with `serves release … unchanged` and the release link, or lists each file that
+differs and exits with an error. Any difference means the wallet must not be
+used until it is explained.
+
+### Rebuild a release yourself
+
+With Node.js 24 and pnpm 10.28, from the public repository at the commit a
+release points to:
+
+```sh
+git checkout <release commit>
+pnpm install --frozen-lockfile
+pnpm run build
+curl -LO <release manifest URL>
+node scripts/verify-runtime-dist.mjs --dist app-dist --manifest <manifest file>
+```
+
+The command reports `Verified … release file(s)` when your build matches the
+release. The runtime configuration and images are left out of this comparison,
+as each deployment sets its own; the check of the live wallet above covers
+them.
+
+### What verification cannot prove
+
+- A host under attack could serve the published code to the verification
+  command and different code to a specific browser. Running the command from
+  the same network and shortly before a sensitive operation narrows that
+  window; it does not close it.
+- The release is produced by Organigram's build pipeline. Because anyone can
+  rebuild it from the public source and its publication is permanent, a
+  tampered release is detectable, but only once someone rebuilds it.
+- The strongest option is to run the wallet yourself, on your own computer, as
+  described above.
+
+## Limits
+
+- **Software keys.** While a request is being signed, the recovery phrase and
+  private key are in the memory of the wallet page. Zeroing limits how long key
+  material stays readable, but does not guarantee it left the process: the
+  JavaScript engine may keep copies, and the recovery phrase is a string that
+  cannot be zeroed. A malicious browser extension with access to the wallet
+  page can read it.
+- **Wallet host integrity.** Whoever controls the wallet host, its DNS, or its
+  deployment pipeline can serve code that asks for the passkey. Deployments of
+  the wallet are built from pinned dependencies and audited workflows, and can
+  be checked against their public release (see above).
+- **Domain changes.** A passkey only works under the host it was created for.
+  Moving the wallet to another domain makes existing passkeys unusable for
+  it: export the recovery phrase first.
+- **Lost passkeys.** If every passkey of a wallet is lost and the recovery
+  phrase was never exported, the wallet cannot be recovered by anyone,
+  including Organigram.
+
+## Recommendations
+
+- Register at least two passkeys on different devices or providers.
+- Save a remote backup from the wallet (“Save remote backup”). It is
+  encrypted, and lets your passkeys restore the wallet in another browser, on
+  another device or in your own copy of the wallet. It does not replace the
+  recovery phrase: without a passkey, nobody can open it.
+- Export the recovery phrase once and keep it offline.
+- Before approving a request, check the requesting domain shown by the wallet.
+- For sensitive operations, and whenever you need your recovery phrase, use your
+  own copy of the wallet.

@@ -1,6 +1,6 @@
-export const metadata = { title: "🫆 Passkey Wallet", order: 5.4 }
+export const metadata = { title: "Passkey Wallet", order: 5.4 }
 
-# Passkey Wallet reference 🫆
+# Passkey Wallet reference
 
 The official TypeScript documentation for the Organigram Passkey Wallet primitives.
 
@@ -37,6 +37,7 @@ import { registerBrowserPasskeyVault } from '@organigram/passkey-wallet/browser-
 - [HydrateOrganigramRemoteWalletConnectionInput](/docs/reference/passkey-wallet#type_HydrateOrganigramRemoteWalletConnectionInput)
 - [HydrateOrganigramRemoteWalletConnectionOptions](/docs/reference/passkey-wallet#type_HydrateOrganigramRemoteWalletConnectionOptions)
 - [OrganigramRemotePasskeyWalletConnection](/docs/reference/passkey-wallet#type_OrganigramRemotePasskeyWalletConnection)
+- [PasskeyPrfCredential](/docs/reference/passkey-wallet#type_PasskeyPrfCredential)
 - [PasskeyProviderEvent](/docs/reference/passkey-wallet#type_PasskeyProviderEvent)
 - [PasskeyProviderListener](/docs/reference/passkey-wallet#type_PasskeyProviderListener)
 - [PasskeyRegistrationResult](/docs/reference/passkey-wallet#type_PasskeyRegistrationResult)
@@ -45,21 +46,33 @@ import { registerBrowserPasskeyVault } from '@organigram/passkey-wallet/browser-
 - [PasskeyWalletConnectPopupInput](/docs/reference/passkey-wallet#type_PasskeyWalletConnectPopupInput)
 - [PasskeyWalletConnectRequest](/docs/reference/passkey-wallet#type_PasskeyWalletConnectRequest)
 - [PasskeyWalletConnectResult](/docs/reference/passkey-wallet#type_PasskeyWalletConnectResult)
-- [PasskeyWalletDisconnectRequest](/docs/reference/passkey-wallet#type_PasskeyWalletDisconnectRequest)
+- [PasskeyWalletDecryptPayloadRequest](/docs/reference/passkey-wallet#type_PasskeyWalletDecryptPayloadRequest)
+- [PasskeyWalletDecryptPayloadResult](/docs/reference/passkey-wallet#type_PasskeyWalletDecryptPayloadResult)
+- [PasskeyWalletEncryptPayloadRequest](/docs/reference/passkey-wallet#type_PasskeyWalletEncryptPayloadRequest)
+- [PasskeyWalletEncryptPayloadResult](/docs/reference/passkey-wallet#type_PasskeyWalletEncryptPayloadResult)
 - [PasskeyWalletErrorResult](/docs/reference/passkey-wallet#type_PasskeyWalletErrorResult)
 - [PasskeyWalletManifest](/docs/reference/passkey-wallet#type_PasskeyWalletManifest)
 - [PasskeyWalletNextAuthCredentials](/docs/reference/passkey-wallet#type_PasskeyWalletNextAuthCredentials)
 - [PasskeyWalletPopupInput](/docs/reference/passkey-wallet#type_PasskeyWalletPopupInput)
+- [PasskeyWalletRemoteErrorResult](/docs/reference/passkey-wallet#type_PasskeyWalletRemoteErrorResult)
 - [PasskeyWalletRemotePopupInput](/docs/reference/passkey-wallet#type_PasskeyWalletRemotePopupInput)
 - [PasskeyWalletRemoteRequest](/docs/reference/passkey-wallet#type_PasskeyWalletRemoteRequest)
+- [PasskeyWalletRemoteRequestPayloadMessage](/docs/reference/passkey-wallet#type_PasskeyWalletRemoteRequestPayloadMessage)
 - [PasskeyWalletRemoteRequestType](/docs/reference/passkey-wallet#type_PasskeyWalletRemoteRequestType)
 - [PasskeyWalletRemoteResult](/docs/reference/passkey-wallet#type_PasskeyWalletRemoteResult)
+- [PasskeyWalletSendTransactionRequest](/docs/reference/passkey-wallet#type_PasskeyWalletSendTransactionRequest)
+- [PasskeyWalletSendTransactionResult](/docs/reference/passkey-wallet#type_PasskeyWalletSendTransactionResult)
 - [PasskeyWalletSignInRequest](/docs/reference/passkey-wallet#type_PasskeyWalletSignInRequest)
 - [PasskeyWalletSignInResult](/docs/reference/passkey-wallet#type_PasskeyWalletSignInResult)
 - [PasskeyWalletSignMessagePopupInput](/docs/reference/passkey-wallet#type_PasskeyWalletSignMessagePopupInput)
 - [PasskeyWalletSignMessageRequest](/docs/reference/passkey-wallet#type_PasskeyWalletSignMessageRequest)
 - [PasskeyWalletSignMessageResult](/docs/reference/passkey-wallet#type_PasskeyWalletSignMessageResult)
-- [PasskeyWalletVaultPayload](/docs/reference/passkey-wallet#type_PasskeyWalletVaultPayload)
+- [PasskeyWalletSignTypedDataPopupInput](/docs/reference/passkey-wallet#type_PasskeyWalletSignTypedDataPopupInput)
+- [PasskeyWalletSignTypedDataRequest](/docs/reference/passkey-wallet#type_PasskeyWalletSignTypedDataRequest)
+- [PasskeyWalletSignTypedDataResult](/docs/reference/passkey-wallet#type_PasskeyWalletSignTypedDataResult)
+- [PasskeyWalletStackSessionChangedMessage](/docs/reference/passkey-wallet#type_PasskeyWalletStackSessionChangedMessage)
+- [PasskeyWalletTransaction](/docs/reference/passkey-wallet#type_PasskeyWalletTransaction)
+- [PasskeyWalletTypedData](/docs/reference/passkey-wallet#type_PasskeyWalletTypedData)
 - [PasskeyWalletVerifiedSiwe](/docs/reference/passkey-wallet#type_PasskeyWalletVerifiedSiwe)
 - [PasskeyWalletVerifySiweInput](/docs/reference/passkey-wallet#type_PasskeyWalletVerifySiweInput)
 - [RemoteVaultBackupPackage](/docs/reference/passkey-wallet#type_RemoteVaultBackupPackage)
@@ -72,6 +85,7 @@ import { registerBrowserPasskeyVault } from '@organigram/passkey-wallet/browser-
 - [VaultRegistryGroup](/docs/reference/passkey-wallet#type_VaultRegistryGroup)
 - [WalletDecryptedFile](/docs/reference/passkey-wallet#type_WalletDecryptedFile)
 - [WalletEncryptedFilePackage](/docs/reference/passkey-wallet#type_WalletEncryptedFilePackage)
+- [WalletEncryptedPayload](/docs/reference/passkey-wallet#type_WalletEncryptedPayload)
 - [WalletEncryptionKeyPairPayload](/docs/reference/passkey-wallet#type_WalletEncryptionKeyPairPayload)
 - [WalletEncryptionPublicKeySiweResource](/docs/reference/passkey-wallet#type_WalletEncryptionPublicKeySiweResource)
 - [WalletGroup](/docs/reference/passkey-wallet#type_WalletGroup)
@@ -83,10 +97,12 @@ import { registerBrowserPasskeyVault } from '@organigram/passkey-wallet/browser-
 ### Functions
 
 - [addAccountToVaultRecords](/docs/reference/passkey-wallet#function_addAccountToVaultRecords)
+- [assertPasskeyWalletSignMessageResult](/docs/reference/passkey-wallet#function_assertPasskeyWalletSignMessageResult)
+- [assertPasskeyWalletSignTypedDataResult](/docs/reference/passkey-wallet#function_assertPasskeyWalletSignTypedDataResult)
 - [assertSignInDomainMatches](/docs/reference/passkey-wallet#function_assertSignInDomainMatches)
 - [authorizePasskeyWalletCredentials](/docs/reference/passkey-wallet#function_authorizePasskeyWalletCredentials)
 - [base64UrlToBytes](/docs/reference/passkey-wallet#function_base64UrlToBytes)
-- [buildPasskeyWalletDisconnectUrl](/docs/reference/passkey-wallet#function_buildPasskeyWalletDisconnectUrl)
+- [beginOrganigramWalletApprovalSequence](/docs/reference/passkey-wallet#function_beginOrganigramWalletApprovalSequence)
 - [buildPasskeyWalletPopupUrl](/docs/reference/passkey-wallet#function_buildPasskeyWalletPopupUrl)
 - [buildPasskeyWalletRemotePopupUrl](/docs/reference/passkey-wallet#function_buildPasskeyWalletRemotePopupUrl)
 - [buildPasskeyWalletSignInPopupUrl](/docs/reference/passkey-wallet#function_buildPasskeyWalletSignInPopupUrl)
@@ -94,14 +110,12 @@ import { registerBrowserPasskeyVault } from '@organigram/passkey-wallet/browser-
 - [clearOrganigramRemotePasskeyWalletConnection](/docs/reference/passkey-wallet#function_clearOrganigramRemotePasskeyWalletConnection)
 - [createBrowserPasskeyWalletVaultPayload](/docs/reference/passkey-wallet#function_createBrowserPasskeyWalletVaultPayload)
 - [createGeneratedRecoveryPhrase](/docs/reference/passkey-wallet#function_createGeneratedRecoveryPhrase)
-- [createNewPasskeyWalletVault](/docs/reference/passkey-wallet#function_createNewPasskeyWalletVault)
 - [createOrganigramRemotePasskeyWallet](/docs/reference/passkey-wallet#function_createOrganigramRemotePasskeyWallet)
 - [createPasskeyWalletChallenge](/docs/reference/passkey-wallet#function_createPasskeyWalletChallenge)
 - [createPasskeyWalletManifest](/docs/reference/passkey-wallet#function_createPasskeyWalletManifest)
-- [createPasskeyWalletVaultPayload](/docs/reference/passkey-wallet#function_createPasskeyWalletVaultPayload)
+- [createPasskeyWalletStackSessionChangedMessage](/docs/reference/passkey-wallet#function_createPasskeyWalletStackSessionChangedMessage)
 - [createRemoteVaultBackupPackage](/docs/reference/passkey-wallet#function_createRemoteVaultBackupPackage)
 - [createRemoteVaultBackupRecord](/docs/reference/passkey-wallet#function_createRemoteVaultBackupRecord)
-- [createUnlockedPasskeyWallet](/docs/reference/passkey-wallet#function_createUnlockedPasskeyWallet)
 - [createVaultBackupDigest](/docs/reference/passkey-wallet#function_createVaultBackupDigest)
 - [createVaultBackupSignatureMessage](/docs/reference/passkey-wallet#function_createVaultBackupSignatureMessage)
 - [createVaultRegistry](/docs/reference/passkey-wallet#function_createVaultRegistry)
@@ -109,16 +123,21 @@ import { registerBrowserPasskeyVault } from '@organigram/passkey-wallet/browser-
 - [createWalletEncryptionPublicKeySiweResource](/docs/reference/passkey-wallet#function_createWalletEncryptionPublicKeySiweResource)
 - [decryptFileWithWalletEncryptionKey](/docs/reference/passkey-wallet#function_decryptFileWithWalletEncryptionKey)
 - [decryptPasskeyVaultSecret](/docs/reference/passkey-wallet#function_decryptPasskeyVaultSecret)
+- [decryptPayloadWithWalletEncryptionKey](/docs/reference/passkey-wallet#function_decryptPayloadWithWalletEncryptionKey)
 - [decryptRemoteVaultBackupRecord](/docs/reference/passkey-wallet#function_decryptRemoteVaultBackupRecord)
+- [decryptVaultPayloadWithPrfOutput](/docs/reference/passkey-wallet#function_decryptVaultPayloadWithPrfOutput)
 - [derivePasskeyVaultKey](/docs/reference/passkey-wallet#function_derivePasskeyVaultKey)
 - [derivePasskeyWalletAccount](/docs/reference/passkey-wallet#function_derivePasskeyWalletAccount)
 - [deriveStoredVaultAccount](/docs/reference/passkey-wallet#function_deriveStoredVaultAccount)
 - [encryptFileWithWalletEncryptionKey](/docs/reference/passkey-wallet#function_encryptFileWithWalletEncryptionKey)
 - [encryptPasskeyVaultSecret](/docs/reference/passkey-wallet#function_encryptPasskeyVaultSecret)
+- [encryptPayloadWithWalletEncryptionKey](/docs/reference/passkey-wallet#function_encryptPayloadWithWalletEncryptionKey)
 - [formatAddress](/docs/reference/passkey-wallet#function_formatAddress)
 - [formatCredentialId](/docs/reference/passkey-wallet#function_formatCredentialId)
+- [getAcceptedWalletOrigins](/docs/reference/passkey-wallet#function_getAcceptedWalletOrigins)
+- [getCrypto](/docs/reference/passkey-wallet#function_getCrypto)
 - [getDerivationPath](/docs/reference/passkey-wallet#function_getDerivationPath)
-- [getDiscoverablePasskeyPrfOutput](/docs/reference/passkey-wallet#function_getDiscoverablePasskeyPrfOutput)
+- [getLocalWalletOrigin](/docs/reference/passkey-wallet#function_getLocalWalletOrigin)
 - [getNextAddressIndex](/docs/reference/passkey-wallet#function_getNextAddressIndex)
 - [getOrganigramRemotePasskeyWalletConnection](/docs/reference/passkey-wallet#function_getOrganigramRemotePasskeyWalletConnection)
 - [getPasskeyWalletCorsAllowedOrigins](/docs/reference/passkey-wallet#function_getPasskeyWalletCorsAllowedOrigins)
@@ -128,50 +147,62 @@ import { registerBrowserPasskeyVault } from '@organigram/passkey-wallet/browser-
 - [getVaultRegistryGroupId](/docs/reference/passkey-wallet#function_getVaultRegistryGroupId)
 - [groupVaultRecordsBySeed](/docs/reference/passkey-wallet#function_groupVaultRecordsBySeed)
 - [groupVaultsByWallet](/docs/reference/passkey-wallet#function_groupVaultsByWallet)
+- [hasBase64UrlByteLength](/docs/reference/passkey-wallet#function_hasBase64UrlByteLength)
 - [hexEncodeMessage](/docs/reference/passkey-wallet#function_hexEncodeMessage)
 - [hydrateOrganigramRemoteWalletConnection](/docs/reference/passkey-wallet#function_hydrateOrganigramRemoteWalletConnection)
-- [inferPasskeyRpId](/docs/reference/passkey-wallet#function_inferPasskeyRpId)
-- [isHostnameCompatibleWithRpId](/docs/reference/passkey-wallet#function_isHostnameCompatibleWithRpId)
-- [isLocalHostname](/docs/reference/passkey-wallet#function_isLocalHostname)
+- [isLocalWalletOriginOf](/docs/reference/passkey-wallet#function_isLocalWalletOriginOf)
 - [isPasskeyPrfSupported](/docs/reference/passkey-wallet#function_isPasskeyPrfSupported)
+- [isPasskeyVaultEnvelope](/docs/reference/passkey-wallet#function_isPasskeyVaultEnvelope)
+- [isPasskeyWalletRemoteRequestPayloadMessage](/docs/reference/passkey-wallet#function_isPasskeyWalletRemoteRequestPayloadMessage)
+- [isPasskeyWalletTransaction](/docs/reference/passkey-wallet#function_isPasskeyWalletTransaction)
 - [isStoredVaultRecord](/docs/reference/passkey-wallet#function_isStoredVaultRecord)
 - [isWalletSignInOriginAllowed](/docs/reference/passkey-wallet#function_isWalletSignInOriginAllowed)
 - [markVaultRecordUsed](/docs/reference/passkey-wallet#function_markVaultRecordUsed)
 - [mergeVaults](/docs/reference/passkey-wallet#function_mergeVaults)
 - [normalizeBackupAddress](/docs/reference/passkey-wallet#function_normalizeBackupAddress)
-- [normalizeHostname](/docs/reference/passkey-wallet#function_normalizeHostname)
 - [notifyCurrentTabNextAuthSessionChanged](/docs/reference/passkey-wallet#function_notifyCurrentTabNextAuthSessionChanged)
-- [notifyOrganigramRemotePasskeyWalletDisconnect](/docs/reference/passkey-wallet#function_notifyOrganigramRemotePasskeyWalletDisconnect)
+- [notifyPasskeyWalletStackSessionChanged](/docs/reference/passkey-wallet#function_notifyPasskeyWalletStackSessionChanged)
 - [parseBrowserPasskeyWalletVaultPayload](/docs/reference/passkey-wallet#function_parseBrowserPasskeyWalletVaultPayload)
-- [parsePasskeyWalletDisconnectRequest](/docs/reference/passkey-wallet#function_parsePasskeyWalletDisconnectRequest)
 - [parsePasskeyWalletRemoteRequest](/docs/reference/passkey-wallet#function_parsePasskeyWalletRemoteRequest)
 - [parsePasskeyWalletSignInRequest](/docs/reference/passkey-wallet#function_parsePasskeyWalletSignInRequest)
-- [parsePasskeyWalletVaultPayload](/docs/reference/passkey-wallet#function_parsePasskeyWalletVaultPayload)
+- [parsePasskeyWalletStackSessionChangedMessage](/docs/reference/passkey-wallet#function_parsePasskeyWalletStackSessionChangedMessage)
+- [parsePasskeyWalletTypedData](/docs/reference/passkey-wallet#function_parsePasskeyWalletTypedData)
 - [parseRemoteVaultBackupPackage](/docs/reference/passkey-wallet#function_parseRemoteVaultBackupPackage)
 - [parseVaultRegistry](/docs/reference/passkey-wallet#function_parseVaultRegistry)
 - [parseWalletEncryptedFilePackage](/docs/reference/passkey-wallet#function_parseWalletEncryptedFilePackage)
+- [parseWalletEncryptedPayload](/docs/reference/passkey-wallet#function_parseWalletEncryptedPayload)
 - [parseWalletEncryptionKeyPair](/docs/reference/passkey-wallet#function_parseWalletEncryptionKeyPair)
 - [parseWalletEncryptionPublicKeySiweResource](/docs/reference/passkey-wallet#function_parseWalletEncryptionPublicKeySiweResource)
+- [postToWalletPopup](/docs/reference/passkey-wallet#function_postToWalletPopup)
+- [randomBytes](/docs/reference/passkey-wallet#function_randomBytes)
 - [registerAdditionalBrowserPasskeyVault](/docs/reference/passkey-wallet#function_registerAdditionalBrowserPasskeyVault)
 - [registerBrowserPasskeyVault](/docs/reference/passkey-wallet#function_registerBrowserPasskeyVault)
 - [rememberOrganigramRemotePasskeyWalletConnection](/docs/reference/passkey-wallet#function_rememberOrganigramRemotePasskeyWalletConnection)
+- [rememberWalletOrigin](/docs/reference/passkey-wallet#function_rememberWalletOrigin)
 - [removeAccountFromVaultRecords](/docs/reference/passkey-wallet#function_removeAccountFromVaultRecords)
 - [removeVaultRecord](/docs/reference/passkey-wallet#function_removeVaultRecord)
 - [removeVaultRecords](/docs/reference/passkey-wallet#function_removeVaultRecords)
+- [requestPasskeyPrfOutput](/docs/reference/passkey-wallet#function_requestPasskeyPrfOutput)
 - [requestPasskeyWalletConnect](/docs/reference/passkey-wallet#function_requestPasskeyWalletConnect)
+- [requestPasskeyWalletDecryptPayload](/docs/reference/passkey-wallet#function_requestPasskeyWalletDecryptPayload)
+- [requestPasskeyWalletEncryptPayload](/docs/reference/passkey-wallet#function_requestPasskeyWalletEncryptPayload)
 - [requestPasskeyWalletSignIn](/docs/reference/passkey-wallet#function_requestPasskeyWalletSignIn)
 - [requestPasskeyWalletSignMessage](/docs/reference/passkey-wallet#function_requestPasskeyWalletSignMessage)
 - [resolveSiweDomain](/docs/reference/passkey-wallet#function_resolveSiweDomain)
-- [serializePasskeyWalletVaultPayload](/docs/reference/passkey-wallet#function_serializePasskeyWalletVaultPayload)
 - [serializeVaultRegistry](/docs/reference/passkey-wallet#function_serializeVaultRegistry)
 - [signInWithPasskeyWallet](/docs/reference/passkey-wallet#function_signInWithPasskeyWallet)
 - [signPersonalMessage](/docs/reference/passkey-wallet#function_signPersonalMessage)
+- [signTypedDataMessage](/docs/reference/passkey-wallet#function_signTypedDataMessage)
+- [stringifyPasskeyWalletTypedData](/docs/reference/passkey-wallet#function_stringifyPasskeyWalletTypedData)
+- [toArrayBuffer](/docs/reference/passkey-wallet#function_toArrayBuffer)
+- [toPreferredWalletUrl](/docs/reference/passkey-wallet#function_toPreferredWalletUrl)
 - [unlockBrowserPasskeyVault](/docs/reference/passkey-wallet#function_unlockBrowserPasskeyVault)
 - [updateStaticPasskeyVaultEncryptionKey](/docs/reference/passkey-wallet#function_updateStaticPasskeyVaultEncryptionKey)
 - [upsertVaultRecord](/docs/reference/passkey-wallet#function_upsertVaultRecord)
 - [validatePasskeyWalletManifest](/docs/reference/passkey-wallet#function_validatePasskeyWalletManifest)
 - [vaultHasAccount](/docs/reference/passkey-wallet#function_vaultHasAccount)
 - [verifyPasskeyWalletSiwe](/docs/reference/passkey-wallet#function_verifyPasskeyWalletSiwe)
+- [watchLocalWalletPopup](/docs/reference/passkey-wallet#function_watchLocalWalletPopup)
 - [withPasskeyWalletCorsHeaders](/docs/reference/passkey-wallet#function_withPasskeyWalletCorsHeaders)
 
 
@@ -185,6 +216,30 @@ addAccountToVaultRecords: (input: {
     sourceAddress: `0x${string}`;
     account: StoredVaultAccount;
 }) => StoredVaultRecord[]
+```
+
+
+## function ++dnt++assertPasskeyWalletSignMessageResult
+
+```typescript
+assertPasskeyWalletSignMessageResult: (input: {
+    result: PasskeyWalletSignMessageResult;
+    address: `0x${string}`;
+    chainId: number;
+    message: string;
+}) => Promise<void>
+```
+
+
+## function ++dnt++assertPasskeyWalletSignTypedDataResult
+
+```typescript
+assertPasskeyWalletSignTypedDataResult: (input: {
+    result: PasskeyWalletSignTypedDataResult;
+    address: `0x${string}`;
+    chainId: number;
+    typedData: PasskeyWalletTypedData;
+}) => Promise<void>
 ```
 
 
@@ -209,12 +264,15 @@ base64UrlToBytes: (value: string) => Uint8Array
 ```
 
 
-## function ++dnt++buildPasskeyWalletDisconnectUrl
+## function ++dnt++beginOrganigramWalletApprovalSequence
+
+Adds presentation-only context to the next wallet approvals. This lets an app tell the wallet that one user action requires several signatures, without broadening any approval or altering its signed payload.
 
 ```typescript
-buildPasskeyWalletDisconnectUrl: (input: PasskeyWalletRemotePopupInput & {
-    address: `0x${string}`;
-}) => URL
+beginOrganigramWalletApprovalSequence: (input: {
+    count: number;
+    label?: string;
+}) => (() => void)
 ```
 
 
@@ -238,7 +296,6 @@ buildPasskeyWalletPopupUrl: (input: {
 buildPasskeyWalletRemotePopupUrl: (input: PasskeyWalletRemotePopupInput & {
     type: PasskeyWalletRemoteRequestType;
     address?: `0x${string}`;
-    message?: string;
 }) => URL
 ```
 
@@ -278,16 +335,6 @@ createGeneratedRecoveryPhrase: () => string
 ```
 
 
-## function ++dnt++createNewPasskeyWalletVault
-
-```typescript
-createNewPasskeyWalletVault: () => Promise<{
-    address: `0x${string}`;
-    vaultPayload: PasskeyWalletVaultPayload;
-}>
-```
-
-
 ## function ++dnt++createOrganigramRemotePasskeyWallet
 
 ```typescript
@@ -318,10 +365,14 @@ createPasskeyWalletManifest: (request: Request) => PasskeyWalletManifest
 ```
 
 
-## function ++dnt++createPasskeyWalletVaultPayload
+## function ++dnt++createPasskeyWalletStackSessionChangedMessage
 
 ```typescript
-createPasskeyWalletVaultPayload: (recoveryPhrase: string) => Promise<PasskeyWalletVaultPayload>
+createPasskeyWalletStackSessionChangedMessage: (input: {
+    event: "revoked";
+    appOrigin: string;
+    address?: `0x${string}` | null;
+}) => PasskeyWalletStackSessionChangedMessage
 ```
 
 
@@ -341,20 +392,8 @@ createRemoteVaultBackupPackage: (input: {
 createRemoteVaultBackupRecord: (input: {
     address: `0x${string}`;
     record: StoredVaultRecord;
-    prfOutput: Uint8Array;
+    recoveryPhrase: string;
 }) => Promise<RemoteVaultBackupRecord>
-```
-
-
-## function ++dnt++createUnlockedPasskeyWallet
-
-```typescript
-createUnlockedPasskeyWallet: (input: {
-    address: `0x${string}`;
-    credentialId: string;
-    vaultPayload: PasskeyWalletVaultPayload;
-    now?: number;
-}) => UnlockedPasskeyWallet
 ```
 
 
@@ -417,14 +456,35 @@ decryptPasskeyVaultSecret: (input: DecryptPasskeyVaultSecretInput) => Promise<st
 ```
 
 
+## function ++dnt++decryptPayloadWithWalletEncryptionKey
+
+```typescript
+decryptPayloadWithWalletEncryptionKey: (input: {
+    encryptedPayload: WalletEncryptedPayload;
+    appOrigin: string;
+    keyPair: WalletEncryptionKeyPairPayload;
+}) => Promise<string>
+```
+
+
 ## function ++dnt++decryptRemoteVaultBackupRecord
 
 ```typescript
 decryptRemoteVaultBackupRecord: (input: {
     address: `0x${string}`;
     backup: RemoteVaultBackupRecord;
-    prfOutput: Uint8Array;
+    recoveryPhrase: string;
 }) => Promise<StoredVaultRecord>
+```
+
+
+## function ++dnt++decryptVaultPayloadWithPrfOutput
+
+```typescript
+decryptVaultPayloadWithPrfOutput: (input: {
+    envelope: PasskeyVaultEnvelopeData;
+    prfOutput: Uint8Array;
+}) => Promise<BrowserPasskeyWalletVaultPayload>
 ```
 
 
@@ -474,6 +534,18 @@ encryptPasskeyVaultSecret: (input: EncryptPasskeyVaultSecretInput) => Promise<Pa
 ```
 
 
+## function ++dnt++encryptPayloadWithWalletEncryptionKey
+
+```typescript
+encryptPayloadWithWalletEncryptionKey: (input: {
+    address: `0x${string}`;
+    appOrigin: string;
+    plaintext: string;
+    keyPair: WalletEncryptionKeyPairPayload;
+}) => Promise<WalletEncryptedPayload>
+```
+
+
 ## function ++dnt++formatAddress
 
 ```typescript
@@ -488,6 +560,22 @@ formatCredentialId: (credentialId: string) => string
 ```
 
 
+## function ++dnt++getAcceptedWalletOrigins
+
+The origins whose messages an app expecting `walletOrigin` accepts.
+
+```typescript
+getAcceptedWalletOrigins: (walletOrigin: string) => string[]
+```
+
+
+## function ++dnt++getCrypto
+
+```typescript
+getCrypto: () => Crypto
+```
+
+
 ## function ++dnt++getDerivationPath
 
 ```typescript
@@ -495,12 +583,12 @@ getDerivationPath: (addressIndex: number) => string
 ```
 
 
-## function ++dnt++getDiscoverablePasskeyPrfOutput
+## function ++dnt++getLocalWalletOrigin
+
+The local copy of `walletOrigin`, if it has one.
 
 ```typescript
-getDiscoverablePasskeyPrfOutput: (input?: {
-    rpId?: string;
-}) => Promise<Uint8Array>
+getLocalWalletOrigin: (walletOrigin: string) => string | null
 ```
 
 
@@ -575,6 +663,13 @@ groupVaultsByWallet: (vaults: StoredVaultRecord[]) => WalletGroup[]
 ```
 
 
+## function ++dnt++hasBase64UrlByteLength
+
+```typescript
+hasBase64UrlByteLength: (value: unknown, isValidLength: (byteLength: number) => boolean) => boolean
+```
+
+
 ## function ++dnt++hexEncodeMessage
 
 ```typescript
@@ -589,27 +684,12 @@ hydrateOrganigramRemoteWalletConnection: <TConnector extends HydrateOrganigramRe
 ```
 
 
-## function ++dnt++inferPasskeyRpId
+## function ++dnt++isLocalWalletOriginOf
+
+Only an HTTPS subdomain of the wallet host can unlock its passkeys.
 
 ```typescript
-inferPasskeyRpId: (hostname?: string) => string
-```
-
-
-## function ++dnt++isHostnameCompatibleWithRpId
-
-```typescript
-isHostnameCompatibleWithRpId: (input: {
-    hostname: string;
-    rpId: string;
-}) => boolean
-```
-
-
-## function ++dnt++isLocalHostname
-
-```typescript
-isLocalHostname: (hostname: string) => boolean
+isLocalWalletOriginOf: (localWalletOrigin: string, walletOrigin: string) => boolean
 ```
 
 
@@ -619,6 +699,27 @@ isLocalHostname: (hostname: string) => boolean
 isPasskeyPrfSupported: (input: {
     credential: PrfSupportCredential | null;
 }) => Promise<boolean>
+```
+
+
+## function ++dnt++isPasskeyVaultEnvelope
+
+```typescript
+isPasskeyVaultEnvelope: (value: unknown) => value is PasskeyVaultEnvelopeData
+```
+
+
+## function ++dnt++isPasskeyWalletRemoteRequestPayloadMessage
+
+```typescript
+isPasskeyWalletRemoteRequestPayloadMessage: (value: unknown, expectedRequestId?: string) => value is PasskeyWalletRemoteRequestPayloadMessage
+```
+
+
+## function ++dnt++isPasskeyWalletTransaction
+
+```typescript
+isPasskeyWalletTransaction: (value: unknown) => value is PasskeyWalletTransaction
 ```
 
 
@@ -661,13 +762,6 @@ normalizeBackupAddress: (value: string) => `0x${string}`
 ```
 
 
-## function ++dnt++normalizeHostname
-
-```typescript
-normalizeHostname: (hostname: unknown) => string
-```
-
-
 ## function ++dnt++notifyCurrentTabNextAuthSessionChanged
 
 ```typescript
@@ -675,13 +769,14 @@ notifyCurrentTabNextAuthSessionChanged: () => void
 ```
 
 
-## function ++dnt++notifyOrganigramRemotePasskeyWalletDisconnect
+## function ++dnt++notifyPasskeyWalletStackSessionChanged
 
 ```typescript
-notifyOrganigramRemotePasskeyWalletDisconnect: (input: {
-    walletOrigin?: string;
-    address: `0x${string}`;
-    chainId: number;
+notifyPasskeyWalletStackSessionChanged: (input: {
+    event: "revoked";
+    appOrigin: string;
+    address?: `0x${string}` | null;
+    targetOrigin?: string;
 }) => void
 ```
 
@@ -690,13 +785,6 @@ notifyOrganigramRemotePasskeyWalletDisconnect: (input: {
 
 ```typescript
 parseBrowserPasskeyWalletVaultPayload: (plaintext: string) => BrowserPasskeyWalletVaultPayload
-```
-
-
-## function ++dnt++parsePasskeyWalletDisconnectRequest
-
-```typescript
-parsePasskeyWalletDisconnectRequest: (params: URLSearchParams) => PasskeyWalletDisconnectRequest
 ```
 
 
@@ -714,10 +802,17 @@ parsePasskeyWalletSignInRequest: (params: URLSearchParams) => PasskeyWalletSignI
 ```
 
 
-## function ++dnt++parsePasskeyWalletVaultPayload
+## function ++dnt++parsePasskeyWalletStackSessionChangedMessage
 
 ```typescript
-parsePasskeyWalletVaultPayload: (plaintext: string) => PasskeyWalletVaultPayload
+parsePasskeyWalletStackSessionChangedMessage: (value: unknown) => PasskeyWalletStackSessionChangedMessage | null
+```
+
+
+## function ++dnt++parsePasskeyWalletTypedData
+
+```typescript
+parsePasskeyWalletTypedData: (value: unknown) => PasskeyWalletTypedData
 ```
 
 
@@ -742,6 +837,13 @@ parseWalletEncryptedFilePackage: (value: unknown) => WalletEncryptedFilePackage
 ```
 
 
+## function ++dnt++parseWalletEncryptedPayload
+
+```typescript
+parseWalletEncryptedPayload: (value: unknown) => WalletEncryptedPayload
+```
+
+
 ## function ++dnt++parseWalletEncryptionKeyPair
 
 ```typescript
@@ -756,6 +858,22 @@ parseWalletEncryptionPublicKeySiweResource: (input: {
     address: string;
     resources: string[] | undefined;
 }) => WalletEncryptionPublicKeySiweResource | null
+```
+
+
+## function ++dnt++postToWalletPopup
+
+Sends a message to the wallet popup, whichever accepted origin it shows: the browser only delivers it to the one the popup is on.
+
+```typescript
+postToWalletPopup: (popup: Window, message: unknown, walletOrigin: string) => void
+```
+
+
+## function ++dnt++randomBytes
+
+```typescript
+randomBytes: (length: number) => Uint8Array
 ```
 
 
@@ -800,6 +918,15 @@ rememberOrganigramRemotePasskeyWalletConnection: (input: {
 ```
 
 
+## function ++dnt++rememberWalletOrigin
+
+Remembers which of the accepted origins answered for `walletOrigin`.
+
+```typescript
+rememberWalletOrigin: (walletOrigin: string, answeringOrigin: string) => void
+```
+
+
 ## function ++dnt++removeAccountFromVaultRecords
 
 ```typescript
@@ -830,12 +957,49 @@ removeVaultRecords: (input: {
 ```
 
 
+## function ++dnt++requestPasskeyPrfOutput
+
+Runs one user-verified assertion restricted to the given passkeys, each evaluated with its own PRF salt, and returns the PRF output of the passkey the person selected. The caller owns the returned PRF output and must zero it once its key is derived.
+
+```typescript
+requestPasskeyPrfOutput: (input: {
+    credentials: PasskeyPrfCredential[];
+    rpId?: string;
+}) => Promise<{
+    credentialId: string;
+    prfOutput: Uint8Array;
+}>
+```
+
+
 ## function ++dnt++requestPasskeyWalletConnect
 
 ```typescript
 requestPasskeyWalletConnect: (input: PasskeyWalletConnectPopupInput & {
     timeoutMs?: number;
 }) => Promise<PasskeyWalletConnectResult>
+```
+
+
+## function ++dnt++requestPasskeyWalletDecryptPayload
+
+```typescript
+requestPasskeyWalletDecryptPayload: (input: PasskeyWalletRemotePopupInput & {
+    address: `0x${string}`;
+    encryptedPayload: WalletEncryptedPayload;
+    timeoutMs?: number;
+}) => Promise<PasskeyWalletDecryptPayloadResult>
+```
+
+
+## function ++dnt++requestPasskeyWalletEncryptPayload
+
+```typescript
+requestPasskeyWalletEncryptPayload: (input: PasskeyWalletRemotePopupInput & {
+    address: `0x${string}`;
+    plaintext: string;
+    timeoutMs?: number;
+}) => Promise<PasskeyWalletEncryptPayloadResult>
 ```
 
 
@@ -864,13 +1028,6 @@ resolveSiweDomain: (message: string) => string
 ```
 
 
-## function ++dnt++serializePasskeyWalletVaultPayload
-
-```typescript
-serializePasskeyWalletVaultPayload: (input: Omit<PasskeyWalletVaultPayload, "version">) => string
-```
-
-
 ## function ++dnt++serializeVaultRegistry
 
 ```typescript
@@ -895,6 +1052,39 @@ signPersonalMessage: (input: {
 ```
 
 
+## function ++dnt++signTypedDataMessage
+
+```typescript
+signTypedDataMessage: (input: {
+    wallet: UnlockedPasskeyWallet;
+    typedData: PasskeyWalletTypedData;
+}) => Promise<`0x${string}`>
+```
+
+
+## function ++dnt++stringifyPasskeyWalletTypedData
+
+```typescript
+stringifyPasskeyWalletTypedData: (typedData: PasskeyWalletTypedData) => string
+```
+
+
+## function ++dnt++toArrayBuffer
+
+```typescript
+toArrayBuffer: (bytes: Uint8Array) => ArrayBuffer
+```
+
+
+## function ++dnt++toPreferredWalletUrl
+
+Opens requests on the local copy once it has answered on this device, so that the official wallet is no longer loaded at all.
+
+```typescript
+toPreferredWalletUrl: (url: URL) => URL
+```
+
+
 ## function ++dnt++unlockBrowserPasskeyVault
 
 ```typescript
@@ -904,7 +1094,6 @@ unlockBrowserPasskeyVault: (input: {
 }) => Promise<{
     record: StoredVaultRecord;
     wallet: UnlockedPasskeyWallet;
-    prfOutput: Uint8Array;
 }>
 ```
 
@@ -951,6 +1140,21 @@ vaultHasAccount: (vault: StoredVaultRecord, address: string) => boolean
 
 ```typescript
 verifyPasskeyWalletSiwe: (input: PasskeyWalletVerifySiweInput) => Promise<PasskeyWalletVerifiedSiwe | null>
+```
+
+
+## function ++dnt++watchLocalWalletPopup
+
+Brings the popup back to the wallet when its local copy does not answer, for instance because it is not running. Returns the cleanup.
+
+```typescript
+watchLocalWalletPopup: (input: {
+    popup: Window;
+    popupUrl: URL;
+    walletOrigin: string;
+    requestId: string;
+    timeoutMs?: number;
+}) => (() => void)
 ```
 
 
@@ -1027,6 +1231,8 @@ export type CreateOrganigramRemotePasskeyWalletInput = {
     walletOrigin?: string;
     requestConnect?: RemoteRequestConnect;
     requestPersonalSign?: RemoteRequestPersonalSign;
+    requestSignTypedData?: RemoteRequestSignTypedData;
+    requestSendTransaction?: RemoteRequestSendTransaction;
 };
 ```
 
@@ -1075,6 +1281,17 @@ export type OrganigramRemotePasskeyWalletConnection = {
 ```
 
 
+## type ++dnt++PasskeyPrfCredential
+
+```typescript
+export type PasskeyPrfCredential = {
+    credentialId: string;
+    transports?: string[];
+    prfSalt: string;
+};
+```
+
+
 ## type ++dnt++PasskeyProviderEvent
 
 ```typescript
@@ -1107,6 +1324,7 @@ export type PasskeyVaultEnvelopeData = {
     keyVersion: typeof passkeyVaultKeyVersion;
     ciphertext: string;
     salt: string;
+    prfSalt: string;
     nonce: string;
 };
 ```
@@ -1150,12 +1368,44 @@ export type PasskeyWalletConnectResult = PasskeyWalletRemoteResultBase & {
 ```
 
 
-## type ++dnt++PasskeyWalletDisconnectRequest
+## type ++dnt++PasskeyWalletDecryptPayloadRequest
 
 ```typescript
-export type PasskeyWalletDisconnectRequest = PasskeyWalletRemoteRequestBase & {
-    type: typeof passkeyWalletDisconnectType;
+export type PasskeyWalletDecryptPayloadRequest = PasskeyWalletRemoteRequestBase & {
+    type: typeof passkeyWalletDecryptPayloadType;
     address: `0x${string}`;
+    encryptedPayload: WalletEncryptedPayload;
+};
+```
+
+
+## type ++dnt++PasskeyWalletDecryptPayloadResult
+
+```typescript
+export type PasskeyWalletDecryptPayloadResult = PasskeyWalletRemoteResultBase & {
+    type: typeof passkeyWalletDecryptPayloadResultType;
+    plaintext: string;
+};
+```
+
+
+## type ++dnt++PasskeyWalletEncryptPayloadRequest
+
+```typescript
+export type PasskeyWalletEncryptPayloadRequest = PasskeyWalletRemoteRequestBase & {
+    type: typeof passkeyWalletEncryptPayloadType;
+    address: `0x${string}`;
+    plaintext: string;
+};
+```
+
+
+## type ++dnt++PasskeyWalletEncryptPayloadResult
+
+```typescript
+export type PasskeyWalletEncryptPayloadResult = PasskeyWalletRemoteResultBase & {
+    type: typeof passkeyWalletEncryptPayloadResultType;
+    encryptedPayload: WalletEncryptedPayload;
 };
 ```
 
@@ -1211,6 +1461,17 @@ export type PasskeyWalletPopupInput = {
 ```
 
 
+## type ++dnt++PasskeyWalletRemoteErrorResult
+
+```typescript
+export type PasskeyWalletRemoteErrorResult = Omit<PasskeyWalletRemoteResultBase, 'address'> & {
+    type: typeof passkeyWalletRemoteErrorResultType;
+    address?: undefined;
+    error: string;
+};
+```
+
+
 ## type ++dnt++PasskeyWalletRemotePopupInput
 
 ```typescript
@@ -1220,6 +1481,9 @@ export type PasskeyWalletRemotePopupInput = {
     chainId: number;
     requestId?: string;
     requestedAt?: string;
+    approvalStep?: number;
+    approvalCount?: number;
+    approvalLabel?: string;
 };
 ```
 
@@ -1227,21 +1491,53 @@ export type PasskeyWalletRemotePopupInput = {
 ## type ++dnt++PasskeyWalletRemoteRequest
 
 ```typescript
-export type PasskeyWalletRemoteRequest = PasskeyWalletConnectRequest | PasskeyWalletSignMessageRequest;
+export type PasskeyWalletRemoteRequest = PasskeyWalletConnectRequest | PasskeyWalletSignMessageRequest | PasskeyWalletSignTypedDataRequest | PasskeyWalletSendTransactionRequest | PasskeyWalletEncryptPayloadRequest | PasskeyWalletDecryptPayloadRequest;
+```
+
+
+## type ++dnt++PasskeyWalletRemoteRequestPayloadMessage
+
+```typescript
+export type PasskeyWalletRemoteRequestPayloadMessage = {
+    type: typeof passkeyWalletRemoteRequestPayloadType;
+    version: 1;
+    request: PasskeyWalletRemoteRequest;
+};
 ```
 
 
 ## type ++dnt++PasskeyWalletRemoteRequestType
 
 ```typescript
-export type PasskeyWalletRemoteRequestType = typeof passkeyWalletConnectType | typeof passkeyWalletSignMessageType | typeof passkeyWalletDisconnectType;
+export type PasskeyWalletRemoteRequestType = typeof passkeyWalletConnectType | typeof passkeyWalletSignMessageType | typeof passkeyWalletSignTypedDataType | typeof passkeyWalletSendTransactionType | typeof passkeyWalletEncryptPayloadType | typeof passkeyWalletDecryptPayloadType;
 ```
 
 
 ## type ++dnt++PasskeyWalletRemoteResult
 
 ```typescript
-export type PasskeyWalletRemoteResult = PasskeyWalletConnectResult | PasskeyWalletSignMessageResult;
+export type PasskeyWalletRemoteResult = PasskeyWalletConnectResult | PasskeyWalletSignMessageResult | PasskeyWalletSignTypedDataResult | PasskeyWalletSendTransactionResult | PasskeyWalletEncryptPayloadResult | PasskeyWalletDecryptPayloadResult | PasskeyWalletRemoteErrorResult;
+```
+
+
+## type ++dnt++PasskeyWalletSendTransactionRequest
+
+```typescript
+export type PasskeyWalletSendTransactionRequest = PasskeyWalletRemoteRequestBase & {
+    type: typeof passkeyWalletSendTransactionType;
+    address: `0x${string}`;
+    transaction: PasskeyWalletTransaction;
+};
+```
+
+
+## type ++dnt++PasskeyWalletSendTransactionResult
+
+```typescript
+export type PasskeyWalletSendTransactionResult = PasskeyWalletRemoteResultBase & {
+    type: typeof passkeyWalletSendTransactionResultType;
+    transactionHash: `0x${string}`;
+};
 ```
 
 
@@ -1308,13 +1604,79 @@ export type PasskeyWalletSignMessageResult = PasskeyWalletRemoteResultBase & {
 ```
 
 
-## type ++dnt++PasskeyWalletVaultPayload
+## type ++dnt++PasskeyWalletSignTypedDataPopupInput
 
 ```typescript
-export type PasskeyWalletVaultPayload = {
+export type PasskeyWalletSignTypedDataPopupInput = PasskeyWalletRemotePopupInput & {
+    address: `0x${string}`;
+    typedData: PasskeyWalletTypedData;
+};
+```
+
+
+## type ++dnt++PasskeyWalletSignTypedDataRequest
+
+```typescript
+export type PasskeyWalletSignTypedDataRequest = PasskeyWalletRemoteRequestBase & {
+    type: typeof passkeyWalletSignTypedDataType;
+    address: `0x${string}`;
+    typedData: PasskeyWalletTypedData;
+};
+```
+
+
+## type ++dnt++PasskeyWalletSignTypedDataResult
+
+```typescript
+export type PasskeyWalletSignTypedDataResult = PasskeyWalletRemoteResultBase & {
+    type: typeof passkeyWalletSignTypedDataResultType;
+    typedData: PasskeyWalletTypedData;
+    signature: `0x${string}`;
+};
+```
+
+
+## type ++dnt++PasskeyWalletStackSessionChangedMessage
+
+```typescript
+export type PasskeyWalletStackSessionChangedMessage = {
+    type: typeof passkeyWalletStackSessionChangedType;
     version: 1;
-    recoveryPhrase: string;
-    walletEncryptionKey?: WalletEncryptionKeyPairPayload;
+    event: 'revoked';
+    appOrigin: string;
+    address: `0x${string}` | null;
+};
+```
+
+
+## type ++dnt++PasskeyWalletTransaction
+
+```typescript
+export type PasskeyWalletTransaction = {
+    from: `0x${string}`;
+    to: `0x${string}`;
+    data?: `0x${string}`;
+    value?: `0x${string}`;
+    gas?: `0x${string}`;
+    gasPrice?: `0x${string}`;
+    maxFeePerGas?: `0x${string}`;
+    maxPriorityFeePerGas?: `0x${string}`;
+    nonce?: `0x${string}`;
+};
+```
+
+
+## type ++dnt++PasskeyWalletTypedData
+
+```typescript
+export type PasskeyWalletTypedData = {
+    domain: Record<string, unknown>;
+    types: Record<string, ReadonlyArray<{
+        name: string;
+        type: string;
+    }>>;
+    primaryType: string;
+    message: Record<string, unknown>;
 };
 ```
 
@@ -1364,8 +1726,10 @@ export type RemoteVaultBackupPackage = {
 
 ```typescript
 export type RemoteVaultBackupRecord = {
-    version: 1;
+    version: 2;
     backupId: string;
+    credentialId: string;
+    envelope: PasskeyVaultEnvelopeData;
     salt: string;
     iv: string;
     ciphertext: string;
@@ -1430,7 +1794,6 @@ export type UnlockedPasskeyWallet = {
     recoveryPhrase: string;
     walletEncryptionKey?: WalletEncryptionKeyPairPayload;
     credentialId: string;
-    expiresAt: number;
 };
 ```
 
@@ -1486,6 +1849,26 @@ export type WalletEncryptedFilePackage = {
         type: string;
         size: number;
         lastModified?: number;
+    };
+    iv: string;
+    ciphertext: string;
+    encryptedAt: string;
+};
+```
+
+
+## type ++dnt++WalletEncryptedPayload
+
+```typescript
+export type WalletEncryptedPayload = {
+    version: 1;
+    kind: 'organigram:wallet-encrypted-payload';
+    algorithm: 'ECDH-P256+A256GCM';
+    appOrigin: string;
+    recipient: {
+        address: `0x${string}`;
+        publicKey: JsonWebKey;
+        keyVersion: number;
     };
     iv: string;
     ciphertext: string;

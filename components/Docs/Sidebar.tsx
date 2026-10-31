@@ -17,11 +17,12 @@ import ChevronRightIcon from '@mui/icons-material/ChevronRight'
 
 import { type FileTree } from '../../types'
 import { t } from '../../lib/i18n'
+import { compareTrees, getDocsSlug, getTreeLabel } from '../../lib/mdx'
 import { useBreakpoint } from '../../lib/client'
 
 export type SetOpen = (value: boolean) => void
 
-export const docsSidebarWidth = { xs: '100%', sm: '250px' }
+export const docsSidebarWidth = { xs: '100%', sm: '280px' }
 
 const DocsSidebar: React.FC<{
   trees: FileTree[]
@@ -31,7 +32,8 @@ const DocsSidebar: React.FC<{
   return (
     <Grid
       sx={{
-        overflow: 'scroll',
+        overflowY: 'auto',
+        overflowX: 'hidden',
         height: 'calc(100% - 50px)'
       }}
       width={docsSidebarWidth}
@@ -52,11 +54,16 @@ const DocsSidebar: React.FC<{
             bottom: 0,
             width: docsSidebarWidth,
             zIndex: 999,
-            border: 'none'
+            border: 'none',
+            backgroundColor: 'background.default'
           }
         }}
       >
         <SimpleTreeView
+          sx={{
+            py: 1,
+            pb: 3
+          }}
           slots={{
             expandIcon: ChevronRightIcon,
             collapseIcon: ExpandMoreIcon
@@ -64,11 +71,7 @@ const DocsSidebar: React.FC<{
           defaultExpandedItems={getTreeIds(trees)}
         >
           {trees
-            .sort((a, b) =>
-              (a.metadata?.order as number) > (b.metadata?.order as number)
-                ? 1
-                : -1
-            )
+            .sort(compareTrees)
             .map(tree => (
               <FileTreeItem
                 key={
@@ -95,6 +98,9 @@ const FileTreeItem: React.FC<{
     ContentProps={{ setOpen } as HTMLAttributes<HTMLElement>}
     sx={{
       mt: 1,
+      '& > .MuiTreeItem-groupTransition': {
+        mt: 0.5
+      },
       '.MuiTreeItem-label': {
         textOverflow: 'ellipsis',
         whiteSpace: 'nowrap',
@@ -102,17 +108,10 @@ const FileTreeItem: React.FC<{
       }
     }}
     itemId={(tree.path as string) + (tree.children != null ? '' : '-node')}
-    label={
-      tree.children == null
-        ? (tree.metadata?.title ?? tree.text)
-        : tree.children.find(child => child.metadata?.folderName != null)
-            ?.metadata?.folderName
-    }
+    label={getTreeLabel(tree)}
   >
     {tree.children
-      ?.sort((a, b) =>
-        (a.metadata?.order as number) > (b.metadata?.order as number) ? 1 : -1
-      )
+      ?.sort(compareTrees)
       ?.filter(
         child =>
           !(
@@ -160,46 +159,61 @@ const CustomContent = forwardRef(function CustomContent(
   const selected = asPath.slice(8) === itemId.slice(0, -9)
   const path = itemId.replace('-node', '')
   const icon = iconProp ?? expansionIcon ?? displayIcon
+  const isSection = icon != null
   const isTabletOrAbove = useBreakpoint('sm')
 
   return (
     <div ref={ref as React.Ref<HTMLDivElement>}>
-      <Grid container justifyContent='space-between' px={2}>
+      <Grid container alignItems='center' justifyContent='space-between' px={3}>
         <Button
           component='div'
+          aria-current={selected ? 'page' : undefined}
           onClick={e => {
             handleSelection(e)
             if (!isTabletOrAbove) setOpen(false)
             push(
-              `/${i18next.language}/docs/${
-                path?.endsWith('index.mdx')
-                  ? path?.slice(1, -9)
-                  : path?.slice(1, -4)
-              }`
+              `/${i18next.language}/docs/${getDocsSlug(path)}`
             )
           }}
           sx={{
             px: 1,
-            width: 'calc(100% - 24px)',
-            justifyContent: 'flex-start'
+            py: isSection ? 0.75 : 0.5,
+            minHeight: 0,
+            width: isSection ? 'calc(100% - 28px)' : '100%',
+            justifyContent: 'flex-start',
+            borderRadius: '6px',
+            borderLeft: ({ palette }) =>
+              `3px solid ${
+                selected ? (palette.primary.main as string) : 'transparent'
+              }`,
+            backgroundColor: selected ? 'primary.light4' : 'transparent',
+            '&:hover': {
+              backgroundColor: selected ? 'primary.light4' : 'grey.light4'
+            }
           }}
         >
           <Typography
             color={selected ? 'primary' : 'inherit'}
-            fontWeight='bold'
-            fontSize={['18px', '14px']}
+            fontWeight={isSection ? 700 : selected ? 700 : 500}
+            fontSize={isSection ? ['12px', '11px'] : ['17px', '14px']}
+            letterSpacing={isSection ? '0.08em' : 'normal'}
+            textTransform={isSection ? 'uppercase' : 'none'}
           >
             {t(label as string)}
           </Typography>
         </Button>
-        <Button
-          component='div'
-          onClick={e => {
-            handleExpansion(e)
-          }}
-        >
-          {icon}
-        </Button>
+        {isSection && (
+          <Button
+            component='div'
+            aria-label={t('Toggle documentation section')}
+            onClick={e => {
+              handleExpansion(e)
+            }}
+            sx={{ minWidth: 28, width: 28, height: 28, p: 0 }}
+          >
+            {icon}
+          </Button>
+        )}
       </Grid>
     </div>
   )

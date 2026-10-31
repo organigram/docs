@@ -2,11 +2,14 @@ import Card from '@mui/material/Card'
 import { Diagram, type DiagramProps } from '@organigram/react'
 import { Organigram, type OrganigramJson } from '@organigram/js'
 
+import { t } from '../lib/i18n'
+
 const Minimap: React.FC<{
   organigram?: OrganigramJson | Organigram
   direction?: string
+  height?: number | string
   diagramProps?: Partial<DiagramProps>
-}> = ({ organigram, direction, diagramProps }) => {
+}> = ({ organigram, direction, height = 360, diagramProps }) => {
   if (organigram == null) return null
   const parsed =
     organigram instanceof Organigram ? organigram : new Organigram(organigram)
@@ -24,8 +27,8 @@ const Minimap: React.FC<{
         mt: 2,
         width: '100%',
         maxWidth: '100%',
-        height: '100%',
-        minHeight: 360,
+        height,
+        minHeight: height,
         minWidth: 0,
         overflow: 'hidden',
         position: 'relative',
@@ -56,6 +59,7 @@ const Minimap: React.FC<{
         onClickAsset={() => {}}
         onClickOrgan={() => {}}
         onClickProcedure={() => {}}
+        translateLabel={t}
         {...restDiagramProps}
       />
     </Card>

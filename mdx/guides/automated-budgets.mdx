@@ -1,13 +1,12 @@
-import Grid from '@mui/material/Grid'
 import Minimap from '../../components/Minimap'
 import { templates } from '@organigram/js'
 
 export const metadata = {
-  title: '💰 Manage automated budgets and funds',
+  title: 'Manage automated budgets and funds',
   order: 8.6
 }
 
-# Manage automated budgets and funds 💰
+# Manage automated budgets and funds
 
 On {process.env.NEXT_PUBLIC_COMPANY_URL}, it is incridibely easy to automate the authorizations of funds and budgets in a transparent and accountable way.
 
@@ -17,9 +16,7 @@ Creating a participatory budget is as easy as creating a new organigram. You can
 
 It will create an organigram like this:
 
-<Grid sx={{ height: '400px' }} mb={3}>
-  <Minimap organigram={templates.participatoryBudget} />
-</Grid>
+<Minimap organigram={templates.participatoryBudget} />
 
 You can click on the link on the link on the top right corner to open the organigram in the editor and inspect how it works in detail. In a nutshell, we made a participatory budget:
 
@@ -45,6 +42,6 @@ You can also configure the rules to have recurrence, for example admins could ap
 
 ## Create a new fund
 
-You can apply this logic and add it to a wider organization to combine the [🛰️ automation features](docs/advanced) of {process.env.NEXT_PUBLIC_COMPANY_URL} with the legal status of your organization. For example, you could create a new organigram for an open source software project, and later decide to add a procedure to manage the funds of that entity collaboratively with the contributors or the users of the software.
+You can apply this logic and add it to a wider organization to combine the [automation features](docs/advanced) of {process.env.NEXT_PUBLIC_COMPANY_URL} with the legal status of your organization. For example, you could create a new organigram for an open source software project, and later decide to add a procedure to manage the funds of that entity collaboratively with the contributors or the users of the software.
 
-This is the scenario we cover our guide [🕊️ Create an open source collective or non-profit association](/docs/guides/non-profit), but it could also work very well with a [for-profit company](/docs/guides/for-profit)!
+This is the scenario we cover our guide [Create an open source collective or non-profit association](/docs/guides/non-profit), but it could also work very well with a [French commercial company](/docs/guides/commercial-companies)!

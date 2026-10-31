@@ -8,6 +8,7 @@ import EditIcon from '@mui/icons-material/Edit'
 import Link from '../Link'
 import { useBreakpoint } from '../../lib/client'
 import { t } from '../../lib/i18n'
+import { compareTrees, getDocsSlug } from '../../lib/mdx'
 import { type FileTree } from '../../types'
 
 const DocsNavigation: React.FC<{ trees: FileTree[]; current?: FileTree }> = ({
@@ -47,11 +48,7 @@ const DocsNavigation: React.FC<{ trees: FileTree[]; current?: FileTree }> = ({
             <Button
               onClick={() => {
                 push(
-                  `/${i18next.language}/docs/${
-                    (previous?.path?.endsWith('index.mdx') === true
-                      ? previous?.path?.slice(1, -9)
-                      : previous?.path?.slice(1, -4)) as string
-                  }`
+                  `/${i18next.language}/docs/${getDocsSlug(previous.path as string)}`
                 )
               }}
               variant='outlined'
@@ -72,11 +69,7 @@ const DocsNavigation: React.FC<{ trees: FileTree[]; current?: FileTree }> = ({
             <Button
               onClick={() => {
                 push(
-                  `/${i18next.language}/docs/${
-                    (next?.path?.endsWith('index.mdx') === true
-                      ? next?.path?.slice(1, -9)
-                      : next?.path?.slice(1, -4)) as string
-                  }`
+                  `/${i18next.language}/docs/${getDocsSlug(next.path as string)}`
                 )
               }}
               variant='outlined'
@@ -102,9 +95,7 @@ export default DocsNavigation
 const orderTrees: (trees: FileTree[]) => FileTree[] = trees => {
   const orderedList: FileTree[] = []
   trees
-    .sort((a, b) =>
-      (a.metadata?.order ?? 0) < (b.metadata?.order ?? 0) ? -1 : 1
-    )
+    .sort(compareTrees)
     .forEach(tree => {
       if (tree.metadata != null && tree.metadata.title !== '') {
         orderedList.push(tree)

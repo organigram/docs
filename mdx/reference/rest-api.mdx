@@ -1,6 +1,6 @@
-export const metadata = { title: "🌐 Web API", order: 5.35 }
+export const metadata = { title: "Web API", order: 5.35 }
 
-# Web API 🌐
+# Web API
 
 The official reference for the API routes used by Organigram.ai. Unlike the package references, these endpoints document the application layer itself, including RPC-style JSON routes, uploads, authentication callbacks, webhooks, and server-side integrations.
 
@@ -21,6 +21,9 @@ The official reference for the API routes used by Organigram.ai. Unlike the pack
 - [/api/organization](/docs/reference/rest-api#route_apiorganization): Organization lookups plus authenticated organization mutations.
 - [/api/subscription](/docs/reference/rest-api#route_apisubscription): Subscription updates and invoice lookups for the current user or sponsor.
 - [/api/notification](/docs/reference/rest-api#route_apinotification): Notification reads, sync, and read-state mutations.
+- [/api/governance](/docs/reference/rest-api#route_apigovernance): Authenticated governance-case, register, document, and workflow operations for organization workspaces.
+- [/api/recurringProposal](/docs/reference/rest-api#route_apirecurringProposal): Authenticated recurring-proposal schedule and worker-prepared draft operations for organization workspaces.
+- [/api/equityTransfer](/docs/reference/rest-api#route_apiequityTransfer): Collects the seller and buyer wallet signatures for an equity transfer before its governance proposal is created.
 
 ### Uploads and generated assets
 
@@ -71,9 +74,9 @@ Account, profile, and privacy operations for the current signed-in user.
 | --- | --- | --- |
 | `getProfile` | Session required | Loads the profile attached to the current user. |
 | `createProfile` | Session required | Creates a profile for the current user. |
-| `updateUser` | Session required | Updates the user record with the provided data. |
 | `deleteUser` | Session required | Deletes a user account on behalf of the current user. |
 | `updateProfile` | Session required | Updates profile fields for the current user. |
+| `getProfilePostalAddresses` | Session required | Loads the current user postal-address sources. |
 | `updatePrivacySettings` | Session required | Persists the current user privacy settings. |
 | `getUserContacts` | Session required | Returns the contacts linked to the current user. |
 | `getNotificationPreferences` | Session required | Loads the notification preferences attached to the current user. |
@@ -109,7 +112,11 @@ Workspace reads and mutations, including membership and ownership changes.
 | `removeUserFromWorkspace` | Session required | Removes a member from a workspace. |
 | `editUserRoleInWorkspace` | Session required | Changes a member role inside a workspace. |
 | `getWorkspaceUserEntries` | Session required | Lists workspace member entry identities with encrypted profile content references only. |
-| `transferWorkspaceOwnership` | Session required | Transfers workspace ownership to an organization. |
+| `getWorkspaceFiles` | Session required | Lists workspace file metadata without exposing file contents. |
+| `inviteWorkspaceMember` | Administrator session required | Emails a single-use link inviting someone to join some organs of the workspace. |
+| `listWorkspaceInvitations` | Administrator session required | Lists pending workspace invitations and accepted ones. |
+| `revokeWorkspaceInvitation` | Administrator session required | Deletes a workspace invitation. |
+| `acceptWorkspaceInvitation` | Session required | Joins the draft organs of a workspace invitation; deployed organs wait for a proposal. |
 | `enableGoogleWorkspaceAccessForWorkspace` | Session required | Allows users from a verified Google Workspace tenant to access a workspace. |
 | `disableGoogleWorkspaceAccessForWorkspace` | Session required | Revokes Google Workspace tenant access for a workspace without removing the verified administrator proof. |
 
@@ -137,6 +144,7 @@ Organigram, organ, procedure, entry, and asset mutations for authenticated users
 | `updateOrganigram` | Session required | Persists organigram changes. |
 | `mergeOrganigramJson` | Session required | Merges imported organigram JSON into an existing organigram. |
 | `deleteOrganigram` | Session required | Deletes an organigram. |
+| `retainGovernanceRecords` | Session required | Archives the meetings and register records of an organigram so it can be deleted. |
 | `saveDeployedOrganigram` | Session required | Stores deployment results for an organigram. |
 | `createOrgan` | Session required | Creates an organ. |
 | `updateOrgan` | Session required | Updates an organ. |
@@ -145,12 +153,17 @@ Organigram, organ, procedure, entry, and asset mutations for authenticated users
 | `updateProcedure` | Session required | Updates a procedure and its target permissions. |
 | `deleteProcedure` | Session required | Deletes a procedure. |
 | `getEntryReference` | Session required | Resolves an entry reference for the authenticated user without profile contents. |
+| `getPrivateReference` | Session required | Resolves an entry reference for the authenticated user without profile contents. |
 | `deleteEntry` | Session required | Deletes an entry. |
 | `createAsset` | Session required | Creates an asset. |
 | `updateAsset` | Session required | Updates an asset. |
 | `getAsset` | Session required | Fetches an asset by address. |
 | `addAssetToOrganigram` | Session required | Links an asset to an organigram. |
 | `deleteAsset` | Session required | Removes an asset from an organigram. |
+| `createOrganigramLayer` | Session required | Creates an empty shared organigram layer. |
+| `updateOrganigramLayer` | Session required | Updates a shared organigram layer. |
+| `reorderOrganigramLayers` | Session required | Reorders shared organigram layers. |
+| `deleteOrganigramLayer` | Session required | Deletes a shared organigram layer. |
 
 
 <span id="route_apiorganization"></span>
@@ -172,9 +185,31 @@ Organization lookups plus authenticated organization mutations.
 | Action | Auth | Description |
 | --- | --- | --- |
 | `getPublicOrganizations` | Public | Lists public organizations. |
-| `getInseeInfoBySiren` | Public | Looks up INSEE company information from a SIREN. |
+| `lookupCompany` | Public | Looks up a company in the national register of its country, from its registration number. |
+| `listCompanyTrademarks` | Public | Lists the trademarks registered by a company, when the register of its country provides them. |
+| `getCompanyStatutesAvailability` | Session required | Checks whether public articles of association can be downloaded from the register of the company country. |
+| `downloadCompanyStatutes` | Session required | Downloads the latest public articles of association of a company from the register of its country. |
 | `createOrganization` | Session required | Creates an organization for the current user. |
+| `verifyOrganizationTaxId` | Administrator session required | Confirms the registration number of the organization by matching the verified identity of the requesting administrator against the officers listed in the company register of its country. |
+| `listOrganizationMandates` | Administrator session required | Lists the active mandates by which RNE officers let administrators act on behalf of the company. |
+| `revokeOrganizationMandate` | Verified RNE officer session required | Revokes a mandate and removes its holder from the administrators. |
+| `inviteOrganizationOfficer` | Administrator session required | Emails a single-use link inviting an officer to join an organization whose SIREN is not verified yet. |
+| `getOrganizationArchiveManifest` | Administrator session required | Returns everything Organigram reads in clear about the organization, for an export before deletion. |
+| `inviteOrganizationDelegate` | Verified RNE officer session required | Emails a single-use link to someone who will administer the company under an officer mandate. |
+| `listPendingDelegates` | Administrator session required | Lists invited delegates waiting for an officer to sign their mandate. |
+| `appointOrganizationDelegate` | Verified RNE officer session required | Makes an invited delegate administrator with a mandate the officer signed with their wallet. |
+| `acceptOrganizationInvitation` | Session required | Joins an unverified organization as administrator with an invitation link. |
+| `attachStatutesToReferenceOrgan` | Organization-member session required | Links an uploaded articles of association file to the reference bylaws organ. |
 | `updateOrganization` | Session required | Updates organization metadata. |
+| `updateOrganizationComplianceProfile` | Session required | Updates organization legal, tax, and default governance settings. |
+| `getOrganizationRegisterSituation` | Administrator session required | Returns whether the organization currently employs staff and processes personal data, as tracked by its conditional registers. |
+| `updateOrganizationRegisterSituation` | Administrator session required | Updates whether the organization employs staff and processes personal data, refreshing the applicability of its conditional registers accordingly. |
+| `setOrganizationOfficialOrganigram` | Session required | Sets or clears the reference organigram used by organization pages. |
+| `getCertifiedComplianceStatus` | Session required | Calculates the current Certified compliance status and its private proof reports. |
+| `saveCertifiedComplianceConfiguration` | Session required | Stores the validated component addresses for the organization compliance profile. |
+| `activateReferenceRegisters` | Administrator session required | Adds the missing reference-register layer without deploying it. |
+| `getCertifiedComplianceReportForExport` | Administrator session required | Returns one private Certified report for administrator export. |
+| `validateCertifiedSensitiveProposal` | Session required | Verifies a proposed mutation of a Certified key organ before wallet signature. |
 | `getOrganizationById` | Session required | Fetches an organization by id. |
 | `getUserOrganizations` | Session required | Lists the organizations linked to the current user. |
 
@@ -197,9 +232,23 @@ Subscription updates and invoice lookups for the current user or sponsor.
 
 | Action | Auth | Description |
 | --- | --- | --- |
+| `authorizeOrganizationOperation` | Session required | Checks whether the current user can run an operation that requires an active Certified Entity. |
+| `authorizeCertifiedProcedureUse` | Session required | Checks whether the current user can use a Certified procedure. |
+| `quoteSponsoredTransaction` | Session required | Quotes the euro price of a sponsored transaction from a gas estimate. |
+| `getEntityActivation` | Session required | Syncs a confirmed Stripe intent for an organization, then returns its Certified Entity access state. |
+| `reconcileSoloBilling` | Session required | Syncs the current user’s Certified Solo subscription from a confirmed Stripe intent. |
+| `beginCryptoSoloEnrollment` | Session required | Persists EURC invoice billing before starting Certified Solo identity verification. |
+| `startCryptoEntitySubscription` | Session required | Creates a Certified Entity Stripe invoice to be paid in EURC. |
+| `getCryptoInvoicePayment` | Session required | Returns the authenticated billing manager’s EURC payment request for a Stripe invoice. |
+| `declareCryptoInvoicePayer` | Session required | Declares, with its signature, the wallet that will send the EURC transfer for a Stripe invoice. |
+| `submitCryptoInvoiceTransaction` | Session required | Submits and verifies an Ethereum EURC transaction for an open Stripe invoice. |
+| `reconcileCryptoInvoicePayment` | Session required | Rechecks the submitted EURC transaction of a Stripe invoice and records its payment once confirmed. |
+| `renewCryptoInvoicePayment` | Session required | Extends an expired EURC payment request for the same open Stripe invoice. |
 | `updateSubscription` | Session required | Updates subscription settings. |
 | `getIncomingInvoice` | Session required | Returns the next Stripe invoice for the provided customer id. |
 | `getPastInvoices` | Session required | Lists the past invoices for the current user Stripe customer. |
+| `getSponsoredTransactions` | Session required | Lists the latest transactions sponsored by an organization, for its billing managers. |
+| `createBillingPortalSession` | Session required | Returns a Stripe customer portal URL for an organization billing manager. |
 | `deleteSubscription` | Session required | Cancels or deletes a sponsor subscription for the current user. |
 
 
@@ -225,6 +274,105 @@ Notification reads, sync, and read-state mutations.
 | `markNotificationRead` | Session required | Marks one notification as read. |
 | `markAllNotificationsRead` | Session required | Marks all notifications as read. |
 | `syncWorkspaceNotifications` | Session required | Synchronizes proposal and asset notifications for one workspace. |
+
+
+<span id="route_apigovernance"></span>
+
+### ++dnt++/api/governance
+
+Authenticated governance-case, register, document, and workflow operations for organization workspaces.
+
+| Field | Value |
+| --- | --- |
+| Methods | `POST` |
+| Auth | Session required |
+| Body | JSON payload with an `action` field and, except for `getGovernanceBundle`, a `data` object |
+
+
+**Actions**
+
+| Action | Auth | Description |
+| --- | --- | --- |
+| `getGovernanceBundle` | Session required | Loads governance cases, register applicability, compliance tasks, and organization settings for an organigram. |
+| `createGovernanceCase` | Session required | Creates a governance case with an idempotency key. |
+| `createRecurringAssembly` | Session required | Creates a schedule that automatically creates governance-case drafts at each due date. |
+| `deleteGovernanceCase` | Session required | Permanently deletes a governance case before its first convocation, provided it has no linked on-chain proposal. |
+| `deleteRecurringAssembly` | Session required | Deletes a recurring assembly schedule without deleting its existing drafts. |
+| `updateRecurringAssembly` | Session required | Updates a recurring assembly schedule without changing its existing drafts. |
+| `updateGovernanceCase` | Session required | Updates an editable governance case and its agenda details. |
+| `confirmGovernanceRules` | Session required | Confirms and freezes the governance rules that apply to a case. |
+| `transitionGovernanceCase` | Session required | Moves a governance case through its lifecycle and triggers applicable workflow work. |
+| `sendGovernanceConvocationErratum` | Session required | Sends a corrected convocation to the case participants. |
+| `upsertGovernanceParticipant` | Session required | Creates or updates a governance-case participant and voting rights. |
+| `synchronizeGovernanceParticipantsFromRights` | Session required | Synchronizes governance-case participants from the organigram rights. |
+| `upsertGovernanceDocument` | Session required | Creates or updates a document attached to a governance case. |
+| `upsertGovernanceResolution` | Session required | Creates or updates an agenda resolution for a governance case. |
+| `deleteGovernanceResolution` | Session required | Deletes an agenda resolution from a governance case. |
+| `prepareGovernanceMinutes` | Session required | Prepares the governance-case minutes document. |
+| `signGovernanceMinutes` | Session required | Verifies and records the signature of the governance-case minutes. |
+| `recordGovernanceProposalCreated` | Session required | Links an on-chain proposal to a governance-case resolution. |
+| `recordGovernanceProposalWorkflowEvent` | Session required | Records an on-chain proposal workflow event for a governance case. |
+| `recordGovernanceWorkflowProposalOutput` | Session required | Records the on-chain proposal produced by a governance workflow. |
+| `upsertRegisterApplicability` | Session required | Confirms or updates whether a governance register applies to an organigram. |
+| `createRegisterRecord` | Session required | Adds a record to an applicable governance register. |
+| `runGovernanceAutomation` | Session required | Runs the governance automations currently due for the signed-in user. |
+
+
+<span id="route_apirecurringProposal"></span>
+
+### ++dnt++/api/recurringProposal
+
+Authenticated recurring-proposal schedule and worker-prepared draft operations for organization workspaces.
+
+| Field | Value |
+| --- | --- |
+| Methods | `POST` |
+| Auth | Session required |
+| Body | JSON payload with an `action` field and a `data` object |
+| Notes | Also reachable through `/api` with the same `action` payload. |
+
+
+**Actions**
+
+| Action | Auth | Description |
+| --- | --- | --- |
+| `getRecurringProposalBundle` | Session required | Lists the caller’s recurring-proposal schedules and prepared drafts for the requested category. |
+| `createRecurringProposal` | Session required | Creates a reusable proposal template for a deployed procedure without creating an on-chain proposal. |
+| `disableRecurringProposal` | Session required | Disables a recurring proposal and cancels its unsubmitted prepared drafts. |
+| `deleteRecurringProposal` | Session required | Deletes a recurring proposal and its prepared drafts. |
+| `runRecurringProposalAutomation` | Session required | Prepares drafts for recurring proposals currently due and notifies their creator; it never signs or creates an on-chain proposal. |
+| `markPreparedRecurringProposalSubmitted` | Session required | Links a prepared recurring-proposal draft to the on-chain proposal created by its owner. |
+
+
+<span id="route_apiequityTransfer"></span>
+
+### ++dnt++/api/equityTransfer
+
+Collects the seller and buyer wallet signatures for an equity transfer before its governance proposal is created.
+
+| Field | Value |
+| --- | --- |
+| Methods | `POST` |
+| Auth | Session wallet must be either the seller or buyer named in the request, or a workspace member for buyer lookups and invitations |
+| Body | JSON body with an action and action-specific data |
+| Notes | Also reachable through `/api` with the same `action` payload. |
+
+
+**Actions**
+
+| Action | Auth | Description |
+| --- | --- | --- |
+| `createSignatureRequest` | Session wallet must be either the seller or buyer named in the request, or a workspace member for buyer lookups and invitations | Creates a seller-signed request for a buyer wallet signature. |
+| `getSignatureRequest` | Session wallet must be either the seller or buyer named in the request, or a workspace member for buyer lookups and invitations | Returns the request to its seller or buyer. |
+| `signSignatureRequest` | Session wallet must be either the seller or buyer named in the request, or a workspace member for buyer lookups and invitations | Records the buyer wallet signature. |
+| `listSellerSignatureRequests` | Session wallet must be either the seller or buyer named in the request, or a workspace member for buyer lookups and invitations | Lists open requests that a seller can turn into proposals. |
+| `renderSignatureRequestPdf` | Session wallet must be either the seller or buyer named in the request, or a workspace member for buyer lookups and invitations | Generates the transfer agreement PDF for a participant. |
+| `markSignatureRequestSubmitted` | Session wallet must be either the seller or buyer named in the request, or a workspace member for buyer lookups and invitations | Anchors both wallet signatures to the on-chain proposal transaction. |
+| `listRegister` | Session wallet must be either the seller or buyer named in the request, or a workspace member for buyer lookups and invitations | Lists settled equity movements after verifying their ProposalApplied event. |
+| `exportRegister` | Session wallet must be either the seller or buyer named in the request, or a workspace member for buyer lookups and invitations | Generates a private CSV or PDF extract of the register. |
+| `listEligibleBuyers` | Session wallet must be either the seller or buyer named in the request, or a workspace member for buyer lookups and invitations | Lists KYC-verified users who explicitly share their information with the workspace or its organization. |
+| `getInvitation` | Session wallet must be either the seller or buyer named in the request, or a workspace member for buyer lookups and invitations | Names the organization a transferee invitation link points to (invited wallet only). |
+| `createInvitation` | Session wallet must be either the seller or buyer named in the request, or a workspace member for buyer lookups and invitations | Invites a wallet to have its identity verified at the organization's expense. |
 
 
 

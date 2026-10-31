@@ -1,10 +1,9 @@
 import { Organigram } from '@organigram/js'
-import Grid from '@mui/material/Grid'
 import Minimap from '../../components/Minimap'
 
-export const metadata = { title: '🔁 Upgradeability', order: 3.1 }
+export const metadata = { title: 'Upgradeability', order: 3.1 }
 
-# Upgradeability 🔁
+# Upgradeability
 
 From the ground up, the Organigram Protocol was designed to be fully upgradeable.
 This means that any organization can be upgraded entirely without any downtime or loss of functionality.
@@ -25,9 +24,7 @@ To do the latter, a new procedure with the new vote parameters is deployed, and 
 
 So not only we can change any aspect of the organigram, but we can do it following any procedure that we want. Let's see the organigram below to see more complex examples of constitutional upgradeability:
 
-<Grid sx={{ height: '400px' }}>
-  <Minimap organigram={new Organigram('none')} />
-</Grid>
+<Minimap organigram={new Organigram('none')} />
 
 In this organigram, which is a template for new projects in the app, the "Update permissions" procedure can replace "Elect executive team" by any procedure with new parameters. In practice, this means that the organization can change its decision making process and overall structure at any time by following the rules of the Update permissions procedure.
 
@@ -40,6 +37,7 @@ The Organigram Protocol also allows for extensibility through the use of `EIP-71
 An organ can act as a controlled execution account for third-party protocols. In the current contracts this happens through `executeWhitelisted(...)`, which lets the organ forward a call to another contract once that call has been approved by governance.
 
 The scope of that power is defined by whitelist policies. A policy is attached to a `target + selector` pair and can restrict individual arguments with exact-value, range, self-address, or whitelist-based constraints. This makes the external execution surface itself upgradeable:
+
 - a constitutional process can authorize a brand new integration;
 - it can later tighten the allowed parameters;
 - it can revoke an integration entirely by removing its policy.

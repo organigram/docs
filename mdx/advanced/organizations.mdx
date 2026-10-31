@@ -1,19 +1,27 @@
-import Grid from '@mui/material/Grid'
 import { Organigram } from '@organigram/js'
 import Minimap from '../../components/Minimap'
 
-export const metadata = { title: '🏡 Organizations', order: 3.2 }
+export const metadata = { title: 'Organizations', order: 3.2 }
 
-# Organizations 🏡
+# Organizations
 
 An organization is a collection of organigrams. Each organigram can have different visibility levels.
 
-Look for instance this template of a for-profit company:
+Look for instance this template of a French commercial company:
 
-<Grid sx={{ height: '700px' }}>
-  <Minimap organigram={new Organigram('forProfit')} />
-</Grid>
+<Minimap organigram={new Organigram('sas')} />
 
-Many organigrams can be combined to become very large maps of who has the power to officially take any given decision within very large organization. You can see an example of that on our [Create a consortium](/docs/guides/consortium) Guide.
+Many organigrams can be combined to become very large maps of who has the power
+to officially take any given decision within very large organization. You can
+see an example of that on our [Create a consortium](/docs/guides/consortium)
+Guide.
 
 And because all the rules of decision and the general structure of the organigram is enforced on a cryptographic network, it becomes impossible to fake or change the dates, time, contents or context of any official action without everyone noticing.
+
+## Prepare and activate an organization
+
+Preparing an organization is free: configure its profile, organigram, participants and draft decisions. New organizations remain outside the public directory until their first activation.
+
+Before deploying an organigram, scheduling or sending convocations, or launching a proposal from the application, an administrator activates **Certified Entity on behalf of the organization**. Participants do not need individual Certified Solo subscriptions. Activation requires accepting the terms and published usage prices and confirming a payment method, even when the initial invoice is €0. Existing AI and storage quotas still apply during preparation.
+
+Cancellation takes effect at the end of the subscription period. Afterwards, new operations require reactivation. Decisions already launched can be completed without new Certified services or sponsored transactions; participants pay any network fees from their wallets. Data, documents, proofs and exports remain available under their existing access permissions. The open protocol and developer tools remain independent of this application subscription.
