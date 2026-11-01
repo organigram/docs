@@ -1,4 +1,4 @@
-import { Organigram } from '@organigram/js'
+import { Organigram, templates } from '@organigram/js'
 import Minimap from '../../components/Minimap'
 
 export const metadata = { title: 'Organizations', order: 3.2 }
@@ -9,7 +9,7 @@ An organization is a collection of organigrams. Each organigram can have differe
 
 Look for instance this template of a French commercial company:
 
-<Minimap organigram={new Organigram('sas')} />
+<Minimap organigram={new Organigram(templates.sas)} />
 
 Many organigrams can be combined to become very large maps of who has the power
 to officially take any given decision within very large organization. You can
