@@ -2,14 +2,15 @@ import Button from '@mui/material/Button'
 import Grid from '@mui/material/Grid'
 
 import Link from '../../components/Link'
+import { t } from '../../lib/i18n'
 
 export const metadata = {
-  title: '✅ Run governance decisions online',
+  title: 'Run governance decisions online',
   folderName: '📖 Guides',
-  order: 1.5
+  order: 8.05
 }
 
-# Run governance decisions online ✅
+# Run governance decisions online
 
 Most sensitive decisions do not fail because people disagree. They fail because the record is incomplete: the wrong people were invited, voting rights were unclear, signatures were collected somewhere else, or the proof disappeared into an inbox.
 
@@ -59,7 +60,7 @@ The Certified Governance Pilot is built for that first workflow: we help configu
 <Grid container my={3} justifyContent='center'>
   <Grid item>
     <Link href={'/certified-governance-pilot'}>
-      <Button variant='contained'>Start a pilot</Button>
+      <Button variant='contained'>{t('Start a pilot')}</Button>
     </Link>
   </Grid>
 </Grid>

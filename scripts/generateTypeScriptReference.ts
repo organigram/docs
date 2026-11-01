@@ -113,18 +113,18 @@ const referenceConfigBySlug: Record<
   }
 > = {
   js: {
-    title: '⚙️ Typescript',
+    title: 'Typescript',
     order: 5.2,
-    heading: 'Typescript reference ⚙️',
+    heading: 'Typescript reference',
     description: `The official Javascript/Typescript documentation for the contracts and types used in the ${companyUrl} stack.`,
     quickStartTitle: 'Init',
     quickStartLanguage: 'ts',
     quickStartImport: `import { OrganigramClient } from '${packageName}'`
   },
   'passkey-wallet': {
-    title: '🫆 Passkey Wallet',
+    title: 'Passkey Wallet',
     order: 5.4,
-    heading: 'Passkey Wallet reference 🫆',
+    heading: 'Passkey Wallet reference',
     description:
       'The official TypeScript documentation for the Organigram Passkey Wallet primitives.',
     quickStartTitle: 'Quick start',
@@ -132,9 +132,9 @@ const referenceConfigBySlug: Record<
     quickStartImport: `import { registerBrowserPasskeyVault } from '${packageName}/browser-wallet'`
   },
   agent: {
-    title: '🤖 Agent',
+    title: 'Agent',
     order: 5.5,
-    heading: 'Agent reference 🤖',
+    heading: 'Agent reference',
     description:
       'The official TypeScript documentation for the Organigram workspace agent primitives.',
     quickStartTitle: 'Quick start',

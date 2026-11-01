@@ -535,9 +535,9 @@ ${grouped[category].map(renderEntry).join('\n')}`
     )
     .join('\n\n')
 
-  return `export const metadata = { title: "⚛️ React", order: 5.3 }
+  return `export const metadata = { title: "React", order: 5.3 }
 
-# React reference ⚛️
+# React reference
 
 The official React documentation for the hooks, components, theme helpers, and utilities exposed by the Organigram.ai stack.
 

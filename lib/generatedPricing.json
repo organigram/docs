@@ -1,33 +1,21 @@
 {
-  "generatedAt": "2026-07-18T19:51:28.969Z",
+  "generatedAt": "2026-09-06T19:48:10.087Z",
   "items": [
     {
       "key": "soloMonthly",
-      "label": "ID Certificates",
-      "price": "1,89€ / address / month",
-      "priceKey": "{{price}} / address / month",
+      "label": "Qualified ID Certificates",
+      "price": "2,89€ / month",
+      "priceKey": "{{price}} / month",
       "priceValues": {
-        "price": "1,89€"
+        "price": "2,89€"
       },
-      "annualPrice": "18,90€ / address / year",
-      "annualPriceKey": "{{price}} / address / year",
+      "annualPrice": "28,90€ / year",
+      "annualPriceKey": "{{price}} / year",
       "annualPriceValues": {
-        "price": "18,90€"
+        "price": "28,90€"
       },
       "details": "Minimum amount charged monthly to keep a certification active. This allows to generate advanced e-signatures tied to a user's wallet.",
       "source": "stripe"
-    },
-    {
-      "key": "sponsoredTransactions",
-      "label": "Sponsored transactions",
-      "price": "~x2 gas used, min. 0.01€",
-      "priceKey": "~x{{gasMultiplier}} gas used, min. {{minimumAmount}}",
-      "priceValues": {
-        "gasMultiplier": "2",
-        "minimumAmount": "0.01€"
-      },
-      "details": "Only the gas actually used is charged when sponsoring transactions, including relayer costs, processing fees and price fluctuations. Price is in Euro at currency rates updated every minute, with a minimum of 0.01€.",
-      "source": "stripe_usage"
     },
     {
       "key": "signatures",
@@ -42,7 +30,7 @@
     },
     {
       "key": "storage",
-      "label": "Certified storage (1GB free)",
+      "label": "Additional certified storage",
       "price": "0,89€ / GB / month",
       "priceKey": "{{price}} / GB / month",
       "priceValues": {
@@ -57,8 +45,19 @@
       "source": "stripe"
     },
     {
+      "key": "sponsoredTransactions",
+      "label": "Sponsored transactions",
+      "price": "From 0.01€",
+      "priceKey": "From {{minimumAmount}}",
+      "priceValues": {
+        "minimumAmount": "0.01€"
+      },
+      "details": "Only the gas actually used is charged when sponsoring transactions, including relayer costs, processing fees and price fluctuations. Price is in Euro at currency rates updated every minute, with a minimum of 0.01€.",
+      "source": "stripe_usage"
+    },
+    {
       "key": "aiUsage",
-      "label": "AI assistance (per 1M tokens)",
+      "label": "Workspace Agent (per 1M tokens)",
       "price": "2,50€ input / 15€ output",
       "priceKey": "{{inputRate}} input / {{outputRate}} output",
       "priceValues": {

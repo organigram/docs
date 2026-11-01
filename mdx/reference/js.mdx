@@ -1,6 +1,6 @@
-export const metadata = { title: "⚙️ Typescript", order: 5.2 }
+export const metadata = { title: "Typescript", order: 5.2 }
 
-# Typescript reference ⚙️
+# Typescript reference
 
 The official Javascript/Typescript documentation for the contracts and types used in the Organigram.ai stack.
 
@@ -78,9 +78,11 @@ import { OrganigramClient } from '@organigram/js'
 - [AccountInOrgans](/docs/reference/js#type_AccountInOrgans)
 - [ContractClients](/docs/reference/js#type_ContractClients)
 - [ContractName](/docs/reference/js#type_ContractName)
+- [DeployOrganigramResult](/docs/reference/js#type_DeployOrganigramResult)
 - [Election](/docs/reference/js#type_Election)
 - [EncryptedCidContentType](/docs/reference/js#type_EncryptedCidContentType)
 - [ERC20VoteProcedureInput](/docs/reference/js#type_ERC20VoteProcedureInput)
+- [ERC20VoteRoleMode](/docs/reference/js#type_ERC20VoteRoleMode)
 - [FileVersionManifest](/docs/reference/js#type_FileVersionManifest)
 - [OperationParamAction](/docs/reference/js#type_OperationParamAction)
 - [OperationParamType](/docs/reference/js#type_OperationParamType)
@@ -110,6 +112,8 @@ import { OrganigramClient } from '@organigram/js'
 
 ### Functions
 
+- [applyDeployedOrganigramAddresses](/docs/reference/js#function_applyDeployedOrganigramAddresses)
+- [assertValidProposalOperations](/docs/reference/js#function_assertValidProposalOperations)
 - [base64ToBytes](/docs/reference/js#function_base64ToBytes)
 - [base64UrlToBytes](/docs/reference/js#function_base64UrlToBytes)
 - [bufferEstimatedGas](/docs/reference/js#function_bufferEstimatedGas)
@@ -121,6 +125,7 @@ import { OrganigramClient } from '@organigram/js'
 - [cloneInitCodeHash](/docs/reference/js#function_cloneInitCodeHash)
 - [computeScopeEnvelopeRoot](/docs/reference/js#function_computeScopeEnvelopeRoot)
 - [createContractWriteTransaction](/docs/reference/js#function_createContractWriteTransaction)
+- [createDeployOrganigramResult](/docs/reference/js#function_createDeployOrganigramResult)
 - [createDeployTransaction](/docs/reference/js#function_createDeployTransaction)
 - [createEncryptedCidManifest](/docs/reference/js#function_createEncryptedCidManifest)
 - [createEncryptionKeyVersion](/docs/reference/js#function_createEncryptionKeyVersion)
@@ -173,7 +178,9 @@ import { OrganigramClient } from '@organigram/js'
 - [isPublicFileVersionManifest](/docs/reference/js#function_isPublicFileVersionManifest)
 - [isScopeEnvelopeManifest](/docs/reference/js#function_isScopeEnvelopeManifest)
 - [isSupportedChainId](/docs/reference/js#function_isSupportedChainId)
+- [isTemplateSupportedOnChain](/docs/reference/js#function_isTemplateSupportedOnChain)
 - [isValidEncryptionKeyVersion](/docs/reference/js#function_isValidEncryptionKeyVersion)
+- [markExistingOrganigramDeployments](/docs/reference/js#function_markExistingOrganigramDeployments)
 - [normalizeEncryptionKeyVersion](/docs/reference/js#function_normalizeEncryptionKeyVersion)
 - [normalizeOrganigramEdgeType](/docs/reference/js#function_normalizeOrganigramEdgeType)
 - [normalizeOrganigramNodePositions](/docs/reference/js#function_normalizeOrganigramNodePositions)
@@ -184,6 +191,7 @@ import { OrganigramClient } from '@organigram/js'
 - [predictContractAddress](/docs/reference/js#function_predictContractAddress)
 - [prepareDeployOrgansInput](/docs/reference/js#function_prepareDeployOrgansInput)
 - [prepareDeployProceduresInput](/docs/reference/js#function_prepareDeployProceduresInput)
+- [refreshUndeployedContractReferences](/docs/reference/js#function_refreshUndeployedContractReferences)
 - [renewSaltsAndAddresses](/docs/reference/js#function_renewSaltsAndAddresses)
 - [resolveDeployment](/docs/reference/js#function_resolveDeployment)
 - [sha256Hex](/docs/reference/js#function_sha256Hex)
@@ -196,6 +204,22 @@ import { OrganigramClient } from '@organigram/js'
 
 
 ## Utility functions
+
+## function ++dnt++applyDeployedOrganigramAddresses
+
+```typescript
+applyDeployedOrganigramAddresses: <Input extends DeployOrganigramInput>(input: Input, deployedAddresses: DeployedOrganigramAddresses, refreshedInput?: DeployOrganigramInput) => Input
+```
+
+
+## function ++dnt++assertValidProposalOperations
+
+Reject malformed calls before a proposal can be persisted on-chain.
+
+```typescript
+assertValidProposalOperations: (operations: ProcedureProposalOperation[]) => void
+```
+
 
 ## function ++dnt++base64ToBytes
 
@@ -279,6 +303,13 @@ createContractWriteTransaction: <TAbi extends Abi | readonly unknown[]>(input: {
     nonce?: number;
     value?: bigint;
 }) => Promise<OrganigramTransaction>
+```
+
+
+## function ++dnt++createDeployOrganigramResult
+
+```typescript
+createDeployOrganigramResult: <Input extends DeployOrganigramInput>(addresses: DeployedOrganigramAddresses, organigram: Input) => DeployOrganigramResult<Input>
 ```
 
 
@@ -493,7 +524,7 @@ exportUserPublicKey: (keyPair: CryptoKeyPair) => Promise<JsonWebKey>
 ## function ++dnt++formatCidRef
 
 ```typescript
-formatCidRef: (scopeRef: ScopeEnvelopeReference, logicalKey: string) => string
+formatCidRef: (scopeRef: ScopeEnvelopeReference, logicalKey: string, manifestCid?: string) => string
 ```
 
 
@@ -781,7 +812,7 @@ getPermissionsSet: (permissions: number) => string[]
 ## function ++dnt++getProcedureClass
 
 ```typescript
-getProcedureClass: (typeName: string) => Promise<typeof import("./vote").VoteProcedure | typeof import("./erc20Vote").ERC20VoteProcedure | typeof import("./nomination").NominationProcedure>
+getProcedureClass: (typeName: string) => Promise<typeof import("./erc20Vote").ERC20VoteProcedure | typeof import("./vote").VoteProcedure | typeof import("./nomination").NominationProcedure>
 ```
 
 
@@ -795,11 +826,7 @@ getProcedureType: (chainId: string, typeName: ProcedureTypeName) => ProcedureTyp
 ## function ++dnt++getProcedureTypes
 
 ```typescript
-getProcedureTypes: (chainId?: string) => {
-    erc20Vote: ProcedureType;
-    nomination: ProcedureType;
-    vote: ProcedureType;
-}
+getProcedureTypes: (chainId?: string) => Partial<Record<ProcedureTypeName, ProcedureType>>
 ```
 
 
@@ -929,10 +956,26 @@ isSupportedChainId: (chainId: string | number | bigint | null | undefined) => bo
 ```
 
 
+## function ++dnt++isTemplateSupportedOnChain
+
+Returns whether every protocol implementation required by a template exists on a chain.
+
+```typescript
+isTemplateSupportedOnChain: (templateName: TemplateName, chainId: string) => boolean
+```
+
+
 ## function ++dnt++isValidEncryptionKeyVersion
 
 ```typescript
 isValidEncryptionKeyVersion: (keyVersion: number) => boolean
+```
+
+
+## function ++dnt++markExistingOrganigramDeployments
+
+```typescript
+markExistingOrganigramDeployments: <Input extends DeployOrganigramInput>(input: Input, publicClient: PublicClient) => Promise<Input>
 ```
 
 
@@ -1021,6 +1064,13 @@ prepareDeployProceduresInput: (deployProceduresInput: DeployProceduresInput[], c
     salt: string;
     options: TransactionOptions | undefined;
 }[]>
+```
+
+
+## function ++dnt++refreshUndeployedContractReferences
+
+```typescript
+refreshUndeployedContractReferences: <Input extends DeployOrganigramInput>(input: Input, chainId: string) => Input
 ```
 
 
@@ -1269,18 +1319,18 @@ deployOrgan(input?: DeployOrganInput): Promise<Organ>;
 Deploy a full organigram, including its organs, assets, and procedures.
 
 ```typescript
-deployOrganigram(input: DeployOrganigramInput): Promise<readonly string[]>;
+deployOrganigram<Input extends DeployOrganigramInput>(input: Input): Promise<DeployOrganigramResult<Input>>;
 ```
 **Parameters**
 
 | Name | Type | Description |
 | --- | --- | --- |
-| `input` | `DeployOrganigramInput` | Batch deployment input for the whole organigram. |
+| `input` | `Input` | Batch deployment input for the whole organigram. |
 **Returns**
 
 | Type | Description |
 | --- | --- |
-| `Promise<readonly string[]>` | The deployed organ, asset, and procedure addresses. |
+| `Promise<DeployOrganigramResult<Input>>` | The deployed organ, asset, and procedure addresses. |
 
 
 #### ++dnt++OrganigramClient.deployOrgans
@@ -1323,6 +1373,26 @@ deployProcedures(deployProceduresInput: DeployProceduresInput[]): Promise<Proced
 | Name | Type | Description |
 | --- | --- | --- |
 | `deployProceduresInput` | `DeployProceduresInput[]` | Procedure definitions to deploy. |
+
+
+#### ++dnt++OrganigramClient.estimateDeployOrganigramGas
+
+Estimate the gas a full organigram deployment would use, without a wallet.
+
+```typescript
+estimateDeployOrganigramGas(input: DeployOrganigramInput, account: string): Promise<bigint>;
+```
+**Parameters**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| `input` | `DeployOrganigramInput` | Batch deployment input for the whole organigram. |
+| `account` | `string` | Address the deployment would be sent from. |
+**Returns**
+
+| Type | Description |
+| --- | --- |
+| `Promise<bigint>` | The estimated gas, or 0n when nothing remains to deploy. |
 
 
 #### ++dnt++OrganigramClient.getDeployedAsset
@@ -2017,6 +2087,13 @@ chainId: string;
 ```
 
 
+#### ++dnt++Asset.decisionProcedure
+
+```typescript
+decisionProcedure?: string | null;
+```
+
+
 #### ++dnt++Asset.description
 
 ```typescript
@@ -2042,6 +2119,13 @@ initialSupply: number;
 
 ```typescript
 isDeployed: boolean;
+```
+
+
+#### ++dnt++Asset.kind
+
+```typescript
+kind: 'asset' | 'equity';
 ```
 
 
@@ -2137,6 +2221,27 @@ static INTERFACE: string;
 ```
 
 
+#### ++dnt++ERC20VoteProcedure.moderatorMode
+
+```typescript
+moderatorMode: ERC20VoteRoleMode;
+```
+
+
+#### ++dnt++ERC20VoteProcedure.proposerMode
+
+```typescript
+proposerMode: ERC20VoteRoleMode;
+```
+
+
+#### ++dnt++ERC20VoteProcedure.requireMemberMajority
+
+```typescript
+requireMemberMajority: boolean;
+```
+
+
 #### ++dnt++ERC20VoteProcedure.toJson
 
 ```typescript
@@ -2148,6 +2253,13 @@ toJson: () => ProcedureJson;
 
 ```typescript
 typeName: ProcedureTypeName;
+```
+
+
+#### ++dnt++ERC20VoteProcedure.voterMode
+
+```typescript
+voterMode: ERC20VoteRoleMode;
 ```
 
 ### Methods
@@ -2247,6 +2359,13 @@ nominateBySig(input: {
         deadline: bigint | number;
         signature: string;
     }): Promise<boolean>;
+```
+
+
+#### ++dnt++NominationProcedure.reject
+
+```typescript
+reject(proposalKey: string, options?: TransactionOptions): Promise<boolean>;
 ```
 
 
@@ -2770,7 +2889,7 @@ static load(address: string, clients: ContractClients, initialProcedure?: Proced
 #### ++dnt++VoteProcedure.loadElection
 
 ```typescript
-static loadElection(address: string, proposalKey: string, clients: ContractClients, voteDuration?: bigint, contract?: any): Promise<Election>;
+static loadElection(address: string, proposalKey: string, clients: ContractClients, voteDuration?: bigint, contract?: any, blockTimestamp?: bigint): Promise<Election>;
 ```
 
 
@@ -2834,6 +2953,15 @@ chainId?: string | null;
 ```
 
 
+#### ++dnt++AssetInput.decisionProcedure
+
+Procedure authorized to settle this equity token's transfers.
+
+```typescript
+decisionProcedure?: string | null;
+```
+
+
 #### ++dnt++AssetInput.description
 
 ```typescript
@@ -2859,6 +2987,13 @@ initialSupply?: number | null;
 
 ```typescript
 isDeployed?: boolean;
+```
+
+
+#### ++dnt++AssetInput.kind
+
+```typescript
+kind?: 'asset' | 'equity' | null;
 ```
 
 
@@ -2918,6 +3053,15 @@ chainId: string;
 ```
 
 
+#### ++dnt++AssetJson.decisionProcedure
+
+Procedure authorized to settle this equity token's transfers.
+
+```typescript
+decisionProcedure?: string | null;
+```
+
+
 #### ++dnt++AssetJson.image
 
 ```typescript
@@ -2936,6 +3080,13 @@ initialSupply: number;
 
 ```typescript
 isDeployed: boolean;
+```
+
+
+#### ++dnt++AssetJson.kind
+
+```typescript
+kind: 'asset' | 'equity';
 ```
 
 
@@ -2981,10 +3132,24 @@ Input used to deploy one ERC-20 asset contract.
 
 ### Properties
 
+#### ++dnt++DeployAssetInput.decisionProcedure
+
+```typescript
+decisionProcedure?: string | null;
+```
+
+
 #### ++dnt++DeployAssetInput.initialSupply
 
 ```typescript
 initialSupply?: number | null;
+```
+
+
+#### ++dnt++DeployAssetInput.kind
+
+```typescript
+kind?: 'asset' | 'equity';
 ```
 
 
@@ -3128,6 +3293,13 @@ forwarder?: string | null;
 ```
 
 
+#### ++dnt++DeployProceduresInput.moderatorMode
+
+```typescript
+moderatorMode?: ERC20VoteRoleMode | null;
+```
+
+
 #### ++dnt++DeployProceduresInput.moderators
 
 ```typescript
@@ -3142,10 +3314,24 @@ options?: TransactionOptions;
 ```
 
 
+#### ++dnt++DeployProceduresInput.proposerMode
+
+```typescript
+proposerMode?: ERC20VoteRoleMode | null;
+```
+
+
 #### ++dnt++DeployProceduresInput.proposers
 
 ```typescript
 proposers?: string | null;
+```
+
+
+#### ++dnt++DeployProceduresInput.requireMemberMajority
+
+```typescript
+requireMemberMajority?: boolean | null;
 ```
 
 
@@ -3160,6 +3346,13 @@ salt?: string | null;
 
 ```typescript
 typeName: ProcedureTypeName;
+```
+
+
+#### ++dnt++DeployProceduresInput.voterMode
+
+```typescript
+voterMode?: ERC20VoteRoleMode | null;
 ```
 
 
@@ -3712,6 +3905,15 @@ logicalKey: string;
 ```
 
 
+#### ++dnt++ParsedCidRef.manifestCid
+
+Pins the reference to one immutable file-version manifest when present.
+
+```typescript
+manifestCid?: string;
+```
+
+
 #### ++dnt++ParsedCidRef.scopeRef
 
 ```typescript
@@ -3752,6 +3954,13 @@ forwarder: string;
 ```
 
 
+#### ++dnt++PopulateInitializeInput.moderatorMode
+
+```typescript
+moderatorMode?: ERC20VoteRoleMode;
+```
+
+
 #### ++dnt++PopulateInitializeInput.moderators
 
 ```typescript
@@ -3766,6 +3975,13 @@ options?: TransactionOptions;
 ```
 
 
+#### ++dnt++PopulateInitializeInput.proposerMode
+
+```typescript
+proposerMode?: ERC20VoteRoleMode;
+```
+
+
 #### ++dnt++PopulateInitializeInput.proposers
 
 ```typescript
@@ -3773,10 +3989,24 @@ proposers: string;
 ```
 
 
+#### ++dnt++PopulateInitializeInput.requireMemberMajority
+
+```typescript
+requireMemberMajority?: boolean;
+```
+
+
 #### ++dnt++PopulateInitializeInput.typeName
 
 ```typescript
 typeName?: ProcedureTypeName;
+```
+
+
+#### ++dnt++PopulateInitializeInput.voterMode
+
+```typescript
+voterMode?: ERC20VoteRoleMode;
 ```
 
 
@@ -3857,6 +4087,13 @@ metadata?: string | null;
 ```
 
 
+#### ++dnt++ProcedureInput.moderatorMode
+
+```typescript
+moderatorMode?: ERC20VoteRoleMode | null;
+```
+
+
 #### ++dnt++ProcedureInput.moderators
 
 ```typescript
@@ -3885,6 +4122,13 @@ proposals?: ProcedureProposal[] | null;
 ```
 
 
+#### ++dnt++ProcedureInput.proposerMode
+
+```typescript
+proposerMode?: ERC20VoteRoleMode | null;
+```
+
+
 #### ++dnt++ProcedureInput.proposers
 
 ```typescript
@@ -3896,6 +4140,13 @@ proposers?: string | null;
 
 ```typescript
 publicClient?: PublicClient | null;
+```
+
+
+#### ++dnt++ProcedureInput.requireMemberMajority
+
+```typescript
+requireMemberMajority?: boolean | null;
 ```
 
 
@@ -3917,6 +4168,13 @@ type?: ProcedureType;
 
 ```typescript
 typeName: string;
+```
+
+
+#### ++dnt++ProcedureInput.voterMode
+
+```typescript
+voterMode?: ERC20VoteRoleMode | null;
 ```
 
 
@@ -4008,6 +4266,13 @@ operations: ProcedureProposalOperation[];
 
 ```typescript
 presented: boolean;
+```
+
+
+#### ++dnt++ProcedureProposal.transactionHash
+
+```typescript
+transactionHash?: string;
 ```
 
 
@@ -4823,7 +5088,16 @@ export type ContractClients = {
 ## type ++dnt++ContractName
 
 ```typescript
-export type ContractName = 'Organ' | 'Asset' | 'ERC20VoteProcedure' | 'VoteProcedure' | 'NominationProcedure' | 'OrganigramClient';
+export type ContractName = 'Organ' | 'Asset' | 'EquityToken' | 'ERC20VoteProcedure' | 'VoteProcedure' | 'NominationProcedure' | 'OrganigramClient';
+```
+
+
+## type ++dnt++DeployOrganigramResult
+
+```typescript
+export type DeployOrganigramResult<Input extends DeployOrganigramInput = DeployOrganigramInput> = readonly [organs: string[], assets: string[], procedures: string[]] & {
+    organigram: Input;
+};
 ```
 
 
@@ -4837,6 +5111,9 @@ export type Election = {
     start: string;
     votesCount: string;
     hasVoted: boolean;
+    approvals?: string;
+    objections?: string;
+    eligibleVotes?: string;
     approved?: boolean;
 };
 ```
@@ -4854,7 +5131,18 @@ export type EncryptedCidContentType = 'entry' | 'proposal' | 'organMetadata' | '
 ```typescript
 export type ERC20VoteProcedureInput = Omit<VoteProcedureInput, 'type' | 'typeName'> & {
     erc20: string;
+    proposerMode?: ERC20VoteRoleMode;
+    moderatorMode?: ERC20VoteRoleMode;
+    voterMode?: ERC20VoteRoleMode;
+    requireMemberMajority?: boolean;
 };
+```
+
+
+## type ++dnt++ERC20VoteRoleMode
+
+```typescript
+export type ERC20VoteRoleMode = 'organ' | 'token' | 'disabled';
 ```
 
 
@@ -5004,6 +5292,10 @@ export type ProcedureJson = {
     proposers: string;
     moderators: string;
     withModeration: boolean;
+    proposerMode?: ERC20VoteRoleMode;
+    moderatorMode?: ERC20VoteRoleMode;
+    voterMode?: ERC20VoteRoleMode;
+    requireMemberMajority?: boolean;
     forwarder: string;
     proposals?: ProcedureProposal[];
     args?: unknown[];

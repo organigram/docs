@@ -1,0 +1,43 @@
+import Grid from '@mui/material/Grid'
+import Button from '@mui/material/Button'
+import { templates } from '@organigram/js'
+
+import Minimap from '../../components/Minimap'
+import Link from '../../components/Link'
+import { t } from '../../lib/i18n'
+
+export const metadata = {
+  title: 'Create a French commercial company',
+  order: 8.2
+}
+
+# Create a French commercial company
+
+Organigram provides templates for the main French commercial-company forms:
+SAS, SASU, SA and SARL/EURL. They provide an initial governance structure and
+the corporate records that can be configured for the company’s actual needs.
+
+## Create the organigram
+
+<Grid container my={3} justifyContent='center'>
+  <Grid item>
+    <Link href={'/workspace'} target='_blank'>
+      <Button variant='contained'>{t('Launch app')}</Button>
+    </Link>
+  </Grid>
+</Grid>
+
+Click **Add new**, then select the appropriate company template. Select **SAS**
+when the company is a société par actions simplifiée; use SASU, SA or SARL/EURL
+when that legal form applies.
+
+## Example: SAS
+
+<Minimap organigram={templates.sas} />
+
+The SAS template includes a chairman, executive management, the share-transfer
+register, governance procedures and the company records organised into
+governance, accounting and compliance layers. Adapt the draft to the bylaws and
+the company’s factual situation before deployment.
+
+For day-to-day records, see [Managing corporate registries](/docs/guides/corporate-registries).

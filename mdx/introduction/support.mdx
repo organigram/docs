@@ -1,11 +1,12 @@
 import Button from '@mui/material/Button'
 import Grid from '@mui/material/Grid'
+import { t } from '../../lib/i18n.ts'
 
 import Link from '../../components/Link'
 
-export const metadata = { title: '🛟 Support', order: 1.4 }
+export const metadata = { title: 'Support', order: 1.4 }
 
-# Support 🛟
+# Support
 
 ## Report issues and bugs
 
@@ -17,8 +18,8 @@ For direct support regarding the Organigram platform or implementing incorruptib
 
 <Grid container my={3} justifyContent='center'>
   <Grid item>
-    <Link href={'/certified-governance-pilot'}>
-      <Button variant='contained'>Book a call</Button>
+    <Link href={'/certified-governance-pilot#book-call'}>
+      <Button variant='contained'>{t('Book a call')}</Button>
     </Link>
   </Grid>
 </Grid>

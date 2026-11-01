@@ -1,6 +1,6 @@
-export const metadata = { title: "⚛️ React", order: 5.3 }
+export const metadata = { title: "React", order: 5.3 }
 
-# React reference ⚛️
+# React reference
 
 The official React documentation for the hooks, components, theme helpers, and utilities exposed by the Organigram.ai stack.
 
@@ -36,6 +36,8 @@ import { Diagram, useOrganigramClient } from '@organigram/react'
 - [DiagramNode](/docs/reference/react#component_DiagramNode)
 - [ElectionComponent](/docs/reference/react#component_ElectionComponent)
 - [EntryCount](/docs/reference/react#component_EntryCount)
+- [getOrganNodeIconKind](/docs/reference/react#constant_getOrganNodeIconKind)
+- [MemberCount](/docs/reference/react#component_MemberCount)
 - [OrganNode](/docs/reference/react#component_OrganNode)
 - [ProcedureIcon](/docs/reference/react#component_ProcedureIcon)
 - [ProcedureNode](/docs/reference/react#component_ProcedureNode)
@@ -49,14 +51,21 @@ import { Diagram, useOrganigramClient } from '@organigram/react'
 
 ### Hooks
 
+- [defaultDiagramDisplayOptions](/docs/reference/react#hook_defaultDiagramDisplayOptions)
+- [filterClassicDiagramByLayers](/docs/reference/react#hook_filterClassicDiagramByLayers)
+- [filterDiagramByLayers](/docs/reference/react#hook_filterDiagramByLayers)
+- [getDiagramLayerStorageKey](/docs/reference/react#hook_getDiagramLayerStorageKey)
+- [readActiveDiagramLayerIds](/docs/reference/react#hook_readActiveDiagramLayerIds)
+- [sanitizeActiveDiagramLayerIds](/docs/reference/react#hook_sanitizeActiveDiagramLayerIds)
+- [useDiagramDisplayOptions](/docs/reference/react#hook_useDiagramDisplayOptions)
 - [useLayers](/docs/reference/react#hook_useLayers)
 - [useModal](/docs/reference/react#hook_useModal)
 - [useOrganigramClient](/docs/reference/react#hook_useOrganigramClient)
 - [useSetModal](/docs/reference/react#hook_useSetModal)
+- [writeActiveDiagramLayerIds](/docs/reference/react#hook_writeActiveDiagramLayerIds)
 
 ### State
 
-- [layersState](/docs/reference/react#state_layersState)
 - [modalState](/docs/reference/react#state_modalState)
 - [organigramIdState](/docs/reference/react#state_organigramIdState)
 - [useModalState](/docs/reference/react#state_useModalState)
@@ -88,14 +97,19 @@ import { Diagram, useOrganigramClient } from '@organigram/react'
 - [CreateProcedure](/docs/reference/react#type_CreateProcedure)
 - [DecidersActionsProps](/docs/reference/react#interface_DecidersActionsProps)
 - [DeployOrganInput](/docs/reference/react#type_DeployOrganInput)
+- [DiagramDisplayOptions](/docs/reference/react#interface_DiagramDisplayOptions)
+- [DiagramEntryUser](/docs/reference/react#type_DiagramEntryUser)
+- [DiagramLayer](/docs/reference/react#interface_DiagramLayer)
+- [DiagramLayerStorage](/docs/reference/react#interface_DiagramLayerStorage)
 - [DiagramProps](/docs/reference/react#interface_DiagramProps)
 - [ElectionComponentProps](/docs/reference/react#interface_ElectionComponentProps)
-- [Layer](/docs/reference/react#interface_Layer)
+- [LayersState](/docs/reference/react#interface_LayersState)
 - [MergeOrganigramPreview](/docs/reference/react#type_MergeOrganigramPreview)
 - [Message](/docs/reference/react#type_Message)
 - [ModalType](/docs/reference/react#type_ModalType)
 - [NewOrganigramPreview](/docs/reference/react#type_NewOrganigramPreview)
 - [OrganigramPreview](/docs/reference/react#type_OrganigramPreview)
+- [OrganNodeIconKind](/docs/reference/react#type_OrganNodeIconKind)
 - [OrganNodeProps](/docs/reference/react#interface_OrganNodeProps)
 - [PanelLabels](/docs/reference/react#type_PanelLabels)
 - [PanelMessage](/docs/reference/react#type_PanelMessage)
@@ -108,6 +122,7 @@ import { Diagram, useOrganigramClient } from '@organigram/react'
 - [Thread](/docs/reference/react#type_Thread)
 - [ThreadSource](/docs/reference/react#type_ThreadSource)
 - [ThreadWorkspace](/docs/reference/react#type_ThreadWorkspace)
+- [UseLayersOptions](/docs/reference/react#interface_UseLayersOptions)
 
 ### Namespaces
 
@@ -290,6 +305,27 @@ Small helper that renders the current entry count for an organ.
 ```tsx
 export const EntryCount: React.FC<{
   organ: OrganJson
+  translateLabel?: (label: string) => string
+}>
+```
+
+
+
+### constant ++dnt++getOrganNodeIconKind
+
+```tsx
+export const getOrganNodeIconKind: ({ organ, hasUserEntries, isMaster }: {    organ: OrganJson;    hasUserEntries: boolean;    isMaster: boolean;}) => OrganNodeIconKind
+```
+
+
+
+### component ++dnt++MemberCount
+
+```tsx
+export const MemberCount: React.FC<{
+  organ: OrganJson
+  count: number
+  translateLabel?: (label: string) => string
 }>
 ```
 
@@ -324,6 +360,7 @@ export const ProcedureNode: React.FC<
       procedure: ProcedureJson
       onClick?: (procedure: ProcedureJson) => void
       organigram?: OrganigramJson
+      translateLabel?: (label: string) => string
     }>
   > &
     ProcedureNodeProps
@@ -394,12 +431,69 @@ export const VoteEnded: React.FC<ElectionComponentProps>
 
 ## Hooks
 
-### hook ++dnt++useLayers
-
-Read and update the current diagram layer configuration.
+### hook ++dnt++defaultDiagramDisplayOptions
 
 ```tsx
-export const useLayers: () => [Layer[], SetterOrUpdater<Layer[]>]
+export const defaultDiagramDisplayOptions: DiagramDisplayOptions
+```
+
+
+
+### hook ++dnt++filterClassicDiagramByLayers
+
+```tsx
+export const filterClassicDiagramByLayers: (organigram: OrganigramJson, layers: ReadonlyArray<DiagramLayer>, activeLayerIds: string[]) => OrganigramJson
+```
+
+
+
+### hook ++dnt++filterDiagramByLayers
+
+```tsx
+export const filterDiagramByLayers: (organigram: OrganigramJson, layers: ReadonlyArray<DiagramLayer>, activeLayerIds: string[]) => OrganigramJson
+```
+
+
+
+### hook ++dnt++getDiagramLayerStorageKey
+
+```tsx
+export const getDiagramLayerStorageKey: (organigramId: string) => string
+```
+
+
+
+### hook ++dnt++readActiveDiagramLayerIds
+
+```tsx
+export const readActiveDiagramLayerIds: (storage: DiagramLayerStorage, organigramId: string) => string[]
+```
+
+
+
+### hook ++dnt++sanitizeActiveDiagramLayerIds
+
+```tsx
+export const sanitizeActiveDiagramLayerIds: (activeLayerIds: string[], availableLayerIds: string[]) => string[]
+```
+
+
+
+### hook ++dnt++useDiagramDisplayOptions
+
+```tsx
+export const useDiagramDisplayOptions: () => [DiagramDisplayOptions, SetterOrUpdater<DiagramDisplayOptions>]
+```
+
+
+
+### hook ++dnt++useLayers
+
+Applies user-selected visual layers to an organigram without owning layer
+persistence or editing. Applications provide their persisted definitions.
+
+```tsx
+export const useLayers: (organigram: OrganigramJson, layers: ReadonlyArray<DiagramLayer>, options?: UseLayersOptions) => LayersState
 ```
 
 
@@ -442,18 +536,16 @@ export const useSetModal: () => SetterOrUpdater<ModalType>
 
 
 
-
-## State
-
-### state ++dnt++layersState
-
-Global recoil state storing the active diagram layers.
+### hook ++dnt++writeActiveDiagramLayerIds
 
 ```tsx
-export const layersState: RecoilState<Layer[]>
+export const writeActiveDiagramLayerIds: (storage: DiagramLayerStorage, organigramId: string, activeLayerIds: string[]) => void
 ```
 
 
+
+
+## State
 
 ### state ++dnt++modalState
 
@@ -757,7 +849,11 @@ Props accepted by the default asset node renderer.
 ```tsx
 export interface AssetNodeProps {
   Token: React.FC<{ style: any }>
-  data: { asset: Asset; onClick?: (asset: Asset) => void }
+  data: {
+    asset: Asset
+    onClick?: (asset: Asset) => void
+    translateLabel?: (label: string) => string
+  }
   hideHandles?: boolean
 }
 ```
@@ -767,7 +863,7 @@ export interface AssetNodeProps {
 | Name | Type | Description |
 | --- | --- | --- |
 | `Token` | `React.FC<{ style: any }>` |   |
-| `data` | `{ asset: Asset; onClick?: (asset: Asset) => void }` |   |
+| `data` | `{ asset: Asset; onClick?: (asset: Asset) => void; translateLabel?: (label: string) => string }` |   |
 | `hideHandles` | `boolean` |   |
 
 
@@ -827,6 +923,7 @@ export interface ClassicOrgChartProps {
   onClickOrgan?: (organ: OrganJson) => void
   style?: Record<string, unknown>
   testIdPrefix?: string
+  translateLabel?: (label: string) => string
 }
 ```
 
@@ -840,6 +937,7 @@ export interface ClassicOrgChartProps {
 | `onClickOrgan` | `(organ: OrganJson) => void` |   |
 | `style` | `Record<string, unknown>` |   |
 | `testIdPrefix` | `string` |   |
+| `translateLabel` | `(label: string) => string` |   |
 
 
 ### type ++dnt++CreateProcedure
@@ -898,6 +996,74 @@ export type DeployOrganInput = (
 
 
 
+### interface ++dnt++DiagramDisplayOptions
+
+```tsx
+export interface DiagramDisplayOptions {
+  showAdminPermissions: boolean
+  showEntriesPermissions: boolean
+  showAssetsPermissions: boolean
+}
+```
+
+**Members**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| `showAdminPermissions` | `boolean` |   |
+| `showEntriesPermissions` | `boolean` |   |
+| `showAssetsPermissions` | `boolean` |   |
+
+
+### type ++dnt++DiagramEntryUser
+
+```tsx
+export type DiagramEntryUser = {
+  image?: string | null
+  name?: string | null
+}
+```
+
+
+
+### interface ++dnt++DiagramLayer
+
+```tsx
+export interface DiagramLayer {
+  id: string
+  organs: ReadonlyArray<{ organAddress: string }>
+  procedures: ReadonlyArray<{ procedureAddress: string }>
+  assets: ReadonlyArray<{ assetAddress: string }>
+}
+```
+
+**Members**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| `id` | `string` |   |
+| `organs` | `ReadonlyArray<{ organAddress: string }>` |   |
+| `procedures` | `ReadonlyArray<{ procedureAddress: string }>` |   |
+| `assets` | `ReadonlyArray<{ assetAddress: string }>` |   |
+
+
+### interface ++dnt++DiagramLayerStorage
+
+```tsx
+export interface DiagramLayerStorage {
+  getItem: (key: string) => string | null
+  setItem: (key: string, value: string) => void
+}
+```
+
+**Members**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| `getItem` | `(key: string) => string \| null` |   |
+| `setItem` | `(key: string, value: string) => void` |   |
+
+
 ### interface ++dnt++DiagramProps
 
 Props accepted by the default `Diagram` component.
@@ -919,6 +1085,9 @@ export interface DiagramProps {
   onOrganDeployed?: (organ: OrganJson) => void
   onAssetDeployed?: (asset: AssetJson) => void
   onProcedureDeployed?: (procedure: ProcedureJson) => void
+  translateLabel?: (label: string) => string
+  entryUsers?: Record<string, DiagramEntryUser>
+  displayOptions?: DiagramDisplayOptions
 }
 ```
 
@@ -941,6 +1110,9 @@ export interface DiagramProps {
 | `onOrganDeployed` | `(organ: OrganJson) => void` |   |
 | `onAssetDeployed` | `(asset: AssetJson) => void` |   |
 | `onProcedureDeployed` | `(procedure: ProcedureJson) => void` |   |
+| `translateLabel` | `(label: string) => string` |   |
+| `entryUsers` | `Record<string, DiagramEntryUser>` |   |
+| `displayOptions` | `DiagramDisplayOptions` |   |
 
 
 ### interface ++dnt++ElectionComponentProps
@@ -958,6 +1130,8 @@ export interface ElectionComponentProps {
   t: (key: string) => string
   publicClient?: PublicClient | null
   walletClient?: WalletClient | null
+  voterAddress?: string
+  compact?: boolean
 }
 ```
 
@@ -972,22 +1146,19 @@ export interface ElectionComponentProps {
 | `t` | `(key: string) => string` |   |
 | `publicClient` | `PublicClient \| null` |   |
 | `walletClient` | `WalletClient \| null` |   |
+| `voterAddress` | `string` |   |
+| `compact` | `boolean` |   |
 
 
-### interface ++dnt++Layer
-
-Visual layer configuration applied to the diagram.
+### interface ++dnt++LayersState
 
 ```tsx
-export interface Layer {
-  name: string
-  organAddresses: string[]
-  procedureIds: string[]
-  showAdminPermissions: boolean
-  showEntriesPermissions: boolean
-  showAssetsPermissions: boolean
-  isPublic: boolean
-  isHidden: boolean
+export interface LayersState {
+  activeLayerIds: string[]
+  visibleOrganigram: OrganigramJson
+  classicVisibleOrganigram: OrganigramJson
+  toggleLayer: (layerId: string) => void
+  showAll: () => void
 }
 ```
 
@@ -995,14 +1166,11 @@ export interface Layer {
 
 | Name | Type | Description |
 | --- | --- | --- |
-| `name` | `string` |   |
-| `organAddresses` | `string[]` |   |
-| `procedureIds` | `string[]` |   |
-| `showAdminPermissions` | `boolean` |   |
-| `showEntriesPermissions` | `boolean` |   |
-| `showAssetsPermissions` | `boolean` |   |
-| `isPublic` | `boolean` |   |
-| `isHidden` | `boolean` |   |
+| `activeLayerIds` | `string[]` |   |
+| `visibleOrganigram` | `OrganigramJson` |   |
+| `classicVisibleOrganigram` | `OrganigramJson` |   |
+| `toggleLayer` | `(layerId: string) => void` |   |
+| `showAll` | `() => void` |   |
 
 
 ### type ++dnt++MergeOrganigramPreview
@@ -1063,6 +1231,14 @@ export type OrganigramPreview =
 
 
 
+### type ++dnt++OrganNodeIconKind
+
+```tsx
+export type OrganNodeIconKind = 'master' | 'people' | 'funds' | 'documents'
+```
+
+
+
 ### interface ++dnt++OrganNodeProps
 
 Props accepted by the default organ node renderer.
@@ -1071,8 +1247,11 @@ Props accepted by the default organ node renderer.
 export interface OrganNodeProps {
   data: {
     organ: Organ
+    entryUsers?: Record<string, DiagramEntryUser>
     position?: { x: number; y: number }
+    isMaster?: boolean
     onClick?: () => void
+    translateLabel?: (label: string) => string
   }
   hideHandles?: boolean
 }
@@ -1082,7 +1261,7 @@ export interface OrganNodeProps {
 
 | Name | Type | Description |
 | --- | --- | --- |
-| `data` | `{ organ: Organ; position?: { x: number; y: number }; onClick?: () => void }` |   |
+| `data` | `{ organ: Organ; entryUsers?: Record<string, DiagramEntryUser>; position?: { x: number; y: number }; isMaster?: boolean; onClick?: () => void; translateLabel?: (label: string) => string }` |   |
 | `hideHandles` | `boolean` |   |
 
 
@@ -1239,6 +1418,23 @@ export type ThreadWorkspace = {
 }
 ```
 
+
+
+### interface ++dnt++UseLayersOptions
+
+```tsx
+export interface UseLayersOptions {
+  storage?: DiagramLayerStorage | null
+  onStorageError?: () => void
+}
+```
+
+**Members**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| `storage` | `DiagramLayerStorage \| null` |   |
+| `onStorageError` | `() => void` |   |
 
 
 

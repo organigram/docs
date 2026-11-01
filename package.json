@@ -6,7 +6,7 @@
   "type": "module",
   "scripts": {
     "generate:docs-modules": "env-cmd --silent tsx scripts/generateDocsModules.ts",
-    "generate:pricing-module": "env-cmd --silent -f ../../.env tsx scripts/generatePricingModule.ts",
+    "generate:pricing-module": "tsx scripts/generatePricingModule.ts",
     "generate:rest-api": "env-cmd --silent tsx scripts/generateRestApiDocs.ts",
     "docs:generate": "pnpm generate:docs-modules && pnpm generate:rest-api && pnpm generate:pricing-module",
     "linkcheck": "find mdx -name '*.mdx' -print0 | xargs -0 -n1 markdown-link-check --quiet",
@@ -22,7 +22,7 @@
     "@organigram/react": "workspace:^",
     "i18next": "^23.16.8",
     "lodash": "^4.17.21",
-    "next": "^16.2.11",
+    "next": "^16.4.3",
     "stripe": "^16.12.0"
   },
   "devDependencies": {
@@ -42,7 +42,7 @@
     "i18next": "^23.16.8",
     "lodash": "^4.17.21",
     "markdown-link-check": "^3.14.2",
-    "next": "^16.2.11",
+    "next": "^16.4.3",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-flow-renderer": "^10.3.17",
@@ -61,7 +61,6 @@
     "./components/PricingTable": "./components/PricingTable.tsx",
     "./components/*": "./components/*",
     "./lib/*": "./lib/*",
-    "./lib/showcases/organigramSas": "./lib/showcases/organigramSas.ts",
     "./modules": "./lib/modules.ts",
     "./pricing": "./lib/pricing.ts",
     "./server": "./lib/server.ts",

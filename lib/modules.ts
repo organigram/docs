@@ -17,12 +17,14 @@ const getPathCandidates = (docPath: string): string[] => {
   return [normalized, `${withoutSuffix}/index.mdx`]
 }
 
+/** The docs file served at `docPath`: the page itself, or its folder's index. */
+export const resolveDocsPath = (docPath: string): string | null =>
+  getPathCandidates(docPath).find(candidate => docsImporters[candidate] != null) ??
+  null
+
 export const getDocsImporter = (docPath: string): DocsImporter | null => {
-  for (const candidate of getPathCandidates(docPath)) {
-    const importer = docsImporters[candidate]
-    if (importer != null) return importer
-  }
-  return null
+  const resolved = resolveDocsPath(docPath)
+  return resolved == null ? null : docsImporters[resolved]
 }
 
 export const getDocsModule = async (

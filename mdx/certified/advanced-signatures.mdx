@@ -2,10 +2,11 @@ import Button from '@mui/material/Button'
 import Grid from '@mui/material/Grid'
 
 import Link from '../../components/Link'
+import { t } from '../../lib/i18n'
 
-export const metadata = { title: '✍️ Advanced signatures', order: 4.3 }
+export const metadata = { title: 'Advanced signatures', order: 4.2 }
 
-# Advanced Signatures ✍️
+# Advanced Signatures
 
 E-signatures are digital signatures used to sign documents, transactions, and governance records online. They are legally recognized in most countries and have been standardized by the eIDAS regulation in Europe.
 
@@ -47,7 +48,7 @@ Current public prices are listed on the [Pricing](/pricing) page.
 <Grid container my={3} justifyContent='center'>
   <Grid item>
     <Link href={'/pricing'}>
-      <Button variant='contained'>View signature pricing</Button>
+      <Button variant='contained'>{t('View signature pricing')}</Button>
     </Link>
   </Grid>
 </Grid>

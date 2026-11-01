@@ -1,6 +1,6 @@
-export const metadata = { title: "⛓️ Solidity", order: 5.1 }
+export const metadata = { title: "Solidity", order: 5.1 }
 
-# Solidity reference ⛓️
+# Solidity reference
 
 The official Solidity documentation for the contracts and types used in the Organigram.ai stack.
 
@@ -95,7 +95,7 @@ function deployAsset(string name, string symbol, uint256 initialSupply, bytes32 
 #### ++dnt++OrganigramClient.deployAssets
 
 ```solidity
-function deployAssets((string, string, uint256, bytes32)[] batch) returns (address[] clones);
+function deployAssets((string, string, uint256, bytes32, bool, address)[] batch) returns (address[] clones);
 ```
 
 
@@ -111,7 +111,7 @@ function deployOrgan(address[] _permissionAddresses, bytes2[] _permissionValues,
 #### ++dnt++OrganigramClient.deployOrganigram
 
 ```solidity
-function deployOrganigram((address[], bytes2[], string, (address, string)[], bytes32)[] organBatch, (string, string, uint256, bytes32)[] assetBatch, (address, bytes, bytes32)[] procedureBatch) returns (address[] organsDeployed, address[] assetsDeployed, address[] proceduresDeployed);
+function deployOrganigram((address[], bytes2[], string, (address, string)[], bytes32)[] organBatch, (string, string, uint256, bytes32, bool, address)[] assetBatch, (address, bytes, bytes32)[] procedureBatch) returns (address[] organsDeployed, address[] assetsDeployed, address[] proceduresDeployed);
 ```
 
 
@@ -150,6 +150,14 @@ function deployProcedure(address procedureType, bytes data, bytes32 salt) return
 
 ```solidity
 function deployProcedures((address, bytes, bytes32)[] batch) returns (address[] created);
+```
+
+
+
+#### ++dnt++OrganigramClient.equityToken
+
+```solidity
+function equityToken() view returns (address);
 ```
 
 
@@ -736,6 +744,16 @@ function eip712Domain() view returns (bytes1 fields, string name, string version
 
 
 
+#### ++dnt++Procedure.getExecutionContext
+
+Lets an operation target safely identify the proposal currently being applied.
+
+```solidity
+function getExecutionContext() view returns (bool isApplying, uint256 proposalKey, address proposalCreator);
+```
+
+
+
 #### ++dnt++Procedure.getNonce
 
 ```solidity
@@ -764,6 +782,14 @@ function getProposal(uint256 proposalKey) view returns ((address, string, string
 
 ```solidity
 function initialize(string _cid, address _proposers, address _moderators, address _deciders, bool _withModeration, address _trustedForwarder);
+```
+
+
+
+#### ++dnt++Procedure.isOwnerBoundProposalOperation
+
+```solidity
+function isOwnerBoundProposalOperation(bytes operationData) pure returns (bool);
 ```
 
 
@@ -827,6 +853,16 @@ function supportsInterface(bytes4 interfaceId) view returns (bool);
 
 
 
+#### ++dnt++Procedure.transferEquity
+
+Transfers the proposal creator's equity; the token emits the movement record.
+
+```solidity
+function transferEquity(address asset, address recipient, uint256 amount, string movementCid);
+```
+
+
+
 #### ++dnt++Procedure.trustedForwarder
 
 Return the trusted ERC-2771 forwarder used by this contract.
@@ -851,6 +887,14 @@ Public API : Procedure Cid and Admin.
 
 ```solidity
 function updateCid(string cid);
+```
+
+
+
+#### ++dnt++Procedure.validateProposalCreator
+
+```solidity
+function validateProposalCreator(address creator, bytes operationData) view;
 ```
 
 
@@ -941,6 +985,16 @@ function eip712Domain() view returns (bytes1 fields, string name, string version
 
 
 
+#### ++dnt++NominationProcedure.getExecutionContext
+
+Lets an operation target safely identify the proposal currently being applied.
+
+```solidity
+function getExecutionContext() view returns (bool isApplying, uint256 proposalKey, address proposalCreator);
+```
+
+
+
 #### ++dnt++NominationProcedure.getNonce
 
 ```solidity
@@ -969,6 +1023,14 @@ function getProposal(uint256 proposalKey) view returns ((address, string, string
 
 ```solidity
 function initialize(string _cid, address _proposers, address _moderators, address _deciders, bool _withModeration, address _trustedForwarder);
+```
+
+
+
+#### ++dnt++NominationProcedure.isOwnerBoundProposalOperation
+
+```solidity
+function isOwnerBoundProposalOperation(bytes operationData) pure returns (bool);
 ```
 
 
@@ -1045,6 +1107,21 @@ function proposeBySig(string cid, (uint256, address, bytes, uint256, bool)[] ope
 
 
 
+#### ++dnt++NominationProcedure.reject
+
+Reject a nomination without applying its proposal operations.
+
+```solidity
+function reject(uint256 proposalKey);
+```
+
+**Parameters**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| `proposalKey` | `uint256` | The proposal to reject. |
+
+
 #### ++dnt++NominationProcedure.supportsInterface
 
 Register EIP165 interfaces for introspection.
@@ -1058,6 +1135,16 @@ function supportsInterface(bytes4 interfaceId) view returns (bool);
 | Name | Type | Description |
 | --- | --- | --- |
 | `interfaceId` | `bytes4` | The interface identifier. |
+
+
+#### ++dnt++NominationProcedure.transferEquity
+
+Transfers the proposal creator's equity; the token emits the movement record.
+
+```solidity
+function transferEquity(address asset, address recipient, uint256 amount, string movementCid);
+```
+
 
 
 #### ++dnt++NominationProcedure.trustedForwarder
@@ -1088,6 +1175,14 @@ function updateCid(string cid);
 
 
 
+#### ++dnt++NominationProcedure.validateProposalCreator
+
+```solidity
+function validateProposalCreator(address creator, bytes operationData) view;
+```
+
+
+
 
 
 ## ++dnt++contract ERC20VoteProcedure
@@ -1114,6 +1209,30 @@ event Initialized(uint64 version);
 
 ```solidity
 event ProposalApplied(uint256 indexed proposalKey);
+```
+
+
+
+#### ++dnt++ERC20VoteProcedure.ProposalBlocked
+
+```solidity
+event ProposalBlocked(address indexed moderator, uint256 indexed proposalKey, string reason);
+```
+
+
+
+#### ++dnt++ERC20VoteProcedure.ProposalCreated
+
+```solidity
+event ProposalCreated(address indexed creator, uint256 indexed proposalKey);
+```
+
+
+
+#### ++dnt++ERC20VoteProcedure.ProposalPresented
+
+```solidity
+event ProposalPresented(address indexed presenter, uint256 indexed proposalKey);
 ```
 
 
@@ -1215,6 +1334,26 @@ function getElection(uint256 _proposalKey) view returns (uint256 start, bool has
 | `votesCount` | `uint256` | The number of votes cast so far. |
 
 
+#### ++dnt++ERC20VoteProcedure.getElectionResults
+
+Get the token-weighted vote split at the election snapshot.
+
+```solidity
+function getElectionResults(uint256 proposalKey) view returns (uint256 approvals, uint256 objections, uint256 eligibleVotes);
+```
+
+
+
+#### ++dnt++ERC20VoteProcedure.getExecutionContext
+
+Lets an operation target safely identify the proposal currently being applied.
+
+```solidity
+function getExecutionContext() view returns (bool isApplying, uint256 proposalKey, address proposalCreator);
+```
+
+
+
 #### ++dnt++ERC20VoteProcedure.getNonce
 
 ```solidity
@@ -1235,6 +1374,14 @@ function getProcedure() view returns (string cid, address proposers, address mod
 
 ```solidity
 function getProposal(uint256 proposalKey) view returns ((address, string, string, bool, bool, bool, bool, (uint256, address, bytes, uint256, bool)[]));
+```
+
+
+
+#### ++dnt++ERC20VoteProcedure.initialize
+
+```solidity
+function initialize(string _metadata, address _proposers, address _moderators, address _deciders, bool _withModeration, address _trustedForwarder, uint32 _quorumSize, uint32 _voteDuration, uint32 _majoritySize, address _tokenContract, uint8[3] _roleModes);
 ```
 
 
@@ -1263,6 +1410,24 @@ function initialize(string _metadata, address _proposers, address _moderators, a
 | `_tokenContract` | `address` | The ERC20 token contract representing the rights to vote. |
 
 
+#### ++dnt++ERC20VoteProcedure.initialize
+
+Initialize an ERC-20 vote with optional member-majority validation.
+
+```solidity
+function initialize(string _metadata, address _proposers, address _moderators, address _deciders, bool _withModeration, address _trustedForwarder, uint32 _quorumSize, uint32 _voteDuration, uint32 _majoritySize, address _tokenContract, uint8[3] _roleModes, bool _requireMemberMajority);
+```
+
+
+
+#### ++dnt++ERC20VoteProcedure.isOwnerBoundProposalOperation
+
+```solidity
+function isOwnerBoundProposalOperation(bytes operationData) pure returns (bool);
+```
+
+
+
 #### ++dnt++ERC20VoteProcedure.isTrustedForwarder
 
 Return whether an address is the trusted ERC-2771 forwarder.
@@ -1282,6 +1447,14 @@ function isTrustedForwarder(address forwarder) view returns (bool);
 
 ```solidity
 function majoritySize() view returns (uint32);
+```
+
+
+
+#### ++dnt++ERC20VoteProcedure.moderatorMode
+
+```solidity
+function moderatorMode() view returns (uint8);
 ```
 
 
@@ -1322,10 +1495,28 @@ function proposeBySig(string cid, (uint256, address, bytes, uint256, bool)[] ope
 
 
 
+#### ++dnt++ERC20VoteProcedure.proposerMode
+
+```solidity
+function proposerMode() view returns (uint8);
+```
+
+
+
 #### ++dnt++ERC20VoteProcedure.quorumSize
 
 ```solidity
 function quorumSize() view returns (uint32);
+```
+
+
+
+#### ++dnt++ERC20VoteProcedure.requireMemberMajority
+
+When voters come from an organ, require a majority of its members in addition to the usual token-weighted quorum and majority.
+
+```solidity
+function requireMemberMajority() view returns (bool);
 ```
 
 
@@ -1346,6 +1537,16 @@ tokenContract is an ERC20Votes-compatible token representing the rights to vote.
 
 ```solidity
 function tokenContract() view returns (address);
+```
+
+
+
+#### ++dnt++ERC20VoteProcedure.transferEquity
+
+Transfers the proposal creator's equity; the token emits the movement record.
+
+```solidity
+function transferEquity(address asset, address recipient, uint256 amount, string movementCid);
 ```
 
 
@@ -1378,6 +1579,14 @@ function updateCid(string cid);
 
 
 
+#### ++dnt++ERC20VoteProcedure.validateProposalCreator
+
+```solidity
+function validateProposalCreator(address creator, bytes operationData) view;
+```
+
+
+
 #### ++dnt++ERC20VoteProcedure.vote
 
 Create a election.
@@ -1400,6 +1609,14 @@ function voteBySig(uint256 proposalKey, bool approval, uint256 nonce, uint256 de
 
 ```solidity
 function voteDuration() view returns (uint32);
+```
+
+
+
+#### ++dnt++ERC20VoteProcedure.voterMode
+
+```solidity
+function voterMode() view returns (uint8);
 ```
 
 
@@ -1430,6 +1647,30 @@ event Initialized(uint64 version);
 
 ```solidity
 event ProposalApplied(uint256 indexed proposalKey);
+```
+
+
+
+#### ++dnt++VoteProcedure.ProposalBlocked
+
+```solidity
+event ProposalBlocked(address indexed moderator, uint256 indexed proposalKey, string reason);
+```
+
+
+
+#### ++dnt++VoteProcedure.ProposalCreated
+
+```solidity
+event ProposalCreated(address indexed creator, uint256 indexed proposalKey);
+```
+
+
+
+#### ++dnt++VoteProcedure.ProposalPresented
+
+```solidity
+event ProposalPresented(address indexed presenter, uint256 indexed proposalKey);
 ```
 
 
@@ -1528,6 +1769,35 @@ function getElection(uint256 _proposalKey) view returns (uint256 start, bool has
 | `votesCount` | `uint256` | The number of votes cast so far. |
 
 
+#### ++dnt++VoteProcedure.getElectionResults
+
+Get the current vote split and the eligible voting base.
+
+> ERC20VoteProcedure overrides this to use snapshot voting power.
+
+```solidity
+function getElectionResults(uint256 proposalKey) view returns (uint256 approvals, uint256 objections, uint256 eligibleVotes);
+```
+
+**Returns**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| `approvals` | `uint256` | The number of approving votes. |
+| `objections` | `uint256` | The number of rejecting votes. |
+| `eligibleVotes` | `uint256` | The number of votes eligible to participate. |
+
+
+#### ++dnt++VoteProcedure.getExecutionContext
+
+Lets an operation target safely identify the proposal currently being applied.
+
+```solidity
+function getExecutionContext() view returns (bool isApplying, uint256 proposalKey, address proposalCreator);
+```
+
+
+
 #### ++dnt++VoteProcedure.getNonce
 
 ```solidity
@@ -1558,6 +1828,14 @@ Initialize the procedure.
 
 ```solidity
 function initialize(string _cid, address _proposers, address _moderators, address _deciders, bool _withModeration, address _trustedForwarder, uint32 _quorumSize, uint32 _voteDuration, uint32 _majoritySize);
+```
+
+
+
+#### ++dnt++VoteProcedure.isOwnerBoundProposalOperation
+
+```solidity
+function isOwnerBoundProposalOperation(bytes operationData) pure returns (bool);
 ```
 
 
@@ -1639,6 +1917,16 @@ function supportsInterface(bytes4 interfaceId) view returns (bool);
 
 
 
+#### ++dnt++VoteProcedure.transferEquity
+
+Transfers the proposal creator's equity; the token emits the movement record.
+
+```solidity
+function transferEquity(address asset, address recipient, uint256 amount, string movementCid);
+```
+
+
+
 #### ++dnt++VoteProcedure.trustedForwarder
 
 Return the trusted ERC-2771 forwarder used by this contract.
@@ -1663,6 +1951,14 @@ Public API : Procedure Cid and Admin.
 
 ```solidity
 function updateCid(string cid);
+```
+
+
+
+#### ++dnt++VoteProcedure.validateProposalCreator
+
+```solidity
+function validateProposalCreator(address creator, bytes operationData) view;
 ```
 
 

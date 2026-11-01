@@ -26,6 +26,8 @@ export interface ApiVisibleRouteDocs {
   auth: string
   body: string
   notes?: string[]
+  /** Whether action payloads are also accepted by the legacy `/api` endpoint. */
+  legacyApiAlias?: boolean
   actions?: Record<string, ApiActionDoc>
   operations?: ApiOperationDoc[]
 }

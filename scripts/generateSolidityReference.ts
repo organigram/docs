@@ -393,9 +393,9 @@ function markdown({ data }: { data: CompiledContract[] }): Promise<void> {
       process.env.NEXT_PUBLIC_COMPANY_LEGAL_NAME ??
       'Organigram.ai'
 
-    writeStream.write(`export const metadata = { title: "⛓️ Solidity", order: 5.1 }
+    writeStream.write(`export const metadata = { title: "Solidity", order: 5.1 }
 
-# Solidity reference ⛓️
+# Solidity reference
 
 The official Solidity documentation for the contracts and types used in the ${companyName} stack.
 
