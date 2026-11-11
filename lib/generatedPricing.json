@@ -1,29 +1,29 @@
 {
-  "generatedAt": "2026-09-06T19:48:10.087Z",
+  "generatedAt": "2026-11-11T08:30:11.564Z",
   "items": [
     {
-      "key": "soloMonthly",
-      "label": "Qualified ID Certificates",
-      "price": "2,89€ / month",
+      "key": "verifiedIdentity",
+      "label": "Verified identity, per signer",
+      "price": "2,89 € / month",
       "priceKey": "{{price}} / month",
       "priceValues": {
-        "price": "2,89€"
+        "price": "2,89 €"
       },
-      "annualPrice": "28,90€ / year",
+      "annualPrice": "28,90 € / year",
       "annualPriceKey": "{{price}} / year",
       "annualPriceValues": {
-        "price": "28,90€"
+        "price": "28,90 €"
       },
-      "details": "Minimum amount charged monthly to keep a certification active. This allows to generate advanced e-signatures tied to a user's wallet.",
+      "details": "Charged to the organization for each member holding a verified identity, beyond the ones included in its plan. It lets its holder sign with an advanced e-signature.",
       "source": "stripe"
     },
     {
       "key": "signatures",
       "label": "Advanced e-signatures",
-      "price": "0,89€ / signature",
+      "price": "0,89 € / signature",
       "priceKey": "{{price}} / signature",
       "priceValues": {
-        "price": "0,89€"
+        "price": "0,89 €"
       },
       "details": "Advanced digital signatures with qualified certificates for signing legally binding actions that require high proof security.",
       "source": "stripe"
@@ -31,17 +31,17 @@
     {
       "key": "storage",
       "label": "Additional certified storage",
-      "price": "0,89€ / GB / month",
+      "price": "0,89 € / GB / month",
       "priceKey": "{{price}} / GB / month",
       "priceValues": {
-        "price": "0,89€"
+        "price": "0,89 €"
       },
-      "annualPrice": "8,90€ / GB / year",
+      "annualPrice": "8,90 € / GB / year",
       "annualPriceKey": "{{price}} / GB / year",
       "annualPriceValues": {
-        "price": "8,90€"
+        "price": "8,90 €"
       },
-      "details": "Certified encrypted storage above 1GB is charged monthly for both organizations and personal workspaces. Data is timestamped, versioned, encrypted with keys derived from workspace members' wallets and pinned to a decentralized storage network. Your data is always backed up publicly and only workspace members can decrypt or modify it.",
+      "details": "Certified encrypted storage above 1GB is charged monthly for both organizations and personal workspaces. Data is timestamped, versioned and encrypted with keys held by workspace members. Encrypted copies are replicated on a public decentralized storage network (IPFS): only workspace members can decrypt or modify them.",
       "source": "stripe"
     },
     {
@@ -52,17 +52,17 @@
       "priceValues": {
         "minimumAmount": "0.01€"
       },
-      "details": "Only the gas actually used is charged when sponsoring transactions, including relayer costs, processing fees and price fluctuations. Price is in Euro at currency rates updated every minute, with a minimum of 0.01€.",
+      "details": "Recording an operation on the network has a technical cost: Organigram covers it for your signers and bills only the actual cost, including processing fees, converted to euros every minute, with a minimum of 0.01€.",
       "source": "stripe_usage"
     },
     {
       "key": "aiUsage",
       "label": "Workspace Agent (per 1M tokens)",
-      "price": "2,50€ input / 15€ output",
+      "price": "2,50 € input / 15 € output",
       "priceKey": "{{inputRate}} input / {{outputRate}} output",
       "priceValues": {
-        "inputRate": "2,50€",
-        "outputRate": "15€"
+        "inputRate": "2,50 €",
+        "outputRate": "15 €"
       },
       "details": "Workspace assistance and assisted organigram generation include 5 successful requests before these rates apply.",
       "detailsKey": "Workspace assistance and assisted organigram generation include {{freeRequestLimit}} successful requests before these rates apply.",
@@ -70,6 +70,36 @@
         "freeRequestLimit": "5"
       },
       "source": "documented"
+    },
+    {
+      "key": "essentialPlan",
+      "label": "Essential",
+      "price": "29 € / month",
+      "priceKey": "{{price}} / month",
+      "priceValues": {
+        "price": "29 €"
+      },
+      "annualPrice": "290 € / year",
+      "annualPriceKey": "{{price}} / year",
+      "annualPriceValues": {
+        "price": "290 €"
+      },
+      "source": "stripe"
+    },
+    {
+      "key": "boardPlan",
+      "label": "Board",
+      "price": "129 € / month",
+      "priceKey": "{{price}} / month",
+      "priceValues": {
+        "price": "129 €"
+      },
+      "annualPrice": "1 290 € / year",
+      "annualPriceKey": "{{price}} / year",
+      "annualPriceValues": {
+        "price": "1 290 €"
+      },
+      "source": "stripe"
     }
   ]
 }

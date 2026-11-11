@@ -29,11 +29,13 @@ const convertStripeStorageEuroPerUnitToEuroPerGb = (
 ): number => Math.max(0, euroPerUnit) * IPFS_STORAGE_BYTES_PER_GB
 
 export const publicPricingKeys = [
-  'soloMonthly',
+  'verifiedIdentity',
   'signatures',
   'storage',
   'sponsoredTransactions',
-  'aiUsage'
+  'aiUsage',
+  'essentialPlan',
+  'boardPlan'
 ] as const
 
 export type PublicPricingKey = (typeof publicPricingKeys)[number]
@@ -95,7 +97,7 @@ const formatEuroAmount = (amount: number): string => {
   return `${amount.toLocaleString('fr-FR', {
     minimumFractionDigits: hasDecimals ? 2 : 0,
     maximumFractionDigits: 2
-  })}€`
+  })}\u00a0€`
 }
 
 const interpolatePricingText = (
@@ -208,10 +210,29 @@ const getAiUsageFields = async (): Promise<
   }
 }
 
+const buildPlanItem = (
+  key: PublicPricingKey,
+  label: string,
+  price?: Stripe.Price,
+  annualPrice?: Stripe.Price
+): PublicPricingItem => ({
+  key,
+  label,
+  ...(price == null
+    ? buildUnavailablePriceFields()
+    : getPerUnitPriceFields(price, '{{price}} / month')),
+  ...buildAnnualPriceFields(
+    annualPrice == null
+      ? undefined
+      : getPerUnitPriceFields(annualPrice, '{{price}} / year')
+  ),
+  source: 'stripe'
+})
+
 const pricingConfigs: Record<PublicPricingKey, PricingConfig> = {
-  soloMonthly: {
-    envKey: 'NEXT_PUBLIC_CERTIFIED_SOLO_MONTHLY_BASE_PRICE_ID',
-    annualEnvKey: 'NEXT_PUBLIC_CERTIFIED_SOLO_YEARLY_BASE_PRICE_ID',
+  verifiedIdentity: {
+    envKey: 'NEXT_PUBLIC_CERTIFIED_ENTITY_ACTIVE_USER_PRICE_ID',
+    annualEnvKey: 'NEXT_PUBLIC_CERTIFIED_ENTITY_ACTIVE_USER_YEARLY_PRICE_ID',
     buildItem: (price, annualPrice) => {
       const priceFields =
         price == null
@@ -223,12 +244,12 @@ const pricingConfigs: Record<PublicPricingKey, PricingConfig> = {
           : getPerUnitPriceFields(annualPrice, '{{price}} / year')
 
       return {
-        key: 'soloMonthly',
-        label: 'Qualified ID Certificates',
+        key: 'verifiedIdentity',
+        label: 'Verified identity, per signer',
         ...priceFields,
         ...buildAnnualPriceFields(annualPriceFields),
         details:
-          "Minimum amount charged monthly to keep a certification active. This allows to generate advanced e-signatures tied to a user's wallet.",
+          "Charged to the organization for each member holding a verified identity, beyond the ones included in its plan. It lets its holder sign with an advanced e-signature.",
         source: 'stripe'
       }
     }
@@ -243,7 +264,7 @@ const pricingConfigs: Record<PublicPricingKey, PricingConfig> = {
         key: 'sponsoredTransactions',
         label: 'Sponsored transactions',
         ...buildPriceFields('From {{minimumAmount}}', priceValues),
-        details: `Only the gas actually used is charged when sponsoring transactions, including relayer costs, processing fees and price fluctuations. Price is in Euro at currency rates updated every minute, with a minimum of ${getDocumentedMinimumTransactionAmount()}€.`,
+        details: `Recording an operation on the network has a technical cost: Organigram covers it for your signers and bills only the actual cost, including processing fees, converted to euros every minute, with a minimum of ${getDocumentedMinimumTransactionAmount()}€.`,
         source: 'stripe_usage'
       }
     }
@@ -285,10 +306,20 @@ const pricingConfigs: Record<PublicPricingKey, PricingConfig> = {
         ...priceFields,
         ...buildAnnualPriceFields(annualPriceFields),
         details:
-          "Certified encrypted storage above 1GB is charged monthly for both organizations and personal workspaces. Data is timestamped, versioned, encrypted with keys derived from workspace members' wallets and pinned to a decentralized storage network. Your data is always backed up publicly and only workspace members can decrypt or modify it.",
+          "Certified encrypted storage above 1GB is charged monthly for both organizations and personal workspaces. Data is timestamped, versioned and encrypted with keys held by workspace members. Encrypted copies are replicated on a public decentralized storage network (IPFS): only workspace members can decrypt or modify them.",
         source: 'stripe'
       }
     }
+  },
+  essentialPlan: {
+    envKey: 'NEXT_PUBLIC_CERTIFIED_ESSENTIAL_MONTHLY_PRICE_ID',
+    annualEnvKey: 'NEXT_PUBLIC_CERTIFIED_ESSENTIAL_YEARLY_PRICE_ID',
+    buildItem: (price, annualPrice) => buildPlanItem('essentialPlan', 'Essential', price, annualPrice)
+  },
+  boardPlan: {
+    envKey: 'NEXT_PUBLIC_CERTIFIED_BOARD_MONTHLY_PRICE_ID',
+    annualEnvKey: 'NEXT_PUBLIC_CERTIFIED_BOARD_YEARLY_PRICE_ID',
+    buildItem: (price, annualPrice) => buildPlanItem('boardPlan', 'Board', price, annualPrice)
   },
   aiUsage: {
     buildItem: async () => ({
