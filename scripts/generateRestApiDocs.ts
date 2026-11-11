@@ -119,9 +119,6 @@ const slugify = (value: unknown): string =>
     .trim()
     .replace(/\s+/g, '_')
 
-const formatRouteLabel = (routePath: string): string =>
-  String(routePath).replace(/\[/g, '\\[').replace(/\]/g, '\\]')
-
 const getRouteAnchor = (routePath: string): string =>
   slugify(`route ${routePath}`)
 
@@ -389,16 +386,6 @@ const prepareRoute = async (
   return route
 }
 
-const renderSummaryList = (routes: PreparedRoute[]): string =>
-  routes
-    .map(
-      route =>
-        `- [${formatRouteLabel(route.path)}](${docsPath}#${getRouteAnchor(
-          route.path
-        )}): ${formatText(route.summary)}`
-    )
-    .join('\n')
-
 const renderRouteInfoTable = (route: PreparedRoute): string => {
   const notesRow: Array<[string, string]> =
     route.notes.length > 0 ? [['Notes', route.notes.join(' ')]] : []
@@ -457,7 +444,11 @@ const renderRoute = (route: PreparedRoute): string => `<span id="${getRouteAncho
 
 ### ++dnt++${route.path}
 
+<div data-summary>
+
 ${formatText(route.summary)}
+
+</div>
 
 ${renderRouteInfoTable(route)}
 
@@ -508,15 +499,6 @@ const main = async (): Promise<void> => {
     }))
     .filter(section => section.routes.length > 0)
 
-  const summarySections: string = preparedSections
-    .map(
-      section => `### ${section.title}
-
-${renderSummaryList(section.routes)}
-`
-    )
-    .join('\n')
-
   const details: string = preparedSections.map(renderSection).join('\n\n')
 
   const document = `export const metadata = { title: "Web API", order: 5.35 }
@@ -530,10 +512,6 @@ The official reference for the API routes used by Organigram.ai. Unlike the pack
 - Most application mutations are sent as \`POST\` requests with a JSON body containing an \`action\` field.
 - Upload and webhook routes disable the default Next.js body parser when they need raw bodies or \`multipart/form-data\`.
 - Authentication varies by route: some endpoints are public, while others require a NextAuth session, a walletless token, or a provider-specific secret.
-
-## Route summary
-
-${summarySections}
 
 ${details}
 `

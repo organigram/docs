@@ -27,6 +27,7 @@ interface DocMember {
   name: string
   summary?: string
   remarks?: string
+  example?: string[]
   syntax?: DocSyntax
 }
 
@@ -42,6 +43,7 @@ interface DocDeclaration {
   name: string
   summary?: string
   remarks?: string
+  example?: string[]
   syntax?: string
   extends?: string
   constructors?: DocMember[]
@@ -57,6 +59,27 @@ interface DocDeclaration {
 
 interface YamlModule {
   load(input: string): unknown
+}
+
+/** An item of the api-extractor model, which also lists constants and source files. */
+interface ApiModelItem {
+  kind: string
+  name: string
+  docComment?: string
+  fileUrlPath?: string
+  excerptTokens?: Array<{ text: string }>
+  members?: ApiModelItem[]
+}
+
+/** A section of the reference page, read from the package `reference.json`. */
+interface ReferenceSection {
+  title: string
+  /** Hand-written paragraph introducing the section, in Markdown. */
+  intro?: string
+  /** Source modules whose exports belong here; `ipfs/` matches a folder. */
+  files?: string[]
+  /** Exports that belong here whatever their module. */
+  names?: string[]
 }
 
 const __filename = fileURLToPath(import.meta.url)
@@ -98,61 +121,50 @@ const docsOutputPath = path.resolve(
   __dirname,
   `../mdx/reference/${docsSlug}.mdx`
 )
-const companyUrl = process.env.NEXT_PUBLIC_COMPANY_URL ?? 'Organigram.ai'
-
-const referenceConfigBySlug: Record<
-  string,
+const referenceConfigBySlug: Record<string, { title: string; order: number }> =
   {
-    title: string
-    order: number
-    heading: string
-    description: string
-    quickStartTitle: string
-    quickStartLanguage: string
-    quickStartImport: string
+    js: { title: 'JavaScript/TypeScript', order: 5.2 },
+    react: { title: 'React', order: 5.3 },
+    'passkey-wallet': { title: 'Passkey Wallet', order: 5.4 },
+    agent: { title: 'Agent', order: 5.5 }
   }
-> = {
-  js: {
-    title: 'Typescript',
-    order: 5.2,
-    heading: 'Typescript reference',
-    description: `The official Javascript/Typescript documentation for the contracts and types used in the ${companyUrl} stack.`,
-    quickStartTitle: 'Init',
-    quickStartLanguage: 'ts',
-    quickStartImport: `import { OrganigramClient } from '${packageName}'`
-  },
-  'passkey-wallet': {
-    title: 'Passkey Wallet',
-    order: 5.4,
-    heading: 'Passkey Wallet reference',
-    description:
-      'The official TypeScript documentation for the Organigram Passkey Wallet primitives.',
-    quickStartTitle: 'Quick start',
-    quickStartLanguage: 'ts',
-    quickStartImport: `import { registerBrowserPasskeyVault } from '${packageName}/browser-wallet'`
-  },
-  agent: {
-    title: 'Agent',
-    order: 5.5,
-    heading: 'Agent reference',
-    description:
-      'The official TypeScript documentation for the Organigram workspace agent primitives.',
-    quickStartTitle: 'Quick start',
-    quickStartLanguage: 'ts',
-    quickStartImport: `import { buildPrompt, normalizeResponse } from '${packageName}'`
-  }
+
+const referenceConfig = referenceConfigBySlug[docsSlug] ?? {
+  title: packageName,
+  order: 5.9
 }
 
-const referenceConfig =
-  referenceConfigBySlug[docsSlug] ?? {
-    title: packageName,
-    order: 5.9,
-    heading: `${packageName} reference`,
-    description: `The official TypeScript documentation for ${packageName}.`,
-    quickStartTitle: 'Quick start',
-    quickStartLanguage: 'ts',
-    quickStartImport: `import { } from '${packageName}'`
-  }
+// The package README introduces the page, so it must stay valid MDX.
+const readmePath = path.resolve(packageDir, 'README.md')
+const introduction = fs.existsSync(readmePath)
+  ? fs.readFileSync(readmePath, 'utf8').trim()
+  : `# ${packageName}`
+
+// The api-extractor model gives the source module of each export, and the
+// constants that api-documenter leaves out of its YAML files.
+const apiModelPath = path.resolve(
+  yamlInputDir,
+  '..',
+  'api-model',
+  `${docsSlug}.api.json`
+)
+const entryPoint = fs.existsSync(apiModelPath)
+  ? ((JSON.parse(fs.readFileSync(apiModelPath, 'utf8')) as ApiModelItem)
+      .members?.[0]?.members ?? [])
+  : []
+const sourceFileByName = new Map(
+  entryPoint.map(item => [
+    item.name,
+    (item.fileUrlPath ?? '').replace(/^dist\//, '').replace(/\.d\.ts$/, '')
+  ])
+)
+const constants = entryPoint.filter(item => item.kind === 'Variable')
+
+// Sections group exports by topic, each with a hand-written introduction.
+const sectionsPath = path.resolve(packageDir, 'reference.json')
+const sections: ReferenceSection[] = fs.existsSync(sectionsPath)
+  ? (JSON.parse(fs.readFileSync(sectionsPath, 'utf8')) as ReferenceSection[])
+  : [{ title: 'API reference' }]
 
 const decodeHtml = (value: unknown): string =>
   String(value ?? '')
@@ -166,25 +178,24 @@ const escapeMDX = (value: unknown): string =>
     .replace(/}/g, '\\}')
     .trim()
 
+// api-extractor renames exports that shadow a global, such as `File`, to `File_2`.
+const exportName = (name: string): string => name.replace(/_\d+$/, '')
+
 const getUidDisplayName = (uid: string): string => {
   const [, objectName = uid] = uid.split('!')
   const [object] = objectName.split(':')
   const [parent, name] = object.split('#')
-  return name ?? parent
+  return exportName(name ?? parent)
 }
 
-const getUidLink = (uid: string): string => {
-  if (!uid.startsWith(`${packageName}!`)) {
-    return `\`${getUidDisplayName(uid)}\``
-  }
-
-  const [, objectName] = uid.split('!')
-  const [object, kind] = objectName.split(':')
-  const [parent, name] = object.split('#')
-  const displayName = name ?? parent
-  const anchor = name != null ? `${parent}.${displayName}` : displayName
-
-  return `[${displayName}](${docsBasePath}#${kind}_${anchor})`
+// Same as `slugify` in lib/mdx.tsx, which sets the ids of the headings.
+const getUidAnchor = (uid: string): string => {
+  const [, objectName = uid] = uid.split('!')
+  const [object] = objectName.split(':')
+  return exportName(object)
+    .replace(/[^\w\s-]/g, '')
+    .trim()
+    .replace(/\s+/g, '_')
 }
 
 const renderUidReference = (
@@ -202,12 +213,7 @@ const renderUidReference = (
     return `\`${displayName}\``
   }
 
-  const [, objectName] = uid.split('!')
-  const [object, kind] = objectName.split(':')
-  const [parent, name] = object.split('#')
-  const anchor = name != null ? `${parent}.${name}` : parent
-
-  return `[${displayName}](${docsBasePath}#${kind}_${anchor})`
+  return `[${displayName}](${docsBasePath}#${getUidAnchor(uid)})`
 }
 
 const replaceXrefs = (value: unknown, mode: RenderMode = 'text'): string =>
@@ -233,27 +239,66 @@ const formatTableCode = (value: unknown): string =>
   formatCode(value)
     .replace(/\s+/g, ' ')
     .replace(/\|/g, '\\|')
-    .replace(/`/g, '\\`')
     .trim()
+// A code span holding backticks needs a longer delimiter: backslashes do not
+// escape them in code.
+const renderTableCode = (value: unknown): string => {
+  const code = formatTableCode(value)
+  return code.includes('`') ? `\`\` ${code} \`\`` : `\`${code}\``
+}
 
 const renderParagraph = (value?: string): string =>
   value != null && value !== '' ? `${formatText(value)}\n\n` : ''
 
-const renderRemarks = (value?: string): string =>
-  value != null && value !== ''
-    ? `${formatText(value)
-        .split('\n')
-        .map(line => `> ${line}`)
-        .join('\n')}\n\n`
-    : ''
+const renderExamples = (examples?: string[]): string =>
+  (examples ?? []).map(example => `${decodeHtml(example).trim()}\n\n`).join('')
 
-const renderSignatureBlock = (content?: string): string =>
+const renderCodeBlock = (content?: string): string =>
   content != null && content !== ''
     ? `\`\`\`typescript
 ${formatCode(content)}
 \`\`\`
+
 `
     : ''
+
+/** Fold signatures and parameter tables, so that the page reads as explanations first. */
+const renderDetails = (label: string, content: string): string =>
+  content.trim() === ''
+    ? ''
+    : `<details>
+<summary>${label}</summary>
+
+${content.trim()}
+
+</details>
+
+`
+
+const missingSummaries: string[] = []
+
+const hasText = (value?: string): value is string =>
+  value != null && value.trim() !== ''
+
+/** The one-sentence summary of an export, which the table of contents also shows. */
+const renderSummary = (name: string, summary?: string): string => {
+  if (!hasText(summary)) {
+    missingSummaries.push(name)
+    return ''
+  }
+  return `<div data-summary>
+
+${formatText(summary)}
+
+</div>
+
+`
+}
+
+const renderMemberText = (name: string, member: DocMember): string => {
+  if (!hasText(member.summary)) missingSummaries.push(name)
+  return `${renderParagraph(member.summary)}${renderParagraph(member.remarks)}${renderExamples(member.example)}`
+}
 
 const shouldRenderItemsTable = (items?: DocParameter[]): boolean =>
   items != null &&
@@ -262,12 +307,16 @@ const shouldRenderItemsTable = (items?: DocParameter[]): boolean =>
 
 const renderItemsTable = (title: string, items?: DocParameter[]): string => {
   if (!shouldRenderItemsTable(items)) return ''
-  const resolvedItems = items ?? []
+  // api-documenter also lists a destructured parameter under its pattern, with
+  // neither type nor description, next to the documented parameter.
+  const resolvedItems = (items ?? []).filter(
+    item => hasText(item.type) || hasText(item.description)
+  )
 
   const rows = resolvedItems
     .map((item, index) => {
       const name = `\`${item.id ?? item.name ?? `value${index}`}\``
-      const type = `\`${formatTableCode(item.type ?? item.syntax?.return?.type ?? 'unknown')}\``
+      const type = renderTableCode(item.type ?? item.syntax?.return?.type ?? 'unknown')
       const description =
         item.description != null && item.description !== ''
           ? formatTableText(item.description)
@@ -281,272 +330,280 @@ const renderItemsTable = (title: string, items?: DocParameter[]): string => {
 | Name | Type | Description |
 | --- | --- | --- |
 ${rows}
+
 `
 }
 
 const renderReturnTable = (syntax?: DocSyntax): string => {
-  if (syntax?.return == null) return ''
-  const description =
-    syntax.return.description != null && syntax.return.description !== ''
-      ? formatTableText(syntax.return.description)
-      : ''
-  if (description === '') return ''
+  if (!hasText(syntax?.return?.description)) return ''
   return `**Returns**
 
 | Type | Description |
 | --- | --- |
-| \`${formatTableCode(syntax.return.type)}\` | ${description} |
+| ${renderTableCode(syntax?.return?.type)} | ${formatTableText(syntax?.return?.description)} |
+
 `
 }
 
-const renderMemberSummary = (member: DocMember): string =>
-  `${renderParagraph(member.summary)}${renderRemarks(member.remarks)}`
+const renderSignature = (syntax?: DocSyntax): string =>
+  renderDetails(
+    'Signature',
+    `${renderCodeBlock(syntax?.content)}${renderItemsTable(
+      'Parameters',
+      syntax?.parameters
+    )}${renderReturnTable(syntax)}`
+  )
 
-const renderProperty = (
-  property: DocMember,
+const memberName = (member: DocMember): string => member.name.split('(')[0]
+
+/** Arrow-function properties read like methods, so they are rendered as such. */
+const isFunctionProperty = (member: DocMember): boolean =>
+  /^(?:static |readonly )*[\w$]+\??:\s*(?:<[^>]*>\s*)?\(/.test(
+    member.syntax?.content ?? ''
+  )
+
+const renderMethod = (method: DocMember, ownerName: string): string => {
+  const name = `${ownerName}.${memberName(method)}`
+  return `#### ++dnt++${name}
+
+${renderMemberText(name, method)}${renderSignature(method.syntax)}`
+}
+
+const propertyType = (property: DocMember): string =>
+  (property.syntax?.content ?? '')
+    .replace(/^(?:static |readonly )*[\w$]+\??:\s*/, '')
+    .replace(/;$/, '')
+
+const renderPropertiesTable = (
+  properties: DocMember[],
   ownerName: string
-): string => `#### ++dnt++${ownerName}.${property.name.split('(')[0]}
-
-${renderMemberSummary(property)}${renderSignatureBlock(property.syntax?.content)}
-`
-
-const renderMethod = (
-  method: DocMember,
-  ownerName: string
-): string => `#### ++dnt++${ownerName}.${method.name.split('(')[0]}
-
-${renderMemberSummary(method)}${renderSignatureBlock(method.syntax?.content)}${renderItemsTable(
-  'Parameters',
-  method.syntax?.parameters
-)}${renderReturnTable(method.syntax)}
-`
-
-const renderConstructor = (
-  constructor: DocMember
-): string => `#### ++dnt++constructor
-
-${renderMemberSummary(constructor)}${renderSignatureBlock(constructor.syntax?.content)}${renderItemsTable(
-  'Parameters',
-  constructor.syntax?.parameters
-)}
-`
-
-const renderTopLevelFunction = (
-  docItem: DocMember
-): string => `## function ++dnt++${docItem.name.split('(')[0]}
-
-${renderMemberSummary(docItem)}${renderSignatureBlock(docItem.syntax?.content)}${renderItemsTable(
-  'Parameters',
-  docItem.syntax?.parameters
-)}${renderReturnTable(docItem.syntax)}
-`
-
-const renderClass = (declarations: DocDeclaration): string => {
-  const constructors = declarations.constructors ?? []
-  const properties = declarations.properties ?? []
-  const methods = declarations.methods ?? []
-
-  return `## class ++dnt++${declarations.name}
-
-${renderParagraph(declarations.summary)}${renderRemarks(
-    declarations.remarks
-  )}${renderSignatureBlock(declarations.syntax)}${
-    constructors.length > 0
-      ? `### Constructors
-
-${constructors.map(member => renderConstructor(member)).join('\n')}`
-      : ''
-  }${
-    properties.length > 0
-      ? `### Properties
-
+): string =>
+  properties.length === 0
+    ? ''
+    : `| Property | Type | Description |
+| --- | --- | --- |
 ${properties
-  .map(member => renderProperty(member, declarations.name))
-  .join('\n')}`
-      : ''
-  }${
-    methods.length > 0
-      ? `### Methods
+  .map(property => {
+    if (!hasText(property.summary)) {
+      missingSummaries.push(`${ownerName}.${memberName(property)}`)
+    }
+    return `| \`${memberName(property)}\` | ${renderTableCode(propertyType(property))} | ${formatTableText(property.summary)} |`
+  })
+  .join('\n')}
 
-${methods.map(member => renderMethod(member, declarations.name)).join('\n')}`
-      : ''
-  }
 `
+
+const renderHeader = (declaration: DocDeclaration): string =>
+  `### ++dnt++${exportName(declaration.name)}
+
+${renderSummary(declaration.name, declaration.summary)}${renderParagraph(
+    declaration.remarks
+  )}${renderExamples(declaration.example)}`
+
+const renderMembers = (declaration: DocDeclaration): string => {
+  const properties = (declaration.properties ?? []).filter(
+    property => !isFunctionProperty(property)
+  )
+  const methods = [
+    ...(declaration.properties ?? []).filter(isFunctionProperty),
+    ...(declaration.methods ?? [])
+  ].sort((a, b) => memberName(a).localeCompare(memberName(b)))
+  return `${renderPropertiesTable(properties, declaration.name)}${methods
+    .map(method => renderMethod(method, declaration.name))
+    .join('')}`
 }
 
-const renderInterface = (declarations: DocDeclaration): string => {
-  const properties = declarations.properties ?? []
+const renderClass = (declaration: DocDeclaration): string =>
+  `${renderHeader(declaration)}${renderDetails(
+    'Definition',
+    `${renderCodeBlock(declaration.syntax)}${(declaration.constructors ?? [])
+      .map(
+        constructor =>
+          `${renderCodeBlock(constructor.syntax?.content)}${renderItemsTable(
+            'Constructor parameters',
+            constructor.syntax?.parameters
+          )}`
+      )
+      .join('')}`
+  )}${renderMembers(declaration)}`
 
-  return `## interface ++dnt++${declarations.name}
-
-${renderParagraph(declarations.summary)}${renderRemarks(declarations.remarks)}${
-    declarations.extends != null && declarations.extends !== ''
-      ? `Extends ${formatText(declarations.extends)}.\n\n`
+const renderInterface = (declaration: DocDeclaration): string =>
+  `${renderHeader(declaration)}${
+    hasText(declaration.extends)
+      ? `Extends ${formatText(declaration.extends)}.\n\n`
       : ''
-  }${
-    properties.length > 0
-      ? `### Properties
+  }${renderMembers(declaration)}`
 
-${properties
-  .map(member => renderProperty(member, declarations.name))
-  .join('\n')}`
-      : ''
-  }
-`
-}
+const renderType = (declaration: DocDeclaration): string =>
+  `${renderHeader(declaration)}${renderDetails(
+    'Definition',
+    renderCodeBlock(declaration.syntax)
+  )}`
 
-const renderType = (
-  declarations: DocDeclaration
-): string => `## type ++dnt++${declarations.name}
-
-${renderParagraph(declarations.summary)}${renderRemarks(
-  declarations.remarks
-)}${renderSignatureBlock(declarations.syntax)}
-`
-
-const renderEnum = (declarations: DocDeclaration): string => {
-  const fields = declarations.fields ?? []
-
-  return `## enum ++dnt++${declarations.name}
-
-${renderParagraph(declarations.summary)}${renderRemarks(declarations.remarks)}${
+const renderEnum = (declaration: DocDeclaration): string => {
+  const fields = declaration.fields ?? []
+  return `${renderHeader(declaration)}${
     fields.length > 0
       ? `| Name | Value | Description |
 | --- | --- | --- |
 ${fields
   .map(
     field =>
-      `| \`${field.name}\` | \`${formatTableCode(field.value)}\` | ${
-        field.summary != null && field.summary !== ''
-          ? formatTableText(field.summary)
-          : ' '
-      } |`
+      `| \`${field.name}\` | ${renderTableCode(field.value)} | ${formatTableText(field.summary)} |`
   )
   .join('\n')}
+
 `
       : ''
-  }
-`
+  }`
 }
 
-const renderPackage = (declarations: DocDeclaration): string => `
-## ${declarations.name}
+const renderFunction = (func: DocMember): string =>
+  `${renderHeader({ ...func, name: memberName(func), syntax: undefined })}${renderSignature(func.syntax)}`
 
-### Install
+/** Read the summary, remarks and examples of a raw TSDoc comment. */
+const parseDocComment = (
+  comment = ''
+): Pick<DocMember, 'summary' | 'remarks' | 'example'> => {
+  const text = comment
+    .replace(/^\s*\/\*\*/, '')
+    .replace(/\*\/\s*$/, '')
+    .split('\n')
+    .map(line => line.replace(/^\s*\* ?/, ''))
+    .join('\n')
+  const [summary, ...blocks] = text.split(/^(?=@\w+)/m)
+  const block = (tag: string): string[] =>
+    blocks
+      .filter(text => text.startsWith(tag))
+      .map(text => text.slice(tag.length).trim())
+  return {
+    summary: summary.trim(),
+    remarks: block('@remarks').join('\n\n'),
+    example: block('@example')
+  }
+}
 
-\`\`\`bash
-pnpm add ${declarations.name}
-\`\`\`
+// Long constant types, such as the templates, would bury the explanation.
+const maxConstantSignatureLength = 400
 
-### ${referenceConfig.quickStartTitle}
+const renderConstant = (item: ApiModelItem): string => {
+  const signature = `const ${(item.excerptTokens ?? [])
+    .map(token => token.text)
+    .join('')
+    .replace(/^export declare const /, '')
+    .trim()}`
+  return `${renderHeader({ name: item.name, ...parseDocComment(item.docComment) })}${
+    signature.length <= maxConstantSignatureLength
+      ? renderDetails('Definition', renderCodeBlock(signature))
+      : ''
+  }`
+}
 
-\`\`\`${referenceConfig.quickStartLanguage}
-${referenceConfig.quickStartImport}
-\`\`\`
+type ReferenceItem = {
+  name: string
+  kindOrder: number
+  render: () => string
+}
 
-### Classes
+const renderDeclaration = (declaration: DocDeclaration): ReferenceItem | null => {
+  const kind = declaration.uid?.split(':')?.[1]
+  const renderers: Record<string, [number, (item: DocDeclaration) => string]> = {
+    class: [0, renderClass],
+    interface: [1, renderInterface],
+    type: [2, renderType],
+    enum: [3, renderEnum]
+  }
+  const renderer = kind == null ? undefined : renderers[kind]
+  if (renderer == null) return null
+  return {
+    name: declaration.name,
+    kindOrder: renderer[0],
+    render: () => renderer[1](declaration)
+  }
+}
 
-${(declarations.classes ?? []).map(uid => `- ${getUidLink(uid)}`).join('\n')}
-
-### Interfaces
-
-${(declarations.interfaces ?? []).map(uid => `- ${getUidLink(uid)}`).join('\n')}
-
-### Types
-
-${(declarations.typeAliases ?? []).map(uid => `- ${getUidLink(uid)}`).join('\n')}
-
-### Enums
-
-${(declarations.enums ?? []).map(uid => `- ${getUidLink(uid)}`).join('\n')}
-
-### Functions
-
-${(declarations.functions ?? [])
-  .map(
-    func =>
-      `- [${func.name.split('(')[0]}](${docsBasePath}#function_${func.name.split('(')[0]})`
+const findSection = (name: string): number => {
+  const byName = sections.findIndex(section =>
+    section.names?.includes(exportName(name))
   )
-  .join('\n')}
-`
-
-const renderDeclaration = (declarations: DocDeclaration): string => {
-  switch (declarations.uid?.split(':')?.[1]) {
-    case 'class':
-      return renderClass(declarations)
-    case 'interface':
-      return renderInterface(declarations)
-    case 'type':
-      return renderType(declarations)
-    case 'enum':
-      return renderEnum(declarations)
-    default:
-      return declarations.type === 'package' ? renderPackage(declarations) : ''
-  }
+  if (byName >= 0) return byName
+  const file = sourceFileByName.get(name) ?? ''
+  const byFile = sections.findIndex(
+    section =>
+      (section.files == null && section.names == null) ||
+      section.files?.some(entry =>
+        entry.endsWith('/') ? file.startsWith(entry) : file === entry
+      )
+  )
+  return byFile >= 0 ? byFile : sections.length
 }
 
-const prioritize =
-  <T>(predicate: (item: T) => boolean) =>
-  (a: T, b: T): number =>
-    Number(predicate(b)) - Number(predicate(a))
+const fileOrder = (name: string, section?: ReferenceSection): number => {
+  const file = sourceFileByName.get(name) ?? ''
+  const index = (section?.files ?? []).findIndex(entry =>
+    entry.endsWith('/') ? file.startsWith(entry) : file === entry
+  )
+  return index >= 0 ? index : Number.MAX_SAFE_INTEGER
+}
 
-const sortDeclarations = (files: DocDeclaration[]): DocDeclaration[] =>
-  [...files]
-    .sort(prioritize(file => file.uid?.split(':')?.[1] === 'enum'))
-    .sort(prioritize(file => file.uid?.split(':')?.[1] === 'type'))
-    .sort(prioritize(file => file.uid?.split(':')?.[1] === 'interface'))
-    .sort(prioritize(file => file.uid?.split(':')?.[1] === 'class'))
-    .sort(prioritize(file => file.name === 'Organ'))
-    .sort(prioritize(file => file.name === 'Organigram'))
-    .sort(prioritize(file => file.name === 'OrganigramClient'))
-    .sort(prioritize(file => file.name === packageName))
+const renderSections = (items: ReferenceItem[]): string => {
+  const allSections = [...sections, { title: 'Other' }]
+  const grouped = allSections.map(() => [] as ReferenceItem[])
+  items.forEach(item => grouped[findSection(item.name)].push(item))
+  return allSections
+    .map((section, index) => {
+      const sectionItems = grouped[index].sort(
+        (a, b) =>
+          fileOrder(a.name, section) - fileOrder(b.name, section) ||
+          a.kindOrder - b.kindOrder ||
+          a.name.localeCompare(b.name)
+      )
+      if (sectionItems.length === 0) return ''
+      return `## ${section.title}
+
+${section.intro != null ? `${section.intro.trim()}\n\n` : ''}${sectionItems
+        .map(item => item.render())
+        .join('')}`
+    })
+    .join('')
+}
+
+// React components are values named in PascalCase: they lead, like classes.
+const valueKindOrder = (name: string, order: number): number =>
+  /^[A-Z][a-z]/.test(name) ? 0 : order
 
 const markdown = async ({
   files
 }: {
   files: DocDeclaration[]
 }): Promise<void> => {
-  return await new Promise((resolve, reject) => {
-    let writeStream: fs.WriteStream
-    try {
-      writeStream = fs.createWriteStream(docsOutputPath, { flags: 'w' })
-    } catch (error) {
-      reject(error)
-      return
-    }
+  const packageDeclaration = files.find(file => file.type === 'package')
+  const items = [
+    ...files.map(renderDeclaration),
+    ...(packageDeclaration?.functions ?? []).map(func => ({
+      name: memberName(func),
+      kindOrder: valueKindOrder(memberName(func), 4),
+      render: () => renderFunction(func)
+    })),
+    ...constants.map(constant => ({
+      name: constant.name,
+      kindOrder: valueKindOrder(constant.name, 5),
+      render: () => renderConstant(constant)
+    }))
+  ].filter((item): item is ReferenceItem => item != null)
 
-    writeStream.on('error', reject)
-    writeStream.on('finish', resolve)
+  const content = `export const metadata = { title: "${referenceConfig.title}", order: ${referenceConfig.order} }
 
-    writeStream.write(`export const metadata = { title: "${referenceConfig.title}", order: ${referenceConfig.order} }
+${introduction}
 
-# ${referenceConfig.heading}
+${renderSections(items)}`
+  await fs.promises.writeFile(docsOutputPath, content, 'utf8')
 
-${referenceConfig.description}
-
-`)
-
-    const orderedFiles = sortDeclarations(files)
-
-    orderedFiles.forEach(file => {
-      writeStream.write(renderDeclaration(file))
-      writeStream.write('\n')
-
-      if (file.type === 'package' && (file.functions?.length ?? 0) > 0) {
-        const functions = file.functions ?? []
-        writeStream.write(`
-## Utility functions
-
-`)
-        functions.forEach(func => {
-          writeStream.write(renderTopLevelFunction(func))
-          writeStream.write('\n')
-        })
-      }
-    })
-
-    writeStream.end()
-  })
+  if (missingSummaries.length > 0) {
+    console.warn(
+      `${missingSummaries.length} public exports or members have no summary:\n  ${missingSummaries.join('\n  ')}`
+    )
+  }
 }
 
 const walkPath = (dir: string): string[] => {

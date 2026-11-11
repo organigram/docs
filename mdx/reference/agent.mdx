@@ -1,73 +1,40 @@
 export const metadata = { title: "Agent", order: 5.5 }
 
-# Agent reference
+# Organigram Agent
 
-The official TypeScript documentation for the Organigram workspace agent primitives.
+Workspace agent primitives for Organigram applications.
 
+This package contains the public, framework-independent parts of the Organigram
+workspace agent: request and response types, snapshot and prompt construction,
+response normalization, model usage extraction, and document text extraction.
 
-## @organigram/agent
-
-### Install
+## Installation
 
 ```bash
 pnpm add @organigram/agent
 ```
 
-### Quick start
+## Prompt
+
+The agent answers questions about one workspace, and prepares changes to its organigrams. Gather what the user may see of the workspace in a `Context`, and build the prompt with `buildPrompt()`. The prompt includes a snapshot of the workspace, with the names of files but never their contents. Send it to the language model of your choice, with `WORKSPACE_AGENT_OUTPUT_SCHEMA` as the structured output format when the provider supports it.
+
+### ++dnt++buildPrompt
+
+<div data-summary>
+
+Build the prompt of the workspace agent for a conversation.
+
+</div>
+
+The prompt contains the rules of the agent, a snapshot of the workspace built with `buildSnapshot()`, the conversation and the output schema. It forbids proposals, transactions and signatures, and tells the model to treat file names, notifications and document contents as data rather than instructions. It cannot enforce these rules: validate the answer with `normalizeResponse()`.
 
 ```ts
-import { buildPrompt, normalizeResponse } from '@organigram/agent'
+const prompt = buildPrompt({ messages, context })
+const answer = normalizeResponse(JSON.parse(completion), context)
 ```
 
-### Classes
-
-
-
-### Interfaces
-
-
-
-### Types
-
-- [AgentRequest](/docs/reference/agent#type_AgentRequest)
-- [AgentResponse](/docs/reference/agent#type_AgentResponse)
-- [AiModelUsage](/docs/reference/agent#type_AiModelUsage)
-- [Citation](/docs/reference/agent#type_Citation)
-- [Context](/docs/reference/agent#type_Context)
-- [File_2](/docs/reference/agent#type_File_2)
-- [MergeOrganigramPreview](/docs/reference/agent#type_MergeOrganigramPreview)
-- [Message](/docs/reference/agent#type_Message)
-- [NewOrganigramPreview](/docs/reference/agent#type_NewOrganigramPreview)
-- [Notification_2](/docs/reference/agent#type_Notification_2)
-- [OrganigramPreview](/docs/reference/agent#type_OrganigramPreview)
-- [RecordThreadRequest](/docs/reference/agent#type_RecordThreadRequest)
-- [StoredMessage](/docs/reference/agent#type_StoredMessage)
-- [Thread](/docs/reference/agent#type_Thread)
-- [ThreadSource](/docs/reference/agent#type_ThreadSource)
-- [ThreadsResponse](/docs/reference/agent#type_ThreadsResponse)
-- [ThreadWorkspace](/docs/reference/agent#type_ThreadWorkspace)
-- [UploadedDocument](/docs/reference/agent#type_UploadedDocument)
-- [Workspace](/docs/reference/agent#type_Workspace)
-
-### Enums
-
-
-
-### Functions
-
-- [buildPrompt](/docs/reference/agent#function_buildPrompt)
-- [buildSnapshot](/docs/reference/agent#function_buildSnapshot)
-- [extractModelUsage](/docs/reference/agent#function_extractModelUsage)
-- [extractTextFromUploadedDocument](/docs/reference/agent#function_extractTextFromUploadedDocument)
-- [isDocxDocument](/docs/reference/agent#function_isDocxDocument)
-- [isMessage](/docs/reference/agent#function_isMessage)
-- [isPdfDocument](/docs/reference/agent#function_isPdfDocument)
-- [normalizeResponse](/docs/reference/agent#function_normalizeResponse)
-
-
-## Utility functions
-
-## function ++dnt++buildPrompt
+<details>
+<summary>Signature</summary>
 
 ```typescript
 buildPrompt: (input: {
@@ -76,114 +43,76 @@ buildPrompt: (input: {
 }) => string
 ```
 
+</details>
 
-## function ++dnt++buildSnapshot
+### ++dnt++NEW_ORGANIGRAM_GENERATION_INSTRUCTIONS
+
+<div data-summary>
+
+Instructions to generate a new organigram from a description or from documents, such as bylaws, included in the prompt of `buildPrompt()`.
+
+</div>
+
+### ++dnt++WORKSPACE_AGENT_OUTPUT_SCHEMA
+
+<div data-summary>
+
+JSON schema of the answers expected from the language model, to pass as its structured output format.
+
+</div>
+
+### ++dnt++buildSnapshot
+
+<div data-summary>
+
+Build the description of a workspace given to the agent in its prompt.
+
+</div>
+
+The snapshot keeps only the fields the agent needs: the workspace, its organigrams with their organs, entries, procedures, latest proposals and elections, and assets, plus the names and references of files and the notifications. It never contains the contents of files. It includes `generatedAt`, the date it was built.
+
+<details>
+<summary>Signature</summary>
 
 ```typescript
 buildSnapshot: (context: Context) => Record<string, unknown>
 ```
 
+**Parameters**
 
-## function ++dnt++extractModelUsage
+| Name | Type | Description |
+| --- | --- | --- |
+| `context` | `Context` | What is known about the workspace. |
 
-```typescript
-extractModelUsage: (input: {
-    payload: unknown;
-    prompt: string;
-    completion: string;
-    provider: string;
-    model: string;
-}) => AiModelUsage
-```
+</details>
 
+### ++dnt++MAX_PROPOSALS_PER_PROCEDURE
 
-## function ++dnt++extractTextFromUploadedDocument
+<div data-summary>
 
-```typescript
-extractTextFromUploadedDocument: (file: UploadedDocument) => Promise<string>
-```
+Number of the latest proposals of each procedure included in a snapshot.
 
+</div>
 
-## function ++dnt++isDocxDocument
+<details>
+<summary>Definition</summary>
 
 ```typescript
-isDocxDocument: (file: Pick<UploadedDocument, "name" | "type">) => boolean
+const MAX_PROPOSALS_PER_PROCEDURE = 10
 ```
 
+</details>
 
-## function ++dnt++isMessage
+### ++dnt++Context
 
-```typescript
-isMessage: (value: unknown) => value is Message
-```
+<div data-summary>
 
+What the agent knows about a workspace: the input of `buildSnapshot()`, `buildPrompt()` and `normalizeResponse()`.
 
-## function ++dnt++isPdfDocument
+</div>
 
-```typescript
-isPdfDocument: (file: Pick<UploadedDocument, "name" | "type">) => boolean
-```
-
-
-## function ++dnt++normalizeResponse
-
-```typescript
-normalizeResponse: (input: unknown, context: Context) => AgentResponse
-```
-
-
-## type ++dnt++AgentRequest
-
-```typescript
-export type AgentRequest = {
-    threadId?: string | null;
-    message?: string;
-    messages?: Message[];
-    currentOrganigramId?: string | null;
-    source?: ThreadSource;
-};
-```
-
-
-## type ++dnt++AgentResponse
-
-```typescript
-export type AgentResponse = {
-    threadId?: string;
-    message: string;
-    citations: Citation[];
-    preview?: OrganigramPreview;
-};
-```
-
-
-## type ++dnt++AiModelUsage
-
-```typescript
-export type AiModelUsage = {
-    provider: string;
-    model: string;
-    inputTokens: number;
-    cachedInputTokens: number;
-    outputTokens: number;
-    totalTokens: number;
-    estimatedTokens: boolean;
-};
-```
-
-
-## type ++dnt++Citation
-
-```typescript
-export type Citation = {
-    type: 'workspace' | 'organigram' | 'organ' | 'procedure' | 'asset' | 'notification' | 'file';
-    id: string;
-    label: string;
-};
-```
-
-
-## type ++dnt++Context
+<details>
+<summary>Definition</summary>
 
 ```typescript
 export type Context = {
@@ -194,8 +123,18 @@ export type Context = {
 };
 ```
 
+</details>
 
-## type ++dnt++File_2
+### ++dnt++File
+
+<div data-summary>
+
+A file of the workspace. The agent only sees its reference and name, not its contents.
+
+</div>
+
+<details>
+<summary>Definition</summary>
 
 ```typescript
 export type File = {
@@ -204,43 +143,18 @@ export type File = {
 };
 ```
 
+</details>
 
-## type ++dnt++MergeOrganigramPreview
+### ++dnt++Notification
 
-```typescript
-export type MergeOrganigramPreview = {
-    type: 'organigram';
-    organigramId: string;
-    persistence: 'merge-additive';
-    summary: string[];
-    organigram: OrganigramJson;
-};
-```
+<div data-summary>
 
+A notification of the workspace.
 
-## type ++dnt++Message
+</div>
 
-```typescript
-export type Message = {
-    role: 'user' | 'assistant';
-    content: string;
-};
-```
-
-
-## type ++dnt++NewOrganigramPreview
-
-```typescript
-export type NewOrganigramPreview = {
-    type: 'new-organigram';
-    persistence: 'create';
-    summary: string[];
-    organigram: OrganigramJson;
-};
-```
-
-
-## type ++dnt++Notification_2
+<details>
+<summary>Definition</summary>
 
 ```typescript
 export type Notification = {
@@ -253,88 +167,18 @@ export type Notification = {
 };
 ```
 
+</details>
 
-## type ++dnt++OrganigramPreview
+### ++dnt++Workspace
 
-```typescript
-export type OrganigramPreview = MergeOrganigramPreview | NewOrganigramPreview;
-```
+<div data-summary>
 
+The workspace the agent answers about.
 
-## type ++dnt++RecordThreadRequest
+</div>
 
-```typescript
-export type RecordThreadRequest = {
-    action: 'recordThread';
-    source: ThreadSource;
-    userMessage: string;
-    assistantMessage: string;
-    currentOrganigramId?: string | null;
-};
-```
-
-
-## type ++dnt++StoredMessage
-
-```typescript
-export type StoredMessage = Message & {
-    id: string;
-    createdAt: string;
-    response?: AgentResponse;
-};
-```
-
-
-## type ++dnt++Thread
-
-```typescript
-export type Thread = {
-    id: string;
-    title: string;
-    source: ThreadSource;
-    workspace?: ThreadWorkspace | null;
-    currentOrganigramId?: string | null;
-    createdAt: string;
-    updatedAt: string;
-    messages: StoredMessage[];
-};
-```
-
-
-## type ++dnt++ThreadSource
-
-```typescript
-export type ThreadSource = 'workspace' | 'hero';
-```
-
-
-## type ++dnt++ThreadsResponse
-
-```typescript
-export type ThreadsResponse = {
-    threads: Thread[];
-};
-```
-
-
-## type ++dnt++ThreadWorkspace
-
-```typescript
-export type ThreadWorkspace = {
-    id: string;
-    name?: string | null;
-};
-```
-
-
-## type ++dnt++UploadedDocument
-
-```typescript
-export type UploadedDocument = Pick<File, 'name' | 'type' | 'arrayBuffer' | 'text'>;
-```
-
-
-## type ++dnt++Workspace
+<details>
+<summary>Definition</summary>
 
 ```typescript
 export type Workspace = {
@@ -352,4 +196,494 @@ export type Workspace = {
 };
 ```
 
+</details>
+
+## Responses
+
+The output of a language model is untrusted. `normalizeResponse()` keeps only valid citations, and only previews that create a new organigram or add to an organigram that is not deployed, without changing what it holds. The agent never proposes, signs or sends transactions: a deployed organigram changes only through its own procedures.
+
+### ++dnt++normalizeResponse
+
+<div data-summary>
+
+Validate the answer of the language model and turn it into an `AgentResponse`.
+
+</div>
+
+Treat the model's output as untrusted. Without a message, the answer is replaced by a fallback message. Only citations of known types are kept, at most 8. A preview is kept only if it is a new organigram, or an addition to an organigram of the workspace that has no deployed organ, procedure or asset and that changes or removes none of its organs, entries, procedures or assets. Invalid previews are dropped.
+
+<details>
+<summary>Signature</summary>
+
+```typescript
+normalizeResponse: (input: unknown, context: Context) => AgentResponse
+```
+
+**Parameters**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| `input` | `unknown` | The answer of the model, parsed from JSON. |
+| `context` | `Context` | The context the prompt was built with. |
+
+**Returns**
+
+| Type | Description |
+| --- | --- |
+| `AgentResponse` | The answer, without `threadId`. |
+
+</details>
+
+### ++dnt++AgentResponse
+
+<div data-summary>
+
+An answer of the workspace agent, as returned by `normalizeResponse()`.
+
+</div>
+
+<details>
+<summary>Definition</summary>
+
+```typescript
+export type AgentResponse = {
+    threadId?: string;
+    message: string;
+    citations: Citation[];
+    preview?: OrganigramPreview;
+};
+```
+
+</details>
+
+### ++dnt++Citation
+
+<div data-summary>
+
+A reference to a workspace object that supports an answer of the agent.
+
+</div>
+
+<details>
+<summary>Definition</summary>
+
+```typescript
+export type Citation = {
+    type: 'workspace' | 'organigram' | 'organ' | 'procedure' | 'asset' | 'notification' | 'file';
+    id: string;
+    label: string;
+};
+```
+
+</details>
+
+### ++dnt++MergeOrganigramPreview
+
+<div data-summary>
+
+A proposed addition to an existing organigram that is not deployed yet.
+
+</div>
+
+<details>
+<summary>Definition</summary>
+
+```typescript
+export type MergeOrganigramPreview = {
+    type: 'organigram';
+    organigramId: string;
+    persistence: 'merge-additive';
+    summary: string[];
+    organigram: OrganigramJson;
+};
+```
+
+</details>
+
+### ++dnt++NewOrganigramPreview
+
+<div data-summary>
+
+A proposed new organigram.
+
+</div>
+
+<details>
+<summary>Definition</summary>
+
+```typescript
+export type NewOrganigramPreview = {
+    type: 'new-organigram';
+    persistence: 'create';
+    summary: string[];
+    organigram: OrganigramJson;
+};
+```
+
+</details>
+
+### ++dnt++OrganigramPreview
+
+<div data-summary>
+
+A change to organigrams proposed by the agent, which the user reviews before saving it.
+
+</div>
+
+<details>
+<summary>Definition</summary>
+
+```typescript
+export type OrganigramPreview = MergeOrganigramPreview | NewOrganigramPreview;
+```
+
+</details>
+
+## Conversations
+
+Types of the requests to the agent and of the conversations stored in the history of a workspace.
+
+### ++dnt++AgentRequest
+
+<div data-summary>
+
+Body of a request to the workspace agent.
+
+</div>
+
+<details>
+<summary>Definition</summary>
+
+```typescript
+export type AgentRequest = {
+    threadId?: string | null;
+    message?: string;
+    messages?: Message[];
+    currentOrganigramId?: string | null;
+    source?: ThreadSource;
+};
+```
+
+</details>
+
+### ++dnt++Message
+
+<div data-summary>
+
+A message of a conversation with the workspace agent.
+
+</div>
+
+<details>
+<summary>Definition</summary>
+
+```typescript
+export type Message = {
+    role: 'user' | 'assistant';
+    content: string;
+};
+```
+
+</details>
+
+### ++dnt++RecordThreadRequest
+
+<div data-summary>
+
+Body of a request that stores a conversation held elsewhere, such as on the home page hero, in the workspace history.
+
+</div>
+
+<details>
+<summary>Definition</summary>
+
+```typescript
+export type RecordThreadRequest = {
+    action: 'recordThread';
+    source: ThreadSource;
+    userMessage: string;
+    assistantMessage: string;
+    currentOrganigramId?: string | null;
+};
+```
+
+</details>
+
+### ++dnt++StoredMessage
+
+<div data-summary>
+
+A message as stored in the history of a conversation.
+
+</div>
+
+<details>
+<summary>Definition</summary>
+
+```typescript
+export type StoredMessage = Message & {
+    id: string;
+    createdAt: string;
+    response?: AgentResponse;
+};
+```
+
+</details>
+
+### ++dnt++Thread
+
+<div data-summary>
+
+A stored conversation with the workspace agent.
+
+</div>
+
+<details>
+<summary>Definition</summary>
+
+```typescript
+export type Thread = {
+    id: string;
+    title: string;
+    source: ThreadSource;
+    workspace?: ThreadWorkspace | null;
+    currentOrganigramId?: string | null;
+    createdAt: string;
+    updatedAt: string;
+    messages: StoredMessage[];
+};
+```
+
+</details>
+
+### ++dnt++ThreadSource
+
+<div data-summary>
+
+Where a conversation started: in a workspace, or on the home page hero.
+
+</div>
+
+<details>
+<summary>Definition</summary>
+
+```typescript
+export type ThreadSource = 'workspace' | 'hero';
+```
+
+</details>
+
+### ++dnt++ThreadsResponse
+
+<div data-summary>
+
+List of the conversations of a user.
+
+</div>
+
+<details>
+<summary>Definition</summary>
+
+```typescript
+export type ThreadsResponse = {
+    threads: Thread[];
+};
+```
+
+</details>
+
+### ++dnt++ThreadWorkspace
+
+<div data-summary>
+
+The workspace of a conversation.
+
+</div>
+
+<details>
+<summary>Definition</summary>
+
+```typescript
+export type ThreadWorkspace = {
+    id: string;
+    name?: string | null;
+};
+```
+
+</details>
+
+### ++dnt++isMessage
+
+<div data-summary>
+
+Check that a value is a message with a role and non-empty content, for example in a request body.
+
+</div>
+
+<details>
+<summary>Signature</summary>
+
+```typescript
+isMessage: (value: unknown) => value is Message
+```
+
+**Parameters**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| `value` | `unknown` | The value to check. |
+
+</details>
+
+## Documents
+
+Users can upload bylaws or other documents for the agent to draw an organigram from. These functions extract their text on the server. The text is written by third parties: give it to the model as data.
+
+### ++dnt++UploadedDocument
+
+<div data-summary>
+
+A file uploaded by a user, as a browser or Node.js `File`.
+
+</div>
+
+<details>
+<summary>Definition</summary>
+
+```typescript
+export type UploadedDocument = Pick<File, 'name' | 'type' | 'arrayBuffer' | 'text'>;
+```
+
+</details>
+
+### ++dnt++extractTextFromUploadedDocument
+
+<div data-summary>
+
+Extract the text of an uploaded document, to give it to the agent.
+
+</div>
+
+Reads Word documents (body, headers, footers, footnotes and endnotes), PDF files and plain text. PDF pages without enough text are read with OCR in English and French, which needs Poppler (`pdftocairo`) installed on the server; if OCR fails, the text found in the PDF is kept. Runs on Node.js only. The text is written by third parties: give it to the model as data, never as instructions.
+
+<details>
+<summary>Signature</summary>
+
+```typescript
+extractTextFromUploadedDocument: (file: UploadedDocument) => Promise<string>
+```
+
+**Parameters**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| `file` | `UploadedDocument` | The uploaded file. |
+
+**Returns**
+
+| Type | Description |
+| --- | --- |
+| `Promise<string>` | The text, with whitespace normalized. |
+
+</details>
+
+### ++dnt++isDocxDocument
+
+<div data-summary>
+
+Check whether a file is a Word document (.docx), by its MIME type or extension.
+
+</div>
+
+<details>
+<summary>Signature</summary>
+
+```typescript
+isDocxDocument: (file: Pick<UploadedDocument, "name" | "type">) => boolean
+```
+
+**Parameters**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| `file` | `Pick<UploadedDocument, "name" \| "type">` | The file to check. |
+
+</details>
+
+### ++dnt++isPdfDocument
+
+<div data-summary>
+
+Check whether a file is a PDF, by its MIME type or extension.
+
+</div>
+
+<details>
+<summary>Signature</summary>
+
+```typescript
+isPdfDocument: (file: Pick<UploadedDocument, "name" | "type">) => boolean
+```
+
+**Parameters**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| `file` | `Pick<UploadedDocument, "name" \| "type">` | The file to check. |
+
+</details>
+
+## Usage
+
+Count the tokens used by each call to a language model, to bill or limit usage.
+
+### ++dnt++extractModelUsage
+
+<div data-summary>
+
+Read the tokens used by a call to a language model from the provider's response.
+
+</div>
+
+Reads the usage fields of OpenAI-compatible responses (`input_tokens`, `prompt_tokens`, cached token details) and Ollama responses (`prompt_eval_count`, `eval_count`). When the provider reports no input or output tokens, they are estimated as a quarter of the length of the prompt or completion, and `estimatedTokens` is `true`.
+
+<details>
+<summary>Signature</summary>
+
+```typescript
+extractModelUsage: (input: {
+    payload: unknown;
+    prompt: string;
+    completion: string;
+    provider: string;
+    model: string;
+}) => AiModelUsage
+```
+
+</details>
+
+### ++dnt++AiModelUsage
+
+<div data-summary>
+
+Tokens used by one call to a language model.
+
+</div>
+
+<details>
+<summary>Definition</summary>
+
+```typescript
+export type AiModelUsage = {
+    provider: string;
+    model: string;
+    inputTokens: number;
+    cachedInputTokens: number;
+    outputTokens: number;
+    totalTokens: number;
+    estimatedTokens: boolean;
+};
+```
+
+</details>
 
