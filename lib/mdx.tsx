@@ -75,15 +75,43 @@ export const slugify: (text: string) => string = text =>
     ?.trim?.()
     ?.replace?.(/\s+/g, '_')
 
+const htmlEntities: Record<string, string> = {
+  amp: '&',
+  lt: '<',
+  gt: '>',
+  quot: '"',
+  '#x27': "'"
+}
+
+/** The text of rendered HTML: without tags, and with React's escapes undone. */
+export const getTextFromHtml = (html: string): string =>
+  html
+    .replace(/<[^>]+>/g, '')
+    .replace(/&(amp|lt|gt|quot|#x27);/g, (_, entity: string) => htmlEntities[entity])
+
+/** Headings, with the one-sentence summary that reference pages put right after them. */
 export const getHeadingsFromHtml: (
   stringifiedHtml: string
 ) => Heading[] = stringifiedHtml => {
   const regex = /<h([2-6])(?:\s[^>]*)?>(.*?)<\/h\1>/g
+  const summaryStart = '<div data-summary="true">'
   return [...stringifiedHtml.matchAll(regex)].map(match => {
     const type = parseInt(match[1])
-    const headingText = match[2].replace(/<[^>]+>/g, '')
+    const headingText = getTextFromHtml(match[2])
     const link = `#${slugify(headingText)}`
-    return { text: headingText, link, type }
+    let position = match.index + match[0].length
+    while (/\s/.test(stringifiedHtml.charAt(position))) position += 1
+    const summary = stringifiedHtml.startsWith(summaryStart, position)
+      ? getTextFromHtml(
+          stringifiedHtml.slice(
+            position + summaryStart.length,
+            stringifiedHtml.indexOf('</div>', position)
+          )
+        ).trim()
+      : ''
+    return summary === ''
+      ? { text: headingText, link, type }
+      : { text: headingText, link, type, summary }
   })
 }
 

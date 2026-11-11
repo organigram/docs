@@ -17,7 +17,10 @@ const DocsNavigation: React.FC<{ trees: FileTree[]; current?: FileTree }> = ({
 }) => {
   const { push } = useRouter()
   const orderedTrees = orderTrees(trees)
-  const currentIndex = current == null ? -1 : orderedTrees.indexOf(current)
+  // By path: an index page is listed through its folder, which shares its path.
+  const currentIndex = orderedTrees.findIndex(
+    tree => current?.path != null && tree.path === current.path
+  )
   const previous = currentIndex < 0 ? undefined : orderedTrees[currentIndex - 1]
   const next = currentIndex < 0 ? undefined : orderedTrees[currentIndex + 1]
   const isTabletOrAbove = useBreakpoint('sm')

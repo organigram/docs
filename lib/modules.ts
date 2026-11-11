@@ -4,6 +4,8 @@ import {
   type DocsModule
 } from './modules.generated'
 
+export { docsImporters }
+
 const withSuffix = (docPath: string): string =>
   docPath.endsWith('.mdx') ? docPath : `${docPath}.mdx`
 

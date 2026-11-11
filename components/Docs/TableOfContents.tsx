@@ -1,3 +1,4 @@
+import { useEffect, useMemo, useRef } from 'react'
 import { navHeight } from '@organigram/react'
 import Box from '@mui/material/Box'
 import Grid from '@mui/material/Grid'
@@ -11,22 +12,48 @@ export interface Heading {
   text: string
   link: string
   type: number
+  summary?: string
 }
 
 export const tocWidthMd = 250
 export const tocWidthSm = 200
 
 const TableOfContents: React.FC<{ headings: Heading[] }> = ({ headings }) => {
-  const currentIndex = useCurrentTocIndex(headings, navHeight)
   const isLongReference = headings.length > 20
-  const referenceHeadings = headings.filter(heading => heading.type === 2)
-  const pageHeadings = isLongReference ? referenceHeadings : headings
+  // Long references list their sections and exports, not every member.
+  const pageHeadings = useMemo(
+    () =>
+      isLongReference
+        ? headings.filter(heading => heading.type <= 3)
+        : headings,
+    [headings, isLongReference]
+  )
+  const currentIndex = useCurrentTocIndex(pageHeadings, navHeight)
+  const listRef = useRef<HTMLDivElement>(null)
+
+  // Keep the current entry visible when the list is longer than the screen.
+  useEffect(() => {
+    const list = listRef.current
+    const entry = list?.querySelector<HTMLElement>(
+      `[href="${CSS.escape(currentIndex)}"]`
+    )
+    if (list == null || entry == null) return
+    const top =
+      entry.getBoundingClientRect().top -
+      list.getBoundingClientRect().top +
+      list.scrollTop
+    if (
+      top < list.scrollTop ||
+      top + entry.offsetHeight > list.scrollTop + list.clientHeight
+    ) {
+      list.scrollTop = top - list.clientHeight / 3
+    }
+  }, [currentIndex])
 
   const renderHeadings = (items: Heading[]) =>
     items.map(heading => {
       const selected = currentIndex === heading.link
       const indent = Math.max(heading.type - 2, 0) * 1.5
-      const isReferenceEntry = heading.text.startsWith('function ')
 
       return (
         <Grid
@@ -53,15 +80,12 @@ const TableOfContents: React.FC<{ headings: Heading[] }> = ({ headings }) => {
           >
             <Link
               href={heading.link}
-              title={t(heading.text)}
+              title={heading.summary ?? t(heading.text)}
               color={selected ? 'primary' : 'text.primary'}
               sx={{
                 display: 'block',
                 fontSize: isLongReference ? '13px' : '14px',
-                fontWeight:
-                  selected || (heading.type === 2 && !isReferenceEntry)
-                    ? 700
-                    : 500,
+                fontWeight: selected || heading.type === 2 ? 700 : 500,
                 lineHeight: 1.5,
                 whiteSpace: isLongReference ? 'nowrap' : 'normal',
                 overflow: isLongReference ? 'hidden' : 'visible',
@@ -74,6 +98,24 @@ const TableOfContents: React.FC<{ headings: Heading[] }> = ({ headings }) => {
               }}
             >
               {t(heading.text)}
+              {heading.summary != null && (
+                <Typography
+                  component='span'
+                  sx={{
+                    display: '-webkit-box',
+                    WebkitLineClamp: 2,
+                    WebkitBoxOrient: 'vertical',
+                    overflow: 'hidden',
+                    whiteSpace: 'normal',
+                    fontSize: '12px',
+                    fontWeight: 400,
+                    lineHeight: 1.4,
+                    color: 'text.secondary'
+                  }}
+                >
+                  {heading.summary}
+                </Typography>
+              )}
             </Link>
           </Box>
         </Grid>
@@ -107,9 +149,12 @@ const TableOfContents: React.FC<{ headings: Heading[] }> = ({ headings }) => {
         {t('On this page:')}
       </Typography>
       <Grid
+        ref={listRef}
         sx={{
           flex: 1,
           minHeight: 0,
+          // Long titles are truncated instead of widening the column.
+          width: '100%',
           overflowY: 'auto',
           overflowX: 'hidden',
           pb: 2,

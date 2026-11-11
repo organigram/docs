@@ -6,8 +6,24 @@ const defaultCalendlyUrl = 'https://calendly.com/organigram/30mn'
 const CalendlyBooking: React.FC<{
   url?: string
   minHeight?: string | number
-}> = ({ url = defaultCalendlyUrl, minHeight = '860px' }) => {
+  onScheduled?: () => void
+}> = ({ url = defaultCalendlyUrl, minHeight = '860px', onScheduled }) => {
   const widgetRef = useRef<HTMLDivElement | null>(null)
+
+  useEffect(() => {
+    if (onScheduled == null) return
+    // Calendly posts booking events to the embedding page.
+    const onMessage = (event: MessageEvent<{ event?: string }>): void => {
+      if (
+        event.origin === 'https://calendly.com' &&
+        event.data?.event === 'calendly.event_scheduled'
+      ) {
+        onScheduled()
+      }
+    }
+    window.addEventListener('message', onMessage)
+    return () => window.removeEventListener('message', onMessage)
+  }, [onScheduled])
 
   useEffect(() => {
     const scriptId = 'calendly-widget-script'
