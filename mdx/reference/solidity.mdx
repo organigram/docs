@@ -1,77 +1,151 @@
 export const metadata = { title: "Solidity", order: 5.1 }
 
-# Solidity reference
+# Organigram Protocol
 
-The official Solidity documentation for the contracts and types used in the Organigram.ai stack.
+The Organigram Protocol is a Solidity framework for building incorruptible governance systems on Ethereum.
 
-## @organigram/protocol
+By assembling three simple concepts, it allows for the automated execution of any business rules in a decentralized and auditable manner:
 
-Solidity smart contracts for the [Organigram Protocol](/docs/protocol).
+- [Assets](https://organigram.ai/en/docs/protocol/assets) are what is being governed: they represent value in cryptocurrency - either native assets (such as ETH), stablecoins (such as USDC or EurE), or any other types of ERC-20-compatible tokens.
+- [Organs](https://organigram.ai/en/docs/protocol/organs) are cryptographic vaults: they store the permissions defining who can access what assets. They can only be modified by procedures stored in the organ's internal memory.
+- [Procedures](https://organigram.ai/en/docs/protocol/procedures) are automated, pre-approved workflows that allow permitted users to perform actions in a compliant and safe way (for example transfer assets or edit permissions after a vote).
 
-### Install
+For comprehensive documentation, please visit our [official website](https://organigram.ai/en/docs).
+
+## Installation
+
+Install the NPM package with:
 
 ```bash
+# npm:
+npm install @organigram/protocol
+# pnpm: 
 pnpm add @organigram/protocol
 ```
 
-### Contracts
+## Usage
 
-- [OrganigramClient](/docs/reference/solidity#contract_OrganigramClient)
-- [Organ](/docs/reference/solidity#contract_Organ)
-- [Procedure](/docs/reference/solidity#contract_Procedure)
-- [NominationProcedure](/docs/reference/solidity#contract_NominationProcedure)
-- [ERC20VoteProcedure](/docs/reference/solidity#contract_ERC20VoteProcedure)
-- [VoteProcedure](/docs/reference/solidity#contract_VoteProcedure)
-- [IOrgan](/docs/reference/solidity#contract_IOrgan)
-- [OrganLibrary](/docs/reference/solidity#contract_OrganLibrary)
-- [ProcedureLibrary](/docs/reference/solidity#contract_ProcedureLibrary)
+With this package, you can directly interact with the Organigram Protocol smart contracts in your Solidity and JavaScript code, or use our official clients to build your own applications on top of the protocol.
 
-## ++dnt++contract OrganigramClient
+- Import contract sources in your solidity code:
 
-### Constructor
+  ```javascript
+  import "@organigram/protocol/Organ.sol";
+  ```
+
+- Import contracts artifacts in your JS code:
+
+  ```javascript
+  import OrganContractABI from '@organigram/protocol/abi/Organ.sol/Organ.json' with { type: 'json' }
+  import { getContract, type Abi } from 'viem'
+
+  const contract = getContract({
+    address: getAddress(address as Address),
+    abi: OrganContractABI.abi as Abi,
+    client: {
+      // ... viem client configuration 
+    }
+  })
+  ```
+
+- Use the official [JavaScript/TypeScript client](https://organigram.ai/en/docs/reference/js), which deploys and operates the contracts, and the [React components](https://organigram.ai/en/docs/reference/react), which draw them.
+
+## Development
+
+### Install Foundry
+
+This package uses **Foundry** (Forge/Anvil) for local development. Install the Foundry toolchain with:
+
+```bash
+curl -L https://foundry.paradigm.xyz | bash
+foundryup
+```
+
+### Start local node
+Start a local node for development with Anvil:
+
+```bash
+pnpm anvil
+```
+
+### Compile contracts
+
+Compile the contracts with:
+
+```bash
+pnpm build
+```
+
+### Deploy contracts
+
+Deploy protocol contracts to a list of networks:
+
+```bash
+pnpm deploy:protocol <comma-separated list of network names or chain ids>
+```
+
+Requires a `.env` with `MNEMONIC` and `NEXT_PUBLIC_THIRDWEB_CLIENT_ID`. The deployer account must have enough funds on each target network to cover deployment costs.
+
+For example:
+
+```bash
+pnpm deploy:protocol mainnet,base,11155111
+```
+
+To deploy to the local Anvil node:
+
+```bash
+pnpm deploy:protocol anvil
+```
+
+By default, network RPC URLs are built from Thirdweb. You can override a specific network with `RPC_URL_<chain id>`, or `RPC_URL_<network name>`, for example `RPC_URL_11155111`.
+
+The deployment script will also accept an optional `--resume` flag to resume the last run if the deployment has failed.
+
+## Contributing
+
+We are looking for Solidity developers and testers to keep our contracts secure and up-to-date. Please create issues in our Github page, fork and create Pull-Requests, or contact us on our [Discord](https://discord.com/invite/gU3g9W4tbt) or at [hello@organigram.ai](mailto:hello@organigram.ai).
+
+## Client
+
+The `OrganigramClient` contract is the entry point of the protocol on each chain. It keeps the registry of procedure types and deploys organs, assets and procedures as clones of their implementations, one by one or as a whole organigram in a single transaction. A clone address depends on its salt and on the account deploying it, so that nobody can take an address someone else predicted.
+
+### ++dnt++OrganigramClient
+
+<div data-summary>
+
+Entry point of the protocol on a chain: the registry of procedure types, and the factory of organs, assets and procedures, deployed as clones of their implementations.
+
+</div>
+
+<details>
+<summary>Constructor</summary>
 
 ```solidity
 constructor(string cid, address trustedForwarder, bytes32 salt);
 ```
-### Events
 
-#### ++dnt++OrganigramClient.assetDeployed
-
-```solidity
-event assetDeployed(address asset);
-```
-
-
-
-#### ++dnt++OrganigramClient.organDeployed
-
-```solidity
-event organDeployed(address organ);
-```
-
-
-
-#### ++dnt++OrganigramClient.procedureDeployed
-
-```solidity
-event procedureDeployed(address procedureType, address procedure);
-```
-
-
-
-### Functions
+</details>
 
 #### ++dnt++OrganigramClient.asset
+
+Implementation that assets are cloned from.
+
+<details>
+<summary>Signature</summary>
 
 ```solidity
 function asset() view returns (address);
 ```
 
-
+</details>
 
 #### ++dnt++OrganigramClient.deployAsset
 
 Deploy a single asset clone and initialize it as an ERC-20 token.
+
+<details>
+<summary>Signature</summary>
 
 ```solidity
 function deployAsset(string name, string symbol, uint256 initialSupply, bytes32 salt) returns (address clone);
@@ -91,42 +165,118 @@ function deployAsset(string name, string symbol, uint256 initialSupply, bytes32 
 | --- | --- | --- |
 | `clone` | `address` | Address of the deployed asset clone. |
 
+</details>
 
 #### ++dnt++OrganigramClient.deployAssets
+
+Deploy several asset clones in one call.
+
+<details>
+<summary>Signature</summary>
 
 ```solidity
 function deployAssets((string, string, uint256, bytes32, bool, address)[] batch) returns (address[] clones);
 ```
 
+**Parameters**
 
+| Name | Type | Description |
+| --- | --- | --- |
+| `batch` | `(string, string, uint256, bytes32, bool, address)[]` | Asset deployment payloads. |
+**Returns**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| `clones` | `address[]` | Addresses of the deployed asset clones. |
+
+</details>
 
 #### ++dnt++OrganigramClient.deployOrgan
+
+Deploy a single organ clone and initialize it.
+
+<details>
+<summary>Signature</summary>
 
 ```solidity
 function deployOrgan(address[] _permissionAddresses, bytes2[] _permissionValues, string cid, (address, string)[] entries, bytes32 salt) returns (address clone);
 ```
 
+**Parameters**
 
+| Name | Type | Description |
+| --- | --- | --- |
+| `_permissionAddresses` | `address[]` | Addresses receiving permissions on the organ. |
+| `_permissionValues` | `bytes2[]` | Permission bitmasks aligned with `_permissionAddresses`. |
+| `cid` | `string` | Metadata CID assigned to the deployed organ. |
+| `entries` | `(address, string)[]` | Initial entries stored on the organ. |
+| `salt` | `bytes32` | Deterministic clone salt. |
+**Returns**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| `clone` | `address` | Address of the deployed organ clone. |
+
+</details>
 
 #### ++dnt++OrganigramClient.deployOrganigram
+
+Deploy a complete organigram in one transaction.
+
+<details>
+<summary>Signature</summary>
 
 ```solidity
 function deployOrganigram((address[], bytes2[], string, (address, string)[], bytes32)[] organBatch, (string, string, uint256, bytes32, bool, address)[] assetBatch, (address, bytes, bytes32)[] procedureBatch) returns (address[] organsDeployed, address[] assetsDeployed, address[] proceduresDeployed);
 ```
 
+**Parameters**
 
+| Name | Type | Description |
+| --- | --- | --- |
+| `organBatch` | `(address[], bytes2[], string, (address, string)[], bytes32)[]` | Organ deployment payloads. |
+| `assetBatch` | `(string, string, uint256, bytes32, bool, address)[]` | Asset deployment payloads. |
+| `procedureBatch` | `(address, bytes, bytes32)[]` | Procedure deployment payloads. |
+**Returns**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| `organsDeployed` | `address[]` | Addresses of the deployed organs. |
+| `assetsDeployed` | `address[]` | Addresses of the deployed assets. |
+| `proceduresDeployed` | `address[]` | Addresses of the deployed procedures. |
+
+</details>
 
 #### ++dnt++OrganigramClient.deployOrgans
+
+Deploy several organ clones in one call.
+
+<details>
+<summary>Signature</summary>
 
 ```solidity
 function deployOrgans((address[], bytes2[], string, (address, string)[], bytes32)[] batch) returns (address[] clones);
 ```
 
+**Parameters**
 
+| Name | Type | Description |
+| --- | --- | --- |
+| `batch` | `(address[], bytes2[], string, (address, string)[], bytes32)[]` | Organ deployment payloads. |
+**Returns**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| `clones` | `address[]` | Addresses of the deployed organ clones. |
+
+</details>
 
 #### ++dnt++OrganigramClient.deployProcedure
 
 Deploy one procedure clone from a registered procedure implementation.
+
+<details>
+<summary>Signature</summary>
 
 ```solidity
 function deployProcedure(address procedureType, bytes data, bytes32 salt) returns (address procedure);
@@ -145,26 +295,51 @@ function deployProcedure(address procedureType, bytes data, bytes32 salt) return
 | --- | --- | --- |
 | `procedure` | `address` | Address of the deployed procedure clone. |
 
+</details>
 
 #### ++dnt++OrganigramClient.deployProcedures
+
+Deploy several procedure clones in one call.
+
+<details>
+<summary>Signature</summary>
 
 ```solidity
 function deployProcedures((address, bytes, bytes32)[] batch) returns (address[] created);
 ```
 
+**Parameters**
 
+| Name | Type | Description |
+| --- | --- | --- |
+| `batch` | `(address, bytes, bytes32)[]` | Procedure deployment payloads. |
+**Returns**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| `created` | `address[]` | Addresses of the deployed procedure clones. |
+
+</details>
 
 #### ++dnt++OrganigramClient.equityToken
+
+Implementation that equity tokens are cloned from.
+
+<details>
+<summary>Signature</summary>
 
 ```solidity
 function equityToken() view returns (address);
 ```
 
-
+</details>
 
 #### ++dnt++OrganigramClient.isTrustedForwarder
 
 Return whether an address is the trusted ERC-2771 forwarder.
+
+<details>
+<summary>Signature</summary>
 
 ```solidity
 function isTrustedForwarder(address forwarder) view returns (bool);
@@ -176,89 +351,370 @@ function isTrustedForwarder(address forwarder) view returns (bool);
 | --- | --- | --- |
 | `forwarder` | `address` | The forwarder address to test. |
 
+</details>
 
 #### ++dnt++OrganigramClient.organ
+
+Implementation that organs are cloned from.
+
+<details>
+<summary>Signature</summary>
 
 ```solidity
 function organ() view returns (address);
 ```
 
-
+</details>
 
 #### ++dnt++OrganigramClient.owner
+
+Account allowed to register procedure types.
+
+<details>
+<summary>Signature</summary>
 
 ```solidity
 function owner() view returns (address);
 ```
 
-
+</details>
 
 #### ++dnt++OrganigramClient.proceduresRegistry
+
+Organ listing the registered procedure types.
+
+<details>
+<summary>Signature</summary>
 
 ```solidity
 function proceduresRegistry() view returns (address);
 ```
 
-
+</details>
 
 #### ++dnt++OrganigramClient.registerProcedures
+
+Register supported procedure implementations in the procedures registry.
+
+<details>
+<summary>Signature</summary>
 
 ```solidity
 function registerProcedures((address, string)[] entries);
 ```
 
+**Parameters**
 
+| Name | Type | Description |
+| --- | --- | --- |
+| `entries` | `(address, string)[]` | Registry entries that point to valid procedure implementations. |
+
+</details>
 
 #### ++dnt++OrganigramClient.trustedForwarder
 
 Return the trusted ERC-2771 forwarder used by this contract.
 
+<details>
+<summary>Signature</summary>
+
 ```solidity
 function trustedForwarder() view returns (address);
 ```
 
+</details>
 
+#### ++dnt++OrganigramClient.assetDeployed
 
+An asset was deployed.
 
+<details>
+<summary>Event</summary>
 
-## ++dnt++contract Organ
+```solidity
+event assetDeployed(address asset);
+```
 
-### Constructor
+</details>
+
+#### ++dnt++OrganigramClient.organDeployed
+
+An organ was deployed.
+
+<details>
+<summary>Event</summary>
+
+```solidity
+event organDeployed(address organ);
+```
+
+</details>
+
+#### ++dnt++OrganigramClient.procedureDeployed
+
+A procedure was deployed from a registered procedure type.
+
+<details>
+<summary>Event</summary>
+
+```solidity
+event procedureDeployed(address procedureType, address procedure);
+```
+
+</details>
+
+## Organs
+
+An organ is a group: a registry of entries, each an address, a document reference or both, a list of permissions, and a balance of ether and tokens. Every change requires a permission held by the caller. Organs can also call outside contracts, but only the calls listed in their execution whitelist.
+
+### ++dnt++Organ
+
+<div data-summary>
+
+A group of an organization: a registry of entries, each an address, a document reference or both, a list of permissions, and a balance of ether and tokens.
+
+</div>
+
+Every change requires a permission held by the caller. In a governed organization, procedures hold those permissions, so that every change goes through a decision.
+
+It has every function and event of [IOrgan](/docs/reference/solidity#IOrgan), and the ones below.
+
+<details>
+<summary>Constructor</summary>
 
 ```solidity
 constructor();
 ```
-### Events
 
-#### ++dnt++Organ.Initialized
+</details>
+
+#### ++dnt++Organ.initialize
+
+Initialize a freshly cloned organ.
+
+<details>
+<summary>Signature</summary>
 
 ```solidity
-event Initialized(uint64 version);
+function initialize(address[] permissionAddresses, bytes2[] permissionValues, string cid, (address, string)[] entries, address forwarder);
 ```
 
+**Parameters**
 
+| Name | Type | Description |
+| --- | --- | --- |
+| `permissionAddresses` | `address[]` |   |
+| `permissionValues` | `bytes2[]` |   |
+| `cid` | `string` | Content identifier describing the organ metadata. |
+| `entries` | `(address, string)[]` | Initial entries stored on the organ. |
+| `forwarder` | `address` |   |
+
+</details>
+
+#### ++dnt++Organ.isTrustedForwarder
+
+Return whether an address is the trusted ERC-2771 forwarder.
+
+<details>
+<summary>Signature</summary>
+
+```solidity
+function isTrustedForwarder(address forwarder) view returns (bool);
+```
+
+**Parameters**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| `forwarder` | `address` | The forwarder address to test. |
+
+</details>
+
+#### ++dnt++Organ.onERC1155BatchReceived
+
+ERC-1155 hook accepting tokens. ERC-1155 tokens are not recorded by the organ.
+
+<details>
+<summary>Signature</summary>
+
+```solidity
+function onERC1155BatchReceived(address arg0, address arg1, uint256[] arg2, uint256[] arg3, bytes arg4) returns (bytes4);
+```
+
+</details>
+
+#### ++dnt++Organ.onERC1155Received
+
+ERC-1155 hook accepting a token. ERC-1155 tokens are not recorded by the organ.
+
+<details>
+<summary>Signature</summary>
+
+```solidity
+function onERC1155Received(address arg0, address arg1, uint256 arg2, uint256 arg3, bytes arg4) returns (bytes4);
+```
+
+</details>
+
+#### ++dnt++Organ.onERC721Received
+
+ERC-721 hook recording a token sent to the organ.
+
+<details>
+<summary>Signature</summary>
+
+```solidity
+function onERC721Received(address operator, address from, uint256 tokenId, bytes arg3) returns (bytes4);
+```
+
+</details>
+
+#### ++dnt++Organ.supportsInterface
+
+Tell whether the organ supports an interface: ERC-165, `IOrgan`, and the ERC-777, ERC-721 and ERC-1155 receivers.
+
+<details>
+<summary>Signature</summary>
+
+```solidity
+function supportsInterface(bytes4 interfaceId) view returns (bool);
+```
+
+</details>
+
+#### ++dnt++Organ.tokensReceived
+
+ERC-777 hook recording tokens sent to the organ.
+
+<details>
+<summary>Signature</summary>
+
+```solidity
+function tokensReceived(address operator, address from, address to, uint256 amount, bytes arg4, bytes arg5);
+```
+
+</details>
+
+#### ++dnt++Organ.transferCoins
+
+Send ERC-20 tokens held by the organ. Requires the `WITHDRAW_COINS` permission.
+
+The second parameter is ignored.
+
+<details>
+<summary>Signature</summary>
+
+```solidity
+function transferCoins(address token, address arg1, address to, uint256 amount);
+```
+
+</details>
+
+#### ++dnt++Organ.transferCollectible
+
+Send an ERC-721 token held by the organ. Requires the `WITHDRAW_COLLECTIBLES` permission.
+
+The second parameter is ignored.
+
+<details>
+<summary>Signature</summary>
+
+```solidity
+function transferCollectible(address token, address arg1, address to, uint256 tokenId);
+```
+
+</details>
+
+#### ++dnt++Organ.transferEther
+
+Send ether held by the organ. Requires the `WITHDRAW_ETHER` permission.
+
+<details>
+<summary>Signature</summary>
+
+```solidity
+function transferEther(address to, uint256 value);
+```
+
+</details>
+
+#### ++dnt++Organ.trustedForwarder
+
+Return the trusted ERC-2771 forwarder used by this contract.
+
+<details>
+<summary>Signature</summary>
+
+```solidity
+function trustedForwarder() view returns (address);
+```
+
+</details>
 
 #### ++dnt++Organ.etherTransferred
+
+The organ sent ether.
+
+<details>
+<summary>Event</summary>
 
 ```solidity
 event etherTransferred(address from, address to, uint256 amount);
 ```
 
+</details>
 
+#### ++dnt++Organ.Initialized
 
-### Functions
+Triggered when the contract has been initialized or reinitialized.
 
-#### ++dnt++Organ.addEntries
+<details>
+<summary>Event</summary>
+
+```solidity
+event Initialized(uint64 version);
+```
+
+</details>
+
+### ++dnt++IOrgan
+
+<div data-summary>
+
+The functions organs expose to procedures and applications: entries, permissions, metadata and whitelisted calls.
+
+</div>
+
+#### ++dnt++IOrgan.addEntries
+
+Append entries to the organ directory.
+
+<details>
+<summary>Signature</summary>
 
 ```solidity
 function addEntries((address, string)[] entries) returns (uint256[] indexes);
 ```
 
+**Parameters**
 
+| Name | Type | Description |
+| --- | --- | --- |
+| `entries` | `(address, string)[]` | Entries to append. |
+**Returns**
 
-#### ++dnt++Organ.addPermission
+| Name | Type | Description |
+| --- | --- | --- |
+| `indexes` | `uint256[]` | Indexes assigned to the newly inserted entries. |
+
+</details>
+
+#### ++dnt++IOrgan.addPermission
 
 Grant permissions to one address or procedure.
+
+<details>
+<summary>Signature</summary>
 
 ```solidity
 function addPermission(address permissionAddress, bytes2 permissionValue);
@@ -271,12 +727,16 @@ function addPermission(address permissionAddress, bytes2 permissionValue);
 | `permissionAddress` | `address` | Address receiving the permission bitmask. |
 | `permissionValue` | `bytes2` | Permission bitmask to grant. |
 
+</details>
 
-#### ++dnt++Organ.executeWhitelisted
+#### ++dnt++IOrgan.executeWhitelisted
 
 Execute an external call that has been approved by a whitelist policy.
 
-> The organ validates the call against the policy configured for `target + selector` before forwarding the call. Every configured constraint must pass.
+The organ validates the call against the policy configured for `target + selector` before forwarding the call. Every configured constraint must pass.
+
+<details>
+<summary>Signature</summary>
 
 ```solidity
 function executeWhitelisted(address target, uint256 value, bytes data) returns (bytes result);
@@ -295,10 +755,14 @@ function executeWhitelisted(address target, uint256 value, bytes data) returns (
 | --- | --- | --- |
 | `result` | `bytes` | The raw return data produced by the external call. |
 
+</details>
 
-#### ++dnt++Organ.getCallPolicy
+#### ++dnt++IOrgan.getCallPolicy
 
 Return summary information about a call policy.
+
+<details>
+<summary>Signature</summary>
 
 ```solidity
 function getCallPolicy(address target, bytes4 selector) view returns (bool enabled, uint256 constraintsLength, uint256 whitelistedAddressesLength);
@@ -318,10 +782,14 @@ function getCallPolicy(address target, bytes4 selector) view returns (bool enabl
 | `constraintsLength` | `uint256` | The number of parameter constraints configured on the policy. |
 | `whitelistedAddressesLength` | `uint256` | The number of addresses stored in the policy whitelist. |
 
+</details>
 
-#### ++dnt++Organ.getCallPolicyConstraint
+#### ++dnt++IOrgan.getCallPolicyConstraint
 
 Return one parameter constraint of a call policy.
+
+<details>
+<summary>Signature</summary>
 
 ```solidity
 function getCallPolicyConstraint(address target, bytes4 selector, uint256 index) view returns (uint8 paramIndex, uint8 constraintType, bytes32 minValue, bytes32 maxValue, bytes32 exactValue);
@@ -344,10 +812,14 @@ function getCallPolicyConstraint(address target, bytes4 selector, uint256 index)
 | `maxValue` | `bytes32` | The upper bound used by range constraints. |
 | `exactValue` | `bytes32` | The exact value used by exact-match constraints. |
 
+</details>
 
-#### ++dnt++Organ.getEntry
+#### ++dnt++IOrgan.getEntry
 
 Return one stored entry.
+
+<details>
+<summary>Signature</summary>
 
 ```solidity
 function getEntry(uint256 index) view returns ((address, string) entry);
@@ -364,10 +836,14 @@ function getEntry(uint256 index) view returns ((address, string) entry);
 | --- | --- | --- |
 | `entry` | `(address, string)` | Entry payload stored at `index`. |
 
+</details>
 
-#### ++dnt++Organ.getEntryIndexForAddress
+#### ++dnt++IOrgan.getEntryIndexForAddress
 
 Find the index of one entry address.
+
+<details>
+<summary>Signature</summary>
 
 ```solidity
 function getEntryIndexForAddress(address addr) view returns (uint256 index);
@@ -384,10 +860,14 @@ function getEntryIndexForAddress(address addr) view returns (uint256 index);
 | --- | --- | --- |
 | `index` | `uint256` | Index of the entry associated with `addr`. |
 
+</details>
 
-#### ++dnt++Organ.getOrgan
+#### ++dnt++IOrgan.getOrgan
 
 Return the core summary of the organ.
+
+<details>
+<summary>Signature</summary>
 
 ```solidity
 function getOrgan() view returns (string cid, uint256 permissionsLength, uint256 entriesLength, uint256 entriesCount, bytes4 interfaceId);
@@ -403,10 +883,14 @@ function getOrgan() view returns (string cid, uint256 permissionsLength, uint256
 | `entriesCount` | `uint256` | Number of active entries. |
 | `interfaceId` | `bytes4` | ERC-165 interface id implemented by the organ. |
 
+</details>
 
-#### ++dnt++Organ.getPermission
+#### ++dnt++IOrgan.getPermission
 
 Return one permission entry by index.
+
+<details>
+<summary>Signature</summary>
 
 ```solidity
 function getPermission(uint256 index) view returns (address addr, bytes2 perms);
@@ -424,10 +908,14 @@ function getPermission(uint256 index) view returns (address addr, bytes2 perms);
 | `addr` | `address` | Address holding the permission. |
 | `perms` | `bytes2` | Permission bitmask held by `addr`. |
 
+</details>
 
-#### ++dnt++Organ.getPermissions
+#### ++dnt++IOrgan.getPermissions
 
 Return the permission bitmask assigned to one address.
+
+<details>
+<summary>Signature</summary>
 
 ```solidity
 function getPermissions(address addr) view returns (bytes2 perms);
@@ -444,18 +932,37 @@ function getPermissions(address addr) view returns (bytes2 perms);
 | --- | --- | --- |
 | `perms` | `bytes2` | Permission bitmask currently assigned to `addr`. |
 
+</details>
 
-#### ++dnt++Organ.initialize
+#### ++dnt++IOrgan.initialize
+
+Initialize a freshly cloned organ.
+
+<details>
+<summary>Signature</summary>
 
 ```solidity
-function initialize(address[] permissionAddresses, bytes2[] permissionValues, string cid, (address, string)[] entries, address forwarder);
+function initialize(address[] procedures, bytes2[] permissions, string cid, (address, string)[] entries, address trustedForwarder);
 ```
 
+**Parameters**
 
+| Name | Type | Description |
+| --- | --- | --- |
+| `procedures` | `address[]` | Addresses that receive permissions on the organ. |
+| `permissions` | `bytes2[]` | Permission bitmasks aligned with `procedures`. |
+| `cid` | `string` | Content identifier describing the organ metadata. |
+| `entries` | `(address, string)[]` | Initial entries stored on the organ. |
+| `trustedForwarder` | `address` | ERC-2771 forwarder trusted by the organ. |
 
-#### ++dnt++Organ.isCallPolicyWhitelistedAddress
+</details>
+
+#### ++dnt++IOrgan.isCallPolicyWhitelistedAddress
 
 Check whether an address is present in a call policy whitelist.
+
+<details>
+<summary>Signature</summary>
 
 ```solidity
 function isCallPolicyWhitelistedAddress(address target, bytes4 selector, address candidate) view returns (bool);
@@ -469,49 +976,14 @@ function isCallPolicyWhitelistedAddress(address target, bytes4 selector, address
 | `selector` | `bytes4` | The function selector keyed by the policy. |
 | `candidate` | `address` | The address to test against the whitelist. |
 
+</details>
 
-#### ++dnt++Organ.isTrustedForwarder
-
-Return whether an address is the trusted ERC-2771 forwarder.
-
-```solidity
-function isTrustedForwarder(address forwarder) view returns (bool);
-```
-
-**Parameters**
-
-| Name | Type | Description |
-| --- | --- | --- |
-| `forwarder` | `address` | The forwarder address to test. |
-
-
-#### ++dnt++Organ.onERC1155BatchReceived
-
-```solidity
-function onERC1155BatchReceived(address arg0, address arg1, uint256[] arg2, uint256[] arg3, bytes arg4) returns (bytes4);
-```
-
-
-
-#### ++dnt++Organ.onERC1155Received
-
-```solidity
-function onERC1155Received(address arg0, address arg1, uint256 arg2, uint256 arg3, bytes arg4) returns (bytes4);
-```
-
-
-
-#### ++dnt++Organ.onERC721Received
-
-```solidity
-function onERC721Received(address operator, address from, uint256 tokenId, bytes arg3) returns (bytes4);
-```
-
-
-
-#### ++dnt++Organ.removeCallPolicy
+#### ++dnt++IOrgan.removeCallPolicy
 
 Remove a previously configured external call policy.
+
+<details>
+<summary>Signature</summary>
 
 ```solidity
 function removeCallPolicy(address target, bytes4 selector);
@@ -524,10 +996,14 @@ function removeCallPolicy(address target, bytes4 selector);
 | `target` | `address` | The external contract whose policy should be removed. |
 | `selector` | `bytes4` | The function selector whose policy should be removed. |
 
+</details>
 
-#### ++dnt++Organ.removeEntries
+#### ++dnt++IOrgan.removeEntries
 
 Remove entries from the organ directory.
+
+<details>
+<summary>Signature</summary>
 
 ```solidity
 function removeEntries(uint256[] indexes);
@@ -539,10 +1015,14 @@ function removeEntries(uint256[] indexes);
 | --- | --- | --- |
 | `indexes` | `uint256[]` | Indexes to remove. |
 
+</details>
 
-#### ++dnt++Organ.removePermission
+#### ++dnt++IOrgan.removePermission
 
 Remove every permission bit from one address or procedure.
+
+<details>
+<summary>Signature</summary>
 
 ```solidity
 function removePermission(address permissionAddress);
@@ -554,101 +1034,79 @@ function removePermission(address permissionAddress);
 | --- | --- | --- |
 | `permissionAddress` | `address` | Address whose permissions should be removed. |
 
+</details>
 
-#### ++dnt++Organ.replaceEntry
+#### ++dnt++IOrgan.replaceEntry
+
+Replace one entry at a fixed index.
+
+<details>
+<summary>Signature</summary>
 
 ```solidity
 function replaceEntry(uint256 index, (address, string) entry);
-```
-
-
-
-#### ++dnt++Organ.replacePermission
-
-Replace one permission holder with another.
-
-```solidity
-function replacePermission(address oldPermissionAddress, address newPermissionAddress, bytes2 newPermissionValue);
 ```
 
 **Parameters**
 
 | Name | Type | Description |
 | --- | --- | --- |
-| `oldPermissionAddress` | `address` |   |
-| `newPermissionAddress` | `address` |   |
+| `index` | `uint256` | Index of the entry to replace. |
+| `entry` | `(address, string)` | New entry payload stored at `index`. |
+
+</details>
+
+#### ++dnt++IOrgan.replacePermission
+
+Replace one permission holder with another.
+
+<details>
+<summary>Signature</summary>
+
+```solidity
+function replacePermission(address oldPermission, address newPermission, bytes2 newPermissionValue);
+```
+
+**Parameters**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| `oldPermission` | `address` | Address currently holding the permission. |
+| `newPermission` | `address` | Address that should receive the permission instead. |
 | `newPermissionValue` | `bytes2` | Permission bitmask assigned to `newPermission`. |
 
+</details>
 
-#### ++dnt++Organ.setCallPolicy
+#### ++dnt++IOrgan.setCallPolicy
+
+Configure a whitelist policy for an external call path.
+
+Policies are keyed by `target + selector`. Each policy can constrain calldata arguments with `NONE`, `EXACT`, `RANGE`, `SELF`, or `WHITELISTED_ADDRESS`. The whitelist is only consulted by constraints that use `WHITELISTED_ADDRESS`.
+
+<details>
+<summary>Signature</summary>
 
 ```solidity
 function setCallPolicy(address target, bytes4 selector, (uint8, uint8, bytes32, bytes32, bytes32)[] constraints, address[] whitelistedAddresses);
 ```
 
+**Parameters**
 
+| Name | Type | Description |
+| --- | --- | --- |
+| `target` | `address` | The external contract the organ may call. |
+| `selector` | `bytes4` | The function selector allowed on `target`. |
+| `constraints` | `(uint8, uint8, bytes32, bytes32, bytes32)[]` | The calldata constraints that must be satisfied to execute the call. |
+| `whitelistedAddresses` | `address[]` | The addresses accepted by whitelist-based constraints. |
 
-#### ++dnt++Organ.supportsInterface
+</details>
 
-```solidity
-function supportsInterface(bytes4 interfaceId) view returns (bool);
-```
-
-
-
-#### ++dnt++Organ.tokensReceived
-
-```solidity
-function tokensReceived(address operator, address from, address to, uint256 amount, bytes arg4, bytes arg5);
-```
-
-
-
-#### ++dnt++Organ.tokensToSend
-
-```solidity
-function tokensToSend(address operator, address arg1, address to, uint256 amount, bytes arg4, bytes arg5);
-```
-
-
-
-#### ++dnt++Organ.transferCoins
-
-```solidity
-function transferCoins(address token, address arg1, address to, uint256 amount);
-```
-
-
-
-#### ++dnt++Organ.transferCollectible
-
-```solidity
-function transferCollectible(address token, address arg1, address to, uint256 tokenId);
-```
-
-
-
-#### ++dnt++Organ.transferEther
-
-```solidity
-function transferEther(address to, uint256 value);
-```
-
-
-
-#### ++dnt++Organ.trustedForwarder
-
-Return the trusted ERC-2771 forwarder used by this contract.
-
-```solidity
-function trustedForwarder() view returns (address);
-```
-
-
-
-#### ++dnt++Organ.updateCid
+#### ++dnt++IOrgan.updateCid
 
 Update the metadata CID of the organ.
+
+<details>
+<summary>Signature</summary>
 
 ```solidity
 function updateCid(string cid);
@@ -660,384 +1118,550 @@ function updateCid(string cid);
 | --- | --- | --- |
 | `cid` | `string` | New content identifier describing the organ. |
 
+</details>
 
+### ++dnt++OrganLibrary
 
+<div data-summary>
 
-## ++dnt++contract Procedure
+Storage layout and rules of organs, linked into the `Organ` contract.
 
-### Constructor
+</div>
+
+#### ++dnt++OrganLibrary.PERMISSION_ADD_ENTRIES
+
+Permission to add entries.
+
+<details>
+<summary>Signature</summary>
+
+```solidity
+function PERMISSION_ADD_ENTRIES() view returns (bytes2);
+```
+
+</details>
+
+#### ++dnt++OrganLibrary.PERMISSION_ADD_PERMISSIONS
+
+Permission to grant permissions.
+
+<details>
+<summary>Signature</summary>
+
+```solidity
+function PERMISSION_ADD_PERMISSIONS() view returns (bytes2);
+```
+
+</details>
+
+#### ++dnt++OrganLibrary.PERMISSION_EXECUTE_WHITELISTED
+
+Permission to make the organ call a whitelisted outside contract.
+
+<details>
+<summary>Signature</summary>
+
+```solidity
+function PERMISSION_EXECUTE_WHITELISTED() view returns (bytes2);
+```
+
+</details>
+
+#### ++dnt++OrganLibrary.PERMISSION_MANAGE_EXECUTION_WHITELIST
+
+Permission to change the calls the organ may make to outside contracts.
+
+<details>
+<summary>Signature</summary>
+
+```solidity
+function PERMISSION_MANAGE_EXECUTION_WHITELIST() view returns (bytes2);
+```
+
+</details>
+
+#### ++dnt++OrganLibrary.PERMISSION_REMOVE_ENTRIES
+
+Permission to remove entries.
+
+<details>
+<summary>Signature</summary>
+
+```solidity
+function PERMISSION_REMOVE_ENTRIES() view returns (bytes2);
+```
+
+</details>
+
+#### ++dnt++OrganLibrary.PERMISSION_REMOVE_PERMISSIONS
+
+Permission to revoke permissions.
+
+<details>
+<summary>Signature</summary>
+
+```solidity
+function PERMISSION_REMOVE_PERMISSIONS() view returns (bytes2);
+```
+
+</details>
+
+#### ++dnt++OrganLibrary.PERMISSION_UPDATE_METADATA
+
+Permission to replace the metadata reference.
+
+<details>
+<summary>Signature</summary>
+
+```solidity
+function PERMISSION_UPDATE_METADATA() view returns (bytes2);
+```
+
+</details>
+
+#### ++dnt++OrganLibrary.PERMISSION_WITHDRAW_COINS
+
+Permission to send tokens held by the organ.
+
+<details>
+<summary>Signature</summary>
+
+```solidity
+function PERMISSION_WITHDRAW_COINS() view returns (bytes2);
+```
+
+</details>
+
+#### ++dnt++OrganLibrary.PERMISSION_WITHDRAW_COLLECTIBLES
+
+Permission to send ERC-721 tokens held by the organ.
+
+<details>
+<summary>Signature</summary>
+
+```solidity
+function PERMISSION_WITHDRAW_COLLECTIBLES() view returns (bytes2);
+```
+
+</details>
+
+#### ++dnt++OrganLibrary.PERMISSION_WITHDRAW_ETHER
+
+Permission to send ether held by the organ.
+
+<details>
+<summary>Signature</summary>
+
+```solidity
+function PERMISSION_WITHDRAW_ETHER() view returns (bytes2);
+```
+
+</details>
+
+#### ++dnt++OrganLibrary.callPolicyRemoved
+
+The organ may no longer call a function of an outside contract.
+
+<details>
+<summary>Event</summary>
+
+```solidity
+event callPolicyRemoved(address indexed caller, address indexed target, bytes4 indexed selector);
+```
+
+</details>
+
+#### ++dnt++OrganLibrary.callPolicySet
+
+The organ may now call a function of an outside contract.
+
+<details>
+<summary>Event</summary>
+
+```solidity
+event callPolicySet(address indexed caller, address indexed target, bytes4 indexed selector);
+```
+
+</details>
+
+#### ++dnt++OrganLibrary.callPolicyWhitelistedAddressAdded
+
+An address was allowed as an argument of a whitelisted call.
+
+<details>
+<summary>Event</summary>
+
+```solidity
+event callPolicyWhitelistedAddressAdded(bytes32 indexed policyKey, address indexed candidate);
+```
+
+</details>
+
+#### ++dnt++OrganLibrary.callPolicyWhitelistedAddressRemoved
+
+An address is no longer allowed as an argument of a whitelisted call.
+
+<details>
+<summary>Event</summary>
+
+```solidity
+event callPolicyWhitelistedAddressRemoved(bytes32 indexed policyKey, address indexed candidate);
+```
+
+</details>
+
+#### ++dnt++OrganLibrary.cidUpdated
+
+The metadata reference of the organ changed.
+
+<details>
+<summary>Event</summary>
+
+```solidity
+event cidUpdated(address from, string cid);
+```
+
+</details>
+
+#### ++dnt++OrganLibrary.coinsReceived
+
+The organ received tokens.
+
+<details>
+<summary>Event</summary>
+
+```solidity
+event coinsReceived(address operator, address from, address to, uint256 amount);
+```
+
+</details>
+
+#### ++dnt++OrganLibrary.coinsTransferred
+
+The organ sent tokens.
+
+<details>
+<summary>Event</summary>
+
+```solidity
+event coinsTransferred(address operator, address from, address to, uint256 amount);
+```
+
+</details>
+
+#### ++dnt++OrganLibrary.collectibleReceived
+
+The organ received an ERC-721 token.
+
+<details>
+<summary>Event</summary>
+
+```solidity
+event collectibleReceived(address operator, address from, uint256 tokenId);
+```
+
+</details>
+
+#### ++dnt++OrganLibrary.collectibleTransferred
+
+The organ sent an ERC-721 token.
+
+<details>
+<summary>Event</summary>
+
+```solidity
+event collectibleTransferred(address operator, address to, uint256 tokenId);
+```
+
+</details>
+
+#### ++dnt++OrganLibrary.entryAdded
+
+An entry was added to the organ.
+
+<details>
+<summary>Event</summary>
+
+```solidity
+event entryAdded(address from, uint256 index, address addr, string cid);
+```
+
+</details>
+
+#### ++dnt++OrganLibrary.entryRemoved
+
+An entry was removed from the organ.
+
+<details>
+<summary>Event</summary>
+
+```solidity
+event entryRemoved(address from, uint256 index);
+```
+
+</details>
+
+#### ++dnt++OrganLibrary.etherReceived
+
+The organ received ether.
+
+<details>
+<summary>Event</summary>
+
+```solidity
+event etherReceived(address from, uint256 amount);
+```
+
+</details>
+
+#### ++dnt++OrganLibrary.etherTransferred
+
+The organ sent ether.
+
+<details>
+<summary>Event</summary>
+
+```solidity
+event etherTransferred(address from, address to, uint256 amount);
+```
+
+</details>
+
+#### ++dnt++OrganLibrary.permissionAdded
+
+An address received permissions on the organ.
+
+<details>
+<summary>Event</summary>
+
+```solidity
+event permissionAdded(address from, address permissionAddress, bytes2 permissionValue);
+```
+
+</details>
+
+#### ++dnt++OrganLibrary.permissionRemoved
+
+An address lost its permissions on the organ.
+
+<details>
+<summary>Event</summary>
+
+```solidity
+event permissionRemoved(address from, address permissionAddress);
+```
+
+</details>
+
+#### ++dnt++OrganLibrary.whitelistedExecution
+
+The organ made a whitelisted call to an outside contract.
+
+<details>
+<summary>Event</summary>
+
+```solidity
+event whitelistedExecution(address indexed caller, address indexed target, bytes4 indexed selector, uint256 value);
+```
+
+</details>
+
+## Procedures
+
+A procedure lets the members of some organs change other organs through proposals. Proposers submit a list of operations; with moderation, moderators present or block it; deciders adopt or reject it, and adoption runs the operations. Every action has a `…BySig` variant that verifies an EIP-712 signature, so that a relayer can submit it on behalf of the signer.
+
+### ++dnt++Procedure
+
+<div data-summary>
+
+Lets the members of some organs change other organs through proposals: lists of operations that proposers submit, moderators may present or block, and deciders adopt or reject.
+
+</div>
+
+Adoption runs the operations. Every action has a `…BySig` variant verifying an EIP-712 signature, so that a relayer can submit it on behalf of the signer.
+
+<details>
+<summary>Constructor</summary>
 
 ```solidity
 constructor();
 ```
-### Events
 
-#### ++dnt++Procedure.EIP712DomainChanged
-
-```solidity
-event EIP712DomainChanged();
-```
-
-
-
-#### ++dnt++Procedure.Initialized
-
-```solidity
-event Initialized(uint64 version);
-```
-
-
-
-### Functions
-
-#### ++dnt++Procedure.INTERFACE_ID
-
-```solidity
-function INTERFACE_ID() view returns (bytes4);
-```
-
-
+</details>
 
 #### ++dnt++Procedure.applyProposal
 
 Apply proposal.
 
+<details>
+<summary>Signature</summary>
+
 ```solidity
 function applyProposal(uint256 proposalKey);
 ```
 
-
+</details>
 
 #### ++dnt++Procedure.applyProposalBySig
+
+Settle a proposal with an application signed by any account, relayed by another.
+
+<details>
+<summary>Signature</summary>
 
 ```solidity
 function applyProposalBySig(uint256 proposalKey, uint256 nonce, uint256 deadline, bytes signature);
 ```
 
-
+</details>
 
 #### ++dnt++Procedure.blockProposal
 
-The procedure can override this method.
+Block a proposal as a moderator, with a reason.
+
+<details>
+<summary>Signature</summary>
 
 ```solidity
 function blockProposal(uint256 proposalKey, string reason);
 ```
 
-
+</details>
 
 #### ++dnt++Procedure.blockProposalBySig
+
+Block a proposal with a block signed by a moderator, relayed by any account.
+
+<details>
+<summary>Signature</summary>
 
 ```solidity
 function blockProposalBySig(uint256 proposalKey, string reason, uint256 nonce, uint256 deadline, bytes signature);
 ```
 
-
+</details>
 
 #### ++dnt++Procedure.eip712Domain
 
-> returns the fields and values that describe the domain separator used by this contract for EIP-712 signature.
+returns the fields and values that describe the domain separator used by this contract for EIP-712 signature.
+
+<details>
+<summary>Signature</summary>
 
 ```solidity
 function eip712Domain() view returns (bytes1 fields, string name, string version, uint256 chainId, address verifyingContract, bytes32 salt, uint256[] extensions);
 ```
 
-
+</details>
 
 #### ++dnt++Procedure.getExecutionContext
 
 Lets an operation target safely identify the proposal currently being applied.
 
+<details>
+<summary>Signature</summary>
+
 ```solidity
 function getExecutionContext() view returns (bool isApplying, uint256 proposalKey, address proposalCreator);
 ```
 
-
+</details>
 
 #### ++dnt++Procedure.getNonce
+
+Read the next signature nonce of an account.
+
+<details>
+<summary>Signature</summary>
 
 ```solidity
 function getNonce(address account) view returns (uint256);
 ```
 
-
+</details>
 
 #### ++dnt++Procedure.getProcedure
+
+Read the metadata reference, the roles and the proposal count of the procedure.
+
+<details>
+<summary>Signature</summary>
 
 ```solidity
 function getProcedure() view returns (string cid, address proposers, address moderators, address deciders, bool withModeration, uint256 proposalsLength, bytes4 interfaceId);
 ```
 
-
+</details>
 
 #### ++dnt++Procedure.getProposal
+
+Read one proposal.
+
+<details>
+<summary>Signature</summary>
 
 ```solidity
 function getProposal(uint256 proposalKey) view returns ((address, string, string, bool, bool, bool, bool, (uint256, address, bytes, uint256, bool)[]));
 ```
 
-
+</details>
 
 #### ++dnt++Procedure.initialize
 
+Initialize a procedure clone with its roles.
+
+<details>
+<summary>Signature</summary>
+
 ```solidity
 function initialize(string _cid, address _proposers, address _moderators, address _deciders, bool _withModeration, address _trustedForwarder);
-```
-
-
-
-#### ++dnt++Procedure.isOwnerBoundProposalOperation
-
-```solidity
-function isOwnerBoundProposalOperation(bytes operationData) pure returns (bool);
-```
-
-
-
-#### ++dnt++Procedure.isTrustedForwarder
-
-Return whether an address is the trusted ERC-2771 forwarder.
-
-```solidity
-function isTrustedForwarder(address forwarder) view returns (bool);
 ```
 
 **Parameters**
 
 | Name | Type | Description |
 | --- | --- | --- |
-| `forwarder` | `address` | The forwarder address to test. |
+| `_cid` | `string` | Reference to the procedure metadata. |
+| `_proposers` | `address` | Organ whose members may submit proposals, or a single address. |
+| `_moderators` | `address` | Organ whose members may present or block proposals. |
+| `_deciders` | `address` | Organ whose members adopt or reject proposals, or a single address. |
+| `_withModeration` | `bool` | Whether proposals must be presented by a moderator before the decision. |
+| `_trustedForwarder` | `address` | Forwarder relaying gasless transactions. |
 
+</details>
 
-#### ++dnt++Procedure.presentProposal
+#### ++dnt++Procedure.INTERFACE_ID
 
-When moderation is enabled, moderators must accept the proposal.
+ERC-165 interface identifier of procedures.
 
-```solidity
-function presentProposal(uint256 proposalKey);
-```
-
-
-
-#### ++dnt++Procedure.presentProposalBySig
-
-```solidity
-function presentProposalBySig(uint256 proposalKey, uint256 nonce, uint256 deadline, bytes signature);
-```
-
-
-
-#### ++dnt++Procedure.propose
-
-```solidity
-function propose(string cid, (uint256, address, bytes, uint256, bool)[] operations) returns (uint256 proposalKey);
-```
-
-
-
-#### ++dnt++Procedure.proposeBySig
-
-```solidity
-function proposeBySig(string cid, (uint256, address, bytes, uint256, bool)[] operations, uint256 nonce, uint256 deadline, bytes signature) returns (uint256 proposalKey);
-```
-
-
-
-#### ++dnt++Procedure.supportsInterface
-
-> Returns true if this contract implements the interface defined by `interfaceId`. See the corresponding https://eips.ethereum.org/EIPS/eip-165#how-interfaces-are-identified[ERC section] to learn more about how these ids are created. This function call must use less than 30 000 gas.
-
-```solidity
-function supportsInterface(bytes4 interfaceId) view returns (bool);
-```
-
-
-
-#### ++dnt++Procedure.transferEquity
-
-Transfers the proposal creator's equity; the token emits the movement record.
-
-```solidity
-function transferEquity(address asset, address recipient, uint256 amount, string movementCid);
-```
-
-
-
-#### ++dnt++Procedure.trustedForwarder
-
-Return the trusted ERC-2771 forwarder used by this contract.
-
-```solidity
-function trustedForwarder() view returns (address);
-```
-
-
-
-#### ++dnt++Procedure.updateAdmin
-
-```solidity
-function updateAdmin(address admin);
-```
-
-
-
-#### ++dnt++Procedure.updateCid
-
-Public API : Procedure Cid and Admin.
-
-```solidity
-function updateCid(string cid);
-```
-
-
-
-#### ++dnt++Procedure.validateProposalCreator
-
-```solidity
-function validateProposalCreator(address creator, bytes operationData) view;
-```
-
-
-
-
-
-## ++dnt++contract NominationProcedure
-
-### Events
-
-#### ++dnt++NominationProcedure.EIP712DomainChanged
-
-```solidity
-event EIP712DomainChanged();
-```
-
-
-
-#### ++dnt++NominationProcedure.Initialized
-
-```solidity
-event Initialized(uint64 version);
-```
-
-
-
-#### ++dnt++NominationProcedure.ProposalApplied
-
-```solidity
-event ProposalApplied(uint256 indexed proposalKey);
-```
-
-
-
-### Functions
-
-#### ++dnt++NominationProcedure.INTERFACE_ID
+<details>
+<summary>Signature</summary>
 
 ```solidity
 function INTERFACE_ID() view returns (bytes4);
 ```
 
+</details>
 
+#### ++dnt++Procedure.isOwnerBoundProposalOperation
 
-#### ++dnt++NominationProcedure.applyProposal
+Tell whether an operation may only be proposed by the account it concerns.
 
-Apply proposal.
-
-```solidity
-function applyProposal(uint256 proposalKey);
-```
-
-
-
-#### ++dnt++NominationProcedure.applyProposalBySig
-
-```solidity
-function applyProposalBySig(uint256 proposalKey, uint256 nonce, uint256 deadline, bytes signature);
-```
-
-
-
-#### ++dnt++NominationProcedure.blockProposal
-
-The procedure can override this method.
-
-```solidity
-function blockProposal(uint256 proposalKey, string reason);
-```
-
-
-
-#### ++dnt++NominationProcedure.blockProposalBySig
-
-```solidity
-function blockProposalBySig(uint256 proposalKey, string reason, uint256 nonce, uint256 deadline, bytes signature);
-```
-
-
-
-#### ++dnt++NominationProcedure.eip712Domain
-
-> returns the fields and values that describe the domain separator used by this contract for EIP-712 signature.
-
-```solidity
-function eip712Domain() view returns (bytes1 fields, string name, string version, uint256 chainId, address verifyingContract, bytes32 salt, uint256[] extensions);
-```
-
-
-
-#### ++dnt++NominationProcedure.getExecutionContext
-
-Lets an operation target safely identify the proposal currently being applied.
-
-```solidity
-function getExecutionContext() view returns (bool isApplying, uint256 proposalKey, address proposalCreator);
-```
-
-
-
-#### ++dnt++NominationProcedure.getNonce
-
-```solidity
-function getNonce(address account) view returns (uint256);
-```
-
-
-
-#### ++dnt++NominationProcedure.getProcedure
-
-```solidity
-function getProcedure() view returns (string cid, address proposers, address moderators, address deciders, bool withModeration, uint256 proposalsLength, bytes4 interfaceId);
-```
-
-
-
-#### ++dnt++NominationProcedure.getProposal
-
-```solidity
-function getProposal(uint256 proposalKey) view returns ((address, string, string, bool, bool, bool, bool, (uint256, address, bytes, uint256, bool)[]));
-```
-
-
-
-#### ++dnt++NominationProcedure.initialize
-
-```solidity
-function initialize(string _cid, address _proposers, address _moderators, address _deciders, bool _withModeration, address _trustedForwarder);
-```
-
-
-
-#### ++dnt++NominationProcedure.isOwnerBoundProposalOperation
+<details>
+<summary>Signature</summary>
 
 ```solidity
 function isOwnerBoundProposalOperation(bytes operationData) pure returns (bool);
 ```
 
+</details>
 
-
-#### ++dnt++NominationProcedure.isTrustedForwarder
+#### ++dnt++Procedure.isTrustedForwarder
 
 Return whether an address is the trusted ERC-2771 forwarder.
+
+<details>
+<summary>Signature</summary>
 
 ```solidity
 function isTrustedForwarder(address forwarder) view returns (bool);
@@ -1049,10 +1673,178 @@ function isTrustedForwarder(address forwarder) view returns (bool);
 | --- | --- | --- |
 | `forwarder` | `address` | The forwarder address to test. |
 
+</details>
+
+#### ++dnt++Procedure.presentProposal
+
+When moderation is enabled, moderators must accept the proposal.
+
+<details>
+<summary>Signature</summary>
+
+```solidity
+function presentProposal(uint256 proposalKey);
+```
+
+</details>
+
+#### ++dnt++Procedure.presentProposalBySig
+
+Present a proposal with a presentation signed by a moderator, relayed by any account.
+
+<details>
+<summary>Signature</summary>
+
+```solidity
+function presentProposalBySig(uint256 proposalKey, uint256 nonce, uint256 deadline, bytes signature);
+```
+
+</details>
+
+#### ++dnt++Procedure.propose
+
+Public API : Proposals creation and update.
+
+<details>
+<summary>Signature</summary>
+
+```solidity
+function propose(string cid, (uint256, address, bytes, uint256, bool)[] operations) returns (uint256 proposalKey);
+```
+
+</details>
+
+#### ++dnt++Procedure.proposeBySig
+
+Submit a proposal signed by a proposer, relayed by any account.
+
+<details>
+<summary>Signature</summary>
+
+```solidity
+function proposeBySig(string cid, (uint256, address, bytes, uint256, bool)[] operations, uint256 nonce, uint256 deadline, bytes signature) returns (uint256 proposalKey);
+```
+
+</details>
+
+#### ++dnt++Procedure.supportsInterface
+
+Returns true if this contract implements the interface defined by `interfaceId`. See the corresponding https://eips.ethereum.org/EIPS/eip-165#how-interfaces-are-identified[ERC section] to learn more about how these ids are created. This function call must use less than 30 000 gas.
+
+<details>
+<summary>Signature</summary>
+
+```solidity
+function supportsInterface(bytes4 interfaceId) view returns (bool);
+```
+
+</details>
+
+#### ++dnt++Procedure.transferEquity
+
+Transfers the proposal creator's equity; the token emits the movement record.
+
+<details>
+<summary>Signature</summary>
+
+```solidity
+function transferEquity(address asset, address recipient, uint256 amount, string movementCid);
+```
+
+</details>
+
+#### ++dnt++Procedure.trustedForwarder
+
+Return the trusted ERC-2771 forwarder used by this contract.
+
+<details>
+<summary>Signature</summary>
+
+```solidity
+function trustedForwarder() view returns (address);
+```
+
+</details>
+
+#### ++dnt++Procedure.validateProposalCreator
+
+Revert unless the creator of a proposal may propose this operation.
+
+<details>
+<summary>Signature</summary>
+
+```solidity
+function validateProposalCreator(address creator, bytes operationData) view;
+```
+
+</details>
+
+#### ++dnt++Procedure.EIP712DomainChanged
+
+MAY be emitted to signal that the domain could have changed.
+
+<details>
+<summary>Event</summary>
+
+```solidity
+event EIP712DomainChanged();
+```
+
+</details>
+
+#### ++dnt++Procedure.Initialized
+
+Triggered when the contract has been initialized or reinitialized.
+
+<details>
+<summary>Event</summary>
+
+```solidity
+event Initialized(uint64 version);
+```
+
+</details>
+
+### ++dnt++NominationProcedure
+
+<div data-summary>
+
+A procedure in which any one member of the deciders organ adopts or rejects a proposal alone.
+
+</div>
+
+It has every function and event of [Procedure](/docs/reference/solidity#Procedure), and the ones below.
+
+#### ++dnt++NominationProcedure.initialize
+
+Initialize a procedure clone with its roles.
+
+<details>
+<summary>Signature</summary>
+
+```solidity
+function initialize(string _cid, address _proposers, address _moderators, address _deciders, bool _withModeration, address _trustedForwarder);
+```
+
+**Parameters**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| `_cid` | `string` | Reference to the procedure metadata. |
+| `_proposers` | `address` | Organ whose members may submit proposals, or a single address. |
+| `_moderators` | `address` | Organ whose members may present or block proposals. |
+| `_deciders` | `address` | Organ whose members adopt or reject proposals, or a single address. |
+| `_withModeration` | `bool` | Whether proposals must be presented by a moderator before the decision. |
+| `_trustedForwarder` | `address` | Forwarder relaying gasless transactions. |
+
+</details>
 
 #### ++dnt++NominationProcedure.nominate
 
 Apply the nomination.
+
+<details>
+<summary>Signature</summary>
 
 ```solidity
 function nominate(uint256 proposalKey);
@@ -1064,52 +1856,27 @@ function nominate(uint256 proposalKey);
 | --- | --- | --- |
 | `proposalKey` | `uint256` | The key used to identify the proposal. |
 
+</details>
 
 #### ++dnt++NominationProcedure.nominateBySig
+
+Adopt a proposal with an adoption signed by a decider, relayed by any account.
+
+<details>
+<summary>Signature</summary>
 
 ```solidity
 function nominateBySig(uint256 proposalKey, uint256 nonce, uint256 deadline, bytes signature);
 ```
 
-
-
-#### ++dnt++NominationProcedure.presentProposal
-
-When moderation is enabled, moderators must accept the proposal.
-
-```solidity
-function presentProposal(uint256 proposalKey);
-```
-
-
-
-#### ++dnt++NominationProcedure.presentProposalBySig
-
-```solidity
-function presentProposalBySig(uint256 proposalKey, uint256 nonce, uint256 deadline, bytes signature);
-```
-
-
-
-#### ++dnt++NominationProcedure.propose
-
-```solidity
-function propose(string cid, (uint256, address, bytes, uint256, bool)[] operations) returns (uint256 proposalKey);
-```
-
-
-
-#### ++dnt++NominationProcedure.proposeBySig
-
-```solidity
-function proposeBySig(string cid, (uint256, address, bytes, uint256, bool)[] operations, uint256 nonce, uint256 deadline, bytes signature) returns (uint256 proposalKey);
-```
-
-
+</details>
 
 #### ++dnt++NominationProcedure.reject
 
 Reject a nomination without applying its proposal operations.
+
+<details>
+<summary>Signature</summary>
 
 ```solidity
 function reject(uint256 proposalKey);
@@ -1121,205 +1888,60 @@ function reject(uint256 proposalKey);
 | --- | --- | --- |
 | `proposalKey` | `uint256` | The proposal to reject. |
 
+</details>
 
-#### ++dnt++NominationProcedure.supportsInterface
+#### ++dnt++NominationProcedure.ProposalApplied
 
-Register EIP165 interfaces for introspection.
+A proposal was settled.
 
-```solidity
-function supportsInterface(bytes4 interfaceId) view returns (bool);
-```
-
-**Parameters**
-
-| Name | Type | Description |
-| --- | --- | --- |
-| `interfaceId` | `bytes4` | The interface identifier. |
-
-
-#### ++dnt++NominationProcedure.transferEquity
-
-Transfers the proposal creator's equity; the token emits the movement record.
-
-```solidity
-function transferEquity(address asset, address recipient, uint256 amount, string movementCid);
-```
-
-
-
-#### ++dnt++NominationProcedure.trustedForwarder
-
-Return the trusted ERC-2771 forwarder used by this contract.
-
-```solidity
-function trustedForwarder() view returns (address);
-```
-
-
-
-#### ++dnt++NominationProcedure.updateAdmin
-
-```solidity
-function updateAdmin(address admin);
-```
-
-
-
-#### ++dnt++NominationProcedure.updateCid
-
-Public API : Procedure Cid and Admin.
-
-```solidity
-function updateCid(string cid);
-```
-
-
-
-#### ++dnt++NominationProcedure.validateProposalCreator
-
-```solidity
-function validateProposalCreator(address creator, bytes operationData) view;
-```
-
-
-
-
-
-## ++dnt++contract ERC20VoteProcedure
-
-### Events
-
-#### ++dnt++ERC20VoteProcedure.EIP712DomainChanged
-
-```solidity
-event EIP712DomainChanged();
-```
-
-
-
-#### ++dnt++ERC20VoteProcedure.Initialized
-
-```solidity
-event Initialized(uint64 version);
-```
-
-
-
-#### ++dnt++ERC20VoteProcedure.ProposalApplied
+<details>
+<summary>Event</summary>
 
 ```solidity
 event ProposalApplied(uint256 indexed proposalKey);
 ```
 
+</details>
 
+### ++dnt++VoteProcedure
 
-#### ++dnt++ERC20VoteProcedure.ProposalBlocked
+<div data-summary>
 
-```solidity
-event ProposalBlocked(address indexed moderator, uint256 indexed proposalKey, string reason);
-```
+A procedure in which the members of the deciders organ vote on each proposal.
 
+</div>
 
+The vote opens when a proposal is presented. Once it is over, anyone calls `applyProposal` to count the ballots and settle the proposal.
 
-#### ++dnt++ERC20VoteProcedure.ProposalCreated
+It has every function and event of [Procedure](/docs/reference/solidity#Procedure), and the ones below.
 
-```solidity
-event ProposalCreated(address indexed creator, uint256 indexed proposalKey);
-```
+#### ++dnt++VoteProcedure.count
 
+Count votes when election is ended.
 
+@todo Handle delegation of Votes.
 
-#### ++dnt++ERC20VoteProcedure.ProposalPresented
-
-```solidity
-event ProposalPresented(address indexed presenter, uint256 indexed proposalKey);
-```
-
-
-
-### Functions
-
-#### ++dnt++ERC20VoteProcedure.INTERFACE_ID
-
-```solidity
-function INTERFACE_ID() view returns (bytes4);
-```
-
-
-
-#### ++dnt++ERC20VoteProcedure.applyProposal
-
-Finalize a vote once the election has ended.
-
-> Anyone can trigger the settlement transaction once voting is over.
-
-```solidity
-function applyProposal(uint256 proposalKey);
-```
-
-
-
-#### ++dnt++ERC20VoteProcedure.applyProposalBySig
-
-```solidity
-function applyProposalBySig(uint256 proposalKey, uint256 nonce, uint256 deadline, bytes signature);
-```
-
-
-
-#### ++dnt++ERC20VoteProcedure.blockProposal
-
-A veto accepts arguments which defines a motivation as a IPFS multihash.
-
-> Overrides Procedure.blockProposal.
-
-```solidity
-function blockProposal(uint256 proposalKey, string reason);
-```
-
-
-
-#### ++dnt++ERC20VoteProcedure.blockProposalBySig
-
-```solidity
-function blockProposalBySig(uint256 proposalKey, string reason, uint256 nonce, uint256 deadline, bytes signature);
-```
-
-
-
-#### ++dnt++ERC20VoteProcedure.count
-
-Count votes after election has ended.
+<details>
+<summary>Signature</summary>
 
 ```solidity
 function count(uint256 proposalKey) view returns (bool approved);
 ```
 
-**Parameters**
-
-| Name | Type | Description |
-| --- | --- | --- |
-| `proposalKey` | `uint256` | The key used to identify the proposal. |
 **Returns**
 
 | Name | Type | Description |
 | --- | --- | --- |
-| `approved` | `bool` | True if the election has been approved. |
+| `approved` | `bool` | True if the proposal is adopted. |
 
+</details>
 
-#### ++dnt++ERC20VoteProcedure.eip712Domain
-
-> returns the fields and values that describe the domain separator used by this contract for EIP-712 signature.
-
-```solidity
-function eip712Domain() view returns (bytes1 fields, string name, string version, uint256 chainId, address verifyingContract, bytes32 salt, uint256[] extensions);
-```
-
-
-
-#### ++dnt++ERC20VoteProcedure.getElection
+#### ++dnt++VoteProcedure.getElection
 
 Get information about a current election
+
+<details>
+<summary>Signature</summary>
 
 ```solidity
 function getElection(uint256 _proposalKey) view returns (uint256 start, bool hasVoted, uint256 votesCount);
@@ -1333,62 +1955,208 @@ function getElection(uint256 _proposalKey) view returns (uint256 start, bool has
 | `hasVoted` | `bool` | True if the voter has voted. |
 | `votesCount` | `uint256` | The number of votes cast so far. |
 
+</details>
 
-#### ++dnt++ERC20VoteProcedure.getElectionResults
+#### ++dnt++VoteProcedure.getElectionResults
 
-Get the token-weighted vote split at the election snapshot.
+Get the current vote split and the eligible voting base.
+
+ERC20VoteProcedure overrides this to use snapshot voting power.
+
+<details>
+<summary>Signature</summary>
 
 ```solidity
 function getElectionResults(uint256 proposalKey) view returns (uint256 approvals, uint256 objections, uint256 eligibleVotes);
 ```
 
+**Returns**
 
+| Name | Type | Description |
+| --- | --- | --- |
+| `approvals` | `uint256` | The number of approving votes. |
+| `objections` | `uint256` | The number of rejecting votes. |
+| `eligibleVotes` | `uint256` | The number of votes eligible to participate. |
 
-#### ++dnt++ERC20VoteProcedure.getExecutionContext
+</details>
 
-Lets an operation target safely identify the proposal currently being applied.
+#### ++dnt++VoteProcedure.initialize
 
-```solidity
-function getExecutionContext() view returns (bool isApplying, uint256 proposalKey, address proposalCreator);
-```
+Initialize the procedure.
 
-
-
-#### ++dnt++ERC20VoteProcedure.getNonce
-
-```solidity
-function getNonce(address account) view returns (uint256);
-```
-
-
-
-#### ++dnt++ERC20VoteProcedure.getProcedure
+<details>
+<summary>Signature</summary>
 
 ```solidity
-function getProcedure() view returns (string cid, address proposers, address moderators, address deciders, bool withModeration, uint256 proposalsLength, bytes4 interfaceId);
+function initialize(string _cid, address _proposers, address _moderators, address _deciders, bool _withModeration, address _trustedForwarder, uint32 _quorumSize, uint32 _voteDuration, uint32 _majoritySize);
 ```
 
+</details>
 
+#### ++dnt++VoteProcedure.majoritySize
 
-#### ++dnt++ERC20VoteProcedure.getProposal
+Share of the ballots that must approve, in thousandths of a percent.
+
+<details>
+<summary>Signature</summary>
 
 ```solidity
-function getProposal(uint256 proposalKey) view returns ((address, string, string, bool, bool, bool, bool, (uint256, address, bytes, uint256, bool)[]));
+function majoritySize() view returns (uint32);
 ```
 
+</details>
 
+#### ++dnt++VoteProcedure.quorumSize
+
+Share of the voters who must vote, in thousandths of a percent.
+
+<details>
+<summary>Signature</summary>
+
+```solidity
+function quorumSize() view returns (uint32);
+```
+
+</details>
+
+#### ++dnt++VoteProcedure.vote
+
+Create a election.
+
+<details>
+<summary>Signature</summary>
+
+```solidity
+function vote(uint256 proposalKey, bool approval);
+```
+
+</details>
+
+#### ++dnt++VoteProcedure.voteBySig
+
+Cast a vote signed by a decider, relayed by any account.
+
+<details>
+<summary>Signature</summary>
+
+```solidity
+function voteBySig(uint256 proposalKey, bool approval, uint256 nonce, uint256 deadline, bytes signature);
+```
+
+</details>
+
+#### ++dnt++VoteProcedure.voteDuration
+
+Duration of a vote, in seconds.
+
+<details>
+<summary>Signature</summary>
+
+```solidity
+function voteDuration() view returns (uint32);
+```
+
+</details>
+
+#### ++dnt++VoteProcedure.ProposalApplied
+
+A proposal was settled.
+
+<details>
+<summary>Event</summary>
+
+```solidity
+event ProposalApplied(uint256 indexed proposalKey);
+```
+
+</details>
+
+#### ++dnt++VoteProcedure.ProposalBlocked
+
+A moderator blocked a proposal.
+
+<details>
+<summary>Event</summary>
+
+```solidity
+event ProposalBlocked(address indexed moderator, uint256 indexed proposalKey, string reason);
+```
+
+</details>
+
+#### ++dnt++VoteProcedure.ProposalCreated
+
+A proposal was submitted.
+
+<details>
+<summary>Event</summary>
+
+```solidity
+event ProposalCreated(address indexed creator, uint256 indexed proposalKey);
+```
+
+</details>
+
+#### ++dnt++VoteProcedure.ProposalPresented
+
+A moderator presented a proposal to the deciders.
+
+<details>
+<summary>Event</summary>
+
+```solidity
+event ProposalPresented(address indexed presenter, uint256 indexed proposalKey);
+```
+
+</details>
+
+### ++dnt++ERC20VoteProcedure
+
+<div data-summary>
+
+A vote procedure in which each ballot weighs the token balance of the voter.
+
+</div>
+
+Ballots weigh balances held just before the vote opened, so tokens moved during the vote do not count twice.
+
+It has every function and event of [VoteProcedure](/docs/reference/solidity#VoteProcedure), and the ones below.
 
 #### ++dnt++ERC20VoteProcedure.initialize
+
+Initialize an ERC-20 vote whose roles are held by organ members, token holders or nobody.
+
+<details>
+<summary>Signature</summary>
 
 ```solidity
 function initialize(string _metadata, address _proposers, address _moderators, address _deciders, bool _withModeration, address _trustedForwarder, uint32 _quorumSize, uint32 _voteDuration, uint32 _majoritySize, address _tokenContract, uint8[3] _roleModes);
 ```
 
+**Parameters**
 
+| Name | Type | Description |
+| --- | --- | --- |
+| `_metadata` | `string` |   |
+| `_proposers` | `address` |   |
+| `_moderators` | `address` |   |
+| `_deciders` | `address` |   |
+| `_withModeration` | `bool` |   |
+| `_trustedForwarder` | `address` |   |
+| `_quorumSize` | `uint32` |   |
+| `_voteDuration` | `uint32` |   |
+| `_majoritySize` | `uint32` |   |
+| `_tokenContract` | `address` |   |
+| `_roleModes` | `uint8[3]` | Role modes of the proposers, moderators and voters. |
+
+</details>
 
 #### ++dnt++ERC20VoteProcedure.initialize
 
 Initialize the procedure.
+
+<details>
+<summary>Signature</summary>
 
 ```solidity
 function initialize(string _metadata, address _proposers, address _moderators, address _deciders, bool _withModeration, address _trustedForwarder, uint32 _quorumSize, uint32 _voteDuration, uint32 _majoritySize, address _tokenContract);
@@ -1409,1221 +2177,821 @@ function initialize(string _metadata, address _proposers, address _moderators, a
 | `_majoritySize` | `uint32` | The minimum percentage of votes required to validate a election. |
 | `_tokenContract` | `address` | The ERC20 token contract representing the rights to vote. |
 
+</details>
 
 #### ++dnt++ERC20VoteProcedure.initialize
 
 Initialize an ERC-20 vote with optional member-majority validation.
 
+<details>
+<summary>Signature</summary>
+
 ```solidity
 function initialize(string _metadata, address _proposers, address _moderators, address _deciders, bool _withModeration, address _trustedForwarder, uint32 _quorumSize, uint32 _voteDuration, uint32 _majoritySize, address _tokenContract, uint8[3] _roleModes, bool _requireMemberMajority);
 ```
 
-
-
-#### ++dnt++ERC20VoteProcedure.isOwnerBoundProposalOperation
-
-```solidity
-function isOwnerBoundProposalOperation(bytes operationData) pure returns (bool);
-```
-
-
-
-#### ++dnt++ERC20VoteProcedure.isTrustedForwarder
-
-Return whether an address is the trusted ERC-2771 forwarder.
-
-```solidity
-function isTrustedForwarder(address forwarder) view returns (bool);
-```
-
-**Parameters**
-
-| Name | Type | Description |
-| --- | --- | --- |
-| `forwarder` | `address` | The forwarder address to test. |
-
-
-#### ++dnt++ERC20VoteProcedure.majoritySize
-
-```solidity
-function majoritySize() view returns (uint32);
-```
-
-
+</details>
 
 #### ++dnt++ERC20VoteProcedure.moderatorMode
+
+Whether moderators are organ members, token holders, or nobody.
+
+<details>
+<summary>Signature</summary>
 
 ```solidity
 function moderatorMode() view returns (uint8);
 ```
 
-
-
-#### ++dnt++ERC20VoteProcedure.presentProposal
-
-Present a proposal.
-
-> Overrides Procedure.
-
-```solidity
-function presentProposal(uint256 proposalKey);
-```
-
-
-
-#### ++dnt++ERC20VoteProcedure.presentProposalBySig
-
-```solidity
-function presentProposalBySig(uint256 proposalKey, uint256 nonce, uint256 deadline, bytes signature);
-```
-
-
-
-#### ++dnt++ERC20VoteProcedure.propose
-
-```solidity
-function propose(string _cid, (uint256, address, bytes, uint256, bool)[] _operations) returns (uint256 proposalKey);
-```
-
-
-
-#### ++dnt++ERC20VoteProcedure.proposeBySig
-
-```solidity
-function proposeBySig(string cid, (uint256, address, bytes, uint256, bool)[] operations, uint256 nonce, uint256 deadline, bytes signature) returns (uint256 proposalKey);
-```
-
-
+</details>
 
 #### ++dnt++ERC20VoteProcedure.proposerMode
+
+Whether proposers are organ members, token holders, or nobody.
+
+<details>
+<summary>Signature</summary>
 
 ```solidity
 function proposerMode() view returns (uint8);
 ```
 
-
-
-#### ++dnt++ERC20VoteProcedure.quorumSize
-
-```solidity
-function quorumSize() view returns (uint32);
-```
-
-
+</details>
 
 #### ++dnt++ERC20VoteProcedure.requireMemberMajority
 
 When voters come from an organ, require a majority of its members in addition to the usual token-weighted quorum and majority.
 
+<details>
+<summary>Signature</summary>
+
 ```solidity
 function requireMemberMajority() view returns (bool);
 ```
 
-
-
-#### ++dnt++ERC20VoteProcedure.supportsInterface
-
-> Register EIP165 interfaces for introspection.
-
-```solidity
-function supportsInterface(bytes4 interfaceId) view returns (bool);
-```
-
-
+</details>
 
 #### ++dnt++ERC20VoteProcedure.tokenContract
 
 tokenContract is an ERC20Votes-compatible token representing the rights to vote.
 
+<details>
+<summary>Signature</summary>
+
 ```solidity
 function tokenContract() view returns (address);
 ```
 
-
-
-#### ++dnt++ERC20VoteProcedure.transferEquity
-
-Transfers the proposal creator's equity; the token emits the movement record.
-
-```solidity
-function transferEquity(address asset, address recipient, uint256 amount, string movementCid);
-```
-
-
-
-#### ++dnt++ERC20VoteProcedure.trustedForwarder
-
-Return the trusted ERC-2771 forwarder used by this contract.
-
-```solidity
-function trustedForwarder() view returns (address);
-```
-
-
-
-#### ++dnt++ERC20VoteProcedure.updateAdmin
-
-```solidity
-function updateAdmin(address admin);
-```
-
-
-
-#### ++dnt++ERC20VoteProcedure.updateCid
-
-Public API : Procedure Cid and Admin.
-
-```solidity
-function updateCid(string cid);
-```
-
-
-
-#### ++dnt++ERC20VoteProcedure.validateProposalCreator
-
-```solidity
-function validateProposalCreator(address creator, bytes operationData) view;
-```
-
-
-
-#### ++dnt++ERC20VoteProcedure.vote
-
-Create a election.
-
-```solidity
-function vote(uint256 proposalKey, bool approval);
-```
-
-
-
-#### ++dnt++ERC20VoteProcedure.voteBySig
-
-```solidity
-function voteBySig(uint256 proposalKey, bool approval, uint256 nonce, uint256 deadline, bytes signature);
-```
-
-
-
-#### ++dnt++ERC20VoteProcedure.voteDuration
-
-```solidity
-function voteDuration() view returns (uint32);
-```
-
-
+</details>
 
 #### ++dnt++ERC20VoteProcedure.voterMode
+
+Whether voters are organ members or token holders.
+
+<details>
+<summary>Signature</summary>
 
 ```solidity
 function voterMode() view returns (uint8);
 ```
 
+</details>
 
+### ++dnt++ProcedureLibrary
 
+<div data-summary>
 
+Storage layout and rules of proposals, linked into procedure contracts.
 
-## ++dnt++contract VoteProcedure
-
-### Events
-
-#### ++dnt++VoteProcedure.EIP712DomainChanged
-
-```solidity
-event EIP712DomainChanged();
-```
-
-
-
-#### ++dnt++VoteProcedure.Initialized
-
-```solidity
-event Initialized(uint64 version);
-```
-
-
-
-#### ++dnt++VoteProcedure.ProposalApplied
-
-```solidity
-event ProposalApplied(uint256 indexed proposalKey);
-```
-
-
-
-#### ++dnt++VoteProcedure.ProposalBlocked
-
-```solidity
-event ProposalBlocked(address indexed moderator, uint256 indexed proposalKey, string reason);
-```
-
-
-
-#### ++dnt++VoteProcedure.ProposalCreated
-
-```solidity
-event ProposalCreated(address indexed creator, uint256 indexed proposalKey);
-```
-
-
-
-#### ++dnt++VoteProcedure.ProposalPresented
-
-```solidity
-event ProposalPresented(address indexed presenter, uint256 indexed proposalKey);
-```
-
-
-
-### Functions
-
-#### ++dnt++VoteProcedure.INTERFACE_ID
-
-```solidity
-function INTERFACE_ID() view returns (bytes4);
-```
-
-
-
-#### ++dnt++VoteProcedure.applyProposal
-
-Finalize a vote once the election has ended.
-
-> Anyone can trigger the settlement transaction once voting is over.
-
-```solidity
-function applyProposal(uint256 proposalKey);
-```
-
-
-
-#### ++dnt++VoteProcedure.applyProposalBySig
-
-```solidity
-function applyProposalBySig(uint256 proposalKey, uint256 nonce, uint256 deadline, bytes signature);
-```
-
-
-
-#### ++dnt++VoteProcedure.blockProposal
-
-A veto accepts arguments which defines a motivation as a IPFS multihash.
-
-> Overrides Procedure.blockProposal.
-
-```solidity
-function blockProposal(uint256 proposalKey, string reason);
-```
-
-
-
-#### ++dnt++VoteProcedure.blockProposalBySig
-
-```solidity
-function blockProposalBySig(uint256 proposalKey, string reason, uint256 nonce, uint256 deadline, bytes signature);
-```
-
-
-
-#### ++dnt++VoteProcedure.count
-
-Count votes when election is ended.
-
-> @todo Handle delegation of Votes.
-
-```solidity
-function count(uint256 proposalKey) view returns (bool approved);
-```
-
-**Returns**
-
-| Name | Type | Description |
-| --- | --- | --- |
-| `approved` | `bool` | True if the proposal is adopted. |
-
-
-#### ++dnt++VoteProcedure.eip712Domain
-
-> returns the fields and values that describe the domain separator used by this contract for EIP-712 signature.
-
-```solidity
-function eip712Domain() view returns (bytes1 fields, string name, string version, uint256 chainId, address verifyingContract, bytes32 salt, uint256[] extensions);
-```
-
-
-
-#### ++dnt++VoteProcedure.getElection
-
-Get information about a current election
-
-```solidity
-function getElection(uint256 _proposalKey) view returns (uint256 start, bool hasVoted, uint256 votesCount);
-```
-
-**Returns**
-
-| Name | Type | Description |
-| --- | --- | --- |
-| `start` | `uint256` | The UNIX time when the election started. |
-| `hasVoted` | `bool` | True if the voter has voted. |
-| `votesCount` | `uint256` | The number of votes cast so far. |
-
-
-#### ++dnt++VoteProcedure.getElectionResults
-
-Get the current vote split and the eligible voting base.
-
-> ERC20VoteProcedure overrides this to use snapshot voting power.
-
-```solidity
-function getElectionResults(uint256 proposalKey) view returns (uint256 approvals, uint256 objections, uint256 eligibleVotes);
-```
-
-**Returns**
-
-| Name | Type | Description |
-| --- | --- | --- |
-| `approvals` | `uint256` | The number of approving votes. |
-| `objections` | `uint256` | The number of rejecting votes. |
-| `eligibleVotes` | `uint256` | The number of votes eligible to participate. |
-
-
-#### ++dnt++VoteProcedure.getExecutionContext
-
-Lets an operation target safely identify the proposal currently being applied.
-
-```solidity
-function getExecutionContext() view returns (bool isApplying, uint256 proposalKey, address proposalCreator);
-```
-
-
-
-#### ++dnt++VoteProcedure.getNonce
-
-```solidity
-function getNonce(address account) view returns (uint256);
-```
-
-
-
-#### ++dnt++VoteProcedure.getProcedure
-
-```solidity
-function getProcedure() view returns (string cid, address proposers, address moderators, address deciders, bool withModeration, uint256 proposalsLength, bytes4 interfaceId);
-```
-
-
-
-#### ++dnt++VoteProcedure.getProposal
-
-```solidity
-function getProposal(uint256 proposalKey) view returns ((address, string, string, bool, bool, bool, bool, (uint256, address, bytes, uint256, bool)[]));
-```
-
-
-
-#### ++dnt++VoteProcedure.initialize
-
-Initialize the procedure.
-
-```solidity
-function initialize(string _cid, address _proposers, address _moderators, address _deciders, bool _withModeration, address _trustedForwarder, uint32 _quorumSize, uint32 _voteDuration, uint32 _majoritySize);
-```
-
-
-
-#### ++dnt++VoteProcedure.isOwnerBoundProposalOperation
-
-```solidity
-function isOwnerBoundProposalOperation(bytes operationData) pure returns (bool);
-```
-
-
-
-#### ++dnt++VoteProcedure.isTrustedForwarder
-
-Return whether an address is the trusted ERC-2771 forwarder.
-
-```solidity
-function isTrustedForwarder(address forwarder) view returns (bool);
-```
-
-**Parameters**
-
-| Name | Type | Description |
-| --- | --- | --- |
-| `forwarder` | `address` | The forwarder address to test. |
-
-
-#### ++dnt++VoteProcedure.majoritySize
-
-```solidity
-function majoritySize() view returns (uint32);
-```
-
-
-
-#### ++dnt++VoteProcedure.presentProposal
-
-Present a proposal.
-
-> Overrides Procedure.
-
-```solidity
-function presentProposal(uint256 proposalKey);
-```
-
-
-
-#### ++dnt++VoteProcedure.presentProposalBySig
-
-```solidity
-function presentProposalBySig(uint256 proposalKey, uint256 nonce, uint256 deadline, bytes signature);
-```
-
-
-
-#### ++dnt++VoteProcedure.propose
-
-```solidity
-function propose(string _cid, (uint256, address, bytes, uint256, bool)[] _operations) returns (uint256 proposalKey);
-```
-
-
-
-#### ++dnt++VoteProcedure.proposeBySig
-
-```solidity
-function proposeBySig(string cid, (uint256, address, bytes, uint256, bool)[] operations, uint256 nonce, uint256 deadline, bytes signature) returns (uint256 proposalKey);
-```
-
-
-
-#### ++dnt++VoteProcedure.quorumSize
-
-```solidity
-function quorumSize() view returns (uint32);
-```
-
-
-
-#### ++dnt++VoteProcedure.supportsInterface
-
-> Register EIP165 interfaces for introspection.
-
-```solidity
-function supportsInterface(bytes4 interfaceId) view returns (bool);
-```
-
-
-
-#### ++dnt++VoteProcedure.transferEquity
-
-Transfers the proposal creator's equity; the token emits the movement record.
-
-```solidity
-function transferEquity(address asset, address recipient, uint256 amount, string movementCid);
-```
-
-
-
-#### ++dnt++VoteProcedure.trustedForwarder
-
-Return the trusted ERC-2771 forwarder used by this contract.
-
-```solidity
-function trustedForwarder() view returns (address);
-```
-
-
-
-#### ++dnt++VoteProcedure.updateAdmin
-
-```solidity
-function updateAdmin(address admin);
-```
-
-
-
-#### ++dnt++VoteProcedure.updateCid
-
-Public API : Procedure Cid and Admin.
-
-```solidity
-function updateCid(string cid);
-```
-
-
-
-#### ++dnt++VoteProcedure.validateProposalCreator
-
-```solidity
-function validateProposalCreator(address creator, bytes operationData) view;
-```
-
-
-
-#### ++dnt++VoteProcedure.vote
-
-Create a election.
-
-```solidity
-function vote(uint256 proposalKey, bool approval);
-```
-
-
-
-#### ++dnt++VoteProcedure.voteBySig
-
-```solidity
-function voteBySig(uint256 proposalKey, bool approval, uint256 nonce, uint256 deadline, bytes signature);
-```
-
-
-
-#### ++dnt++VoteProcedure.voteDuration
-
-```solidity
-function voteDuration() view returns (uint32);
-```
-
-
-
-
-
-## ++dnt++contract IOrgan
-
-### Functions
-
-#### ++dnt++IOrgan.addEntries
-
-```solidity
-function addEntries((address, string)[] entries) returns (uint256[] indexes);
-```
-
-
-
-#### ++dnt++IOrgan.addPermission
-
-Grant permissions to one address or procedure.
-
-```solidity
-function addPermission(address permissionAddress, bytes2 permissionValue);
-```
-
-**Parameters**
-
-| Name | Type | Description |
-| --- | --- | --- |
-| `permissionAddress` | `address` | Address receiving the permission bitmask. |
-| `permissionValue` | `bytes2` | Permission bitmask to grant. |
-
-
-#### ++dnt++IOrgan.executeWhitelisted
-
-Execute an external call that has been approved by a whitelist policy.
-
-> The organ validates the call against the policy configured for `target + selector` before forwarding the call. Every configured constraint must pass.
-
-```solidity
-function executeWhitelisted(address target, uint256 value, bytes data) returns (bytes result);
-```
-
-**Parameters**
-
-| Name | Type | Description |
-| --- | --- | --- |
-| `target` | `address` | The external contract to call. |
-| `value` | `uint256` | The amount of native token to forward with the call. |
-| `data` | `bytes` | The encoded calldata forwarded to `target`. |
-**Returns**
-
-| Name | Type | Description |
-| --- | --- | --- |
-| `result` | `bytes` | The raw return data produced by the external call. |
-
-
-#### ++dnt++IOrgan.getCallPolicy
-
-Return summary information about a call policy.
-
-```solidity
-function getCallPolicy(address target, bytes4 selector) view returns (bool enabled, uint256 constraintsLength, uint256 whitelistedAddressesLength);
-```
-
-**Parameters**
-
-| Name | Type | Description |
-| --- | --- | --- |
-| `target` | `address` | The external contract keyed by the policy. |
-| `selector` | `bytes4` | The function selector keyed by the policy. |
-**Returns**
-
-| Name | Type | Description |
-| --- | --- | --- |
-| `enabled` | `bool` | Whether the policy exists and is active. |
-| `constraintsLength` | `uint256` | The number of parameter constraints configured on the policy. |
-| `whitelistedAddressesLength` | `uint256` | The number of addresses stored in the policy whitelist. |
-
-
-#### ++dnt++IOrgan.getCallPolicyConstraint
-
-Return one parameter constraint of a call policy.
-
-```solidity
-function getCallPolicyConstraint(address target, bytes4 selector, uint256 index) view returns (uint8 paramIndex, uint8 constraintType, bytes32 minValue, bytes32 maxValue, bytes32 exactValue);
-```
-
-**Parameters**
-
-| Name | Type | Description |
-| --- | --- | --- |
-| `target` | `address` | The external contract keyed by the policy. |
-| `selector` | `bytes4` | The function selector keyed by the policy. |
-| `index` | `uint256` | The position of the constraint inside the policy. |
-**Returns**
-
-| Name | Type | Description |
-| --- | --- | --- |
-| `paramIndex` | `uint8` | The zero-based calldata argument index constrained by this rule. |
-| `constraintType` | `uint8` | The type of validation applied to that argument. |
-| `minValue` | `bytes32` | The lower bound used by range constraints. |
-| `maxValue` | `bytes32` | The upper bound used by range constraints. |
-| `exactValue` | `bytes32` | The exact value used by exact-match constraints. |
-
-
-#### ++dnt++IOrgan.getEntry
-
-Return one stored entry.
-
-```solidity
-function getEntry(uint256 index) view returns ((address, string) entry);
-```
-
-**Parameters**
-
-| Name | Type | Description |
-| --- | --- | --- |
-| `index` | `uint256` | Index of the entry to read. |
-**Returns**
-
-| Name | Type | Description |
-| --- | --- | --- |
-| `entry` | `(address, string)` | Entry payload stored at `index`. |
-
-
-#### ++dnt++IOrgan.getEntryIndexForAddress
-
-Find the index of one entry address.
-
-```solidity
-function getEntryIndexForAddress(address addr) view returns (uint256 index);
-```
-
-**Parameters**
-
-| Name | Type | Description |
-| --- | --- | --- |
-| `addr` | `address` | Address stored in the entry. |
-**Returns**
-
-| Name | Type | Description |
-| --- | --- | --- |
-| `index` | `uint256` | Index of the entry associated with `addr`. |
-
-
-#### ++dnt++IOrgan.getOrgan
-
-Return the core summary of the organ.
-
-```solidity
-function getOrgan() view returns (string cid, uint256 permissionsLength, uint256 entriesLength, uint256 entriesCount, bytes4 interfaceId);
-```
-
-**Returns**
-
-| Name | Type | Description |
-| --- | --- | --- |
-| `cid` | `string` | Metadata CID currently attached to the organ. |
-| `permissionsLength` | `uint256` | Number of permission entries configured on the organ. |
-| `entriesLength` | `uint256` | Number of allocated entry slots. |
-| `entriesCount` | `uint256` | Number of active entries. |
-| `interfaceId` | `bytes4` | ERC-165 interface id implemented by the organ. |
-
-
-#### ++dnt++IOrgan.getPermission
-
-Return one permission entry by index.
-
-```solidity
-function getPermission(uint256 index) view returns (address addr, bytes2 perms);
-```
-
-**Parameters**
-
-| Name | Type | Description |
-| --- | --- | --- |
-| `index` | `uint256` | Index of the permission entry to read. |
-**Returns**
-
-| Name | Type | Description |
-| --- | --- | --- |
-| `addr` | `address` | Address holding the permission. |
-| `perms` | `bytes2` | Permission bitmask held by `addr`. |
-
-
-#### ++dnt++IOrgan.getPermissions
-
-Return the permission bitmask assigned to one address.
-
-```solidity
-function getPermissions(address addr) view returns (bytes2 perms);
-```
-
-**Parameters**
-
-| Name | Type | Description |
-| --- | --- | --- |
-| `addr` | `address` | Address to inspect. |
-**Returns**
-
-| Name | Type | Description |
-| --- | --- | --- |
-| `perms` | `bytes2` | Permission bitmask currently assigned to `addr`. |
-
-
-#### ++dnt++IOrgan.initialize
-
-```solidity
-function initialize(address[] procedures, bytes2[] permissions, string cid, (address, string)[] entries, address trustedForwarder);
-```
-
-
-
-#### ++dnt++IOrgan.isCallPolicyWhitelistedAddress
-
-Check whether an address is present in a call policy whitelist.
-
-```solidity
-function isCallPolicyWhitelistedAddress(address target, bytes4 selector, address candidate) view returns (bool);
-```
-
-**Parameters**
-
-| Name | Type | Description |
-| --- | --- | --- |
-| `target` | `address` | The external contract keyed by the policy. |
-| `selector` | `bytes4` | The function selector keyed by the policy. |
-| `candidate` | `address` | The address to test against the whitelist. |
-
-
-#### ++dnt++IOrgan.removeCallPolicy
-
-Remove a previously configured external call policy.
-
-```solidity
-function removeCallPolicy(address target, bytes4 selector);
-```
-
-**Parameters**
-
-| Name | Type | Description |
-| --- | --- | --- |
-| `target` | `address` | The external contract whose policy should be removed. |
-| `selector` | `bytes4` | The function selector whose policy should be removed. |
-
-
-#### ++dnt++IOrgan.removeEntries
-
-Remove entries from the organ directory.
-
-```solidity
-function removeEntries(uint256[] indexes);
-```
-
-**Parameters**
-
-| Name | Type | Description |
-| --- | --- | --- |
-| `indexes` | `uint256[]` | Indexes to remove. |
-
-
-#### ++dnt++IOrgan.removePermission
-
-Remove every permission bit from one address or procedure.
-
-```solidity
-function removePermission(address permissionAddress);
-```
-
-**Parameters**
-
-| Name | Type | Description |
-| --- | --- | --- |
-| `permissionAddress` | `address` | Address whose permissions should be removed. |
-
-
-#### ++dnt++IOrgan.replaceEntry
-
-```solidity
-function replaceEntry(uint256 index, (address, string) entry);
-```
-
-
-
-#### ++dnt++IOrgan.replacePermission
-
-Replace one permission holder with another.
-
-```solidity
-function replacePermission(address oldPermission, address newPermission, bytes2 newPermissionValue);
-```
-
-**Parameters**
-
-| Name | Type | Description |
-| --- | --- | --- |
-| `oldPermission` | `address` | Address currently holding the permission. |
-| `newPermission` | `address` | Address that should receive the permission instead. |
-| `newPermissionValue` | `bytes2` | Permission bitmask assigned to `newPermission`. |
-
-
-#### ++dnt++IOrgan.setCallPolicy
-
-```solidity
-function setCallPolicy(address target, bytes4 selector, (uint8, uint8, bytes32, bytes32, bytes32)[] constraints, address[] whitelistedAddresses);
-```
-
-
-
-#### ++dnt++IOrgan.updateCid
-
-Update the metadata CID of the organ.
-
-```solidity
-function updateCid(string cid);
-```
-
-**Parameters**
-
-| Name | Type | Description |
-| --- | --- | --- |
-| `cid` | `string` | New content identifier describing the organ. |
-
-
-
-
-## ++dnt++contract OrganLibrary
-
-### Events
-
-#### ++dnt++OrganLibrary.adminUpdated
-
-```solidity
-event adminUpdated(address from, address admin);
-```
-
-
-
-#### ++dnt++OrganLibrary.callPolicyRemoved
-
-```solidity
-event callPolicyRemoved(address indexed caller, address indexed target, bytes4 indexed selector);
-```
-
-
-
-#### ++dnt++OrganLibrary.callPolicySet
-
-```solidity
-event callPolicySet(address indexed caller, address indexed target, bytes4 indexed selector);
-```
-
-
-
-#### ++dnt++OrganLibrary.callPolicyWhitelistedAddressAdded
-
-```solidity
-event callPolicyWhitelistedAddressAdded(bytes32 indexed policyKey, address indexed candidate);
-```
-
-
-
-#### ++dnt++OrganLibrary.callPolicyWhitelistedAddressRemoved
-
-```solidity
-event callPolicyWhitelistedAddressRemoved(bytes32 indexed policyKey, address indexed candidate);
-```
-
-
-
-#### ++dnt++OrganLibrary.cidUpdated
-
-```solidity
-event cidUpdated(address from, string cid);
-```
-
-
-
-#### ++dnt++OrganLibrary.coinsReceived
-
-```solidity
-event coinsReceived(address operator, address from, address to, uint256 amount);
-```
-
-
-
-#### ++dnt++OrganLibrary.coinsTransferred
-
-```solidity
-event coinsTransferred(address operator, address from, address to, uint256 amount);
-```
-
-
-
-#### ++dnt++OrganLibrary.collectibleReceived
-
-```solidity
-event collectibleReceived(address operator, address from, uint256 tokenId);
-```
-
-
-
-#### ++dnt++OrganLibrary.collectibleTransferred
-
-```solidity
-event collectibleTransferred(address operator, address to, uint256 tokenId);
-```
-
-
-
-#### ++dnt++OrganLibrary.entryAdded
-
-```solidity
-event entryAdded(address from, uint256 index, address addr, string cid);
-```
-
-
-
-#### ++dnt++OrganLibrary.entryRemoved
-
-```solidity
-event entryRemoved(address from, uint256 index);
-```
-
-
-
-#### ++dnt++OrganLibrary.etherReceived
-
-```solidity
-event etherReceived(address from, uint256 amount);
-```
-
-
-
-#### ++dnt++OrganLibrary.etherTransferred
-
-```solidity
-event etherTransferred(address from, address to, uint256 amount);
-```
-
-
-
-#### ++dnt++OrganLibrary.permissionAdded
-
-```solidity
-event permissionAdded(address from, address permissionAddress, bytes2 permissionValue);
-```
-
-
-
-#### ++dnt++OrganLibrary.permissionRemoved
-
-```solidity
-event permissionRemoved(address from, address permissionAddress);
-```
-
-
-
-#### ++dnt++OrganLibrary.whitelistedExecution
-
-```solidity
-event whitelistedExecution(address indexed caller, address indexed target, bytes4 indexed selector, uint256 value);
-```
-
-
-
-### Functions
-
-#### ++dnt++OrganLibrary.PERMISSION_ADD_ENTRIES
-
-```solidity
-function PERMISSION_ADD_ENTRIES() view returns (bytes2);
-```
-
-
-
-#### ++dnt++OrganLibrary.PERMISSION_ADD_PERMISSIONS
-
-```solidity
-function PERMISSION_ADD_PERMISSIONS() view returns (bytes2);
-```
-
-
-
-#### ++dnt++OrganLibrary.PERMISSION_DEPOSIT_COINS
-
-```solidity
-function PERMISSION_DEPOSIT_COINS() view returns (bytes2);
-```
-
-
-
-#### ++dnt++OrganLibrary.PERMISSION_DEPOSIT_COLLECTIBLES
-
-```solidity
-function PERMISSION_DEPOSIT_COLLECTIBLES() view returns (bytes2);
-```
-
-
-
-#### ++dnt++OrganLibrary.PERMISSION_DEPOSIT_ETHER
-
-```solidity
-function PERMISSION_DEPOSIT_ETHER() view returns (bytes2);
-```
-
-
-
-#### ++dnt++OrganLibrary.PERMISSION_EXECUTE_WHITELISTED
-
-```solidity
-function PERMISSION_EXECUTE_WHITELISTED() view returns (bytes2);
-```
-
-
-
-#### ++dnt++OrganLibrary.PERMISSION_MANAGE_EXECUTION_WHITELIST
-
-```solidity
-function PERMISSION_MANAGE_EXECUTION_WHITELIST() view returns (bytes2);
-```
-
-
-
-#### ++dnt++OrganLibrary.PERMISSION_REMOVE_ENTRIES
-
-```solidity
-function PERMISSION_REMOVE_ENTRIES() view returns (bytes2);
-```
-
-
-
-#### ++dnt++OrganLibrary.PERMISSION_REMOVE_PERMISSIONS
-
-```solidity
-function PERMISSION_REMOVE_PERMISSIONS() view returns (bytes2);
-```
-
-
-
-#### ++dnt++OrganLibrary.PERMISSION_UPDATE_METADATA
-
-```solidity
-function PERMISSION_UPDATE_METADATA() view returns (bytes2);
-```
-
-
-
-#### ++dnt++OrganLibrary.PERMISSION_WITHDRAW_COINS
-
-```solidity
-function PERMISSION_WITHDRAW_COINS() view returns (bytes2);
-```
-
-
-
-#### ++dnt++OrganLibrary.PERMISSION_WITHDRAW_COLLECTIBLES
-
-```solidity
-function PERMISSION_WITHDRAW_COLLECTIBLES() view returns (bytes2);
-```
-
-
-
-#### ++dnt++OrganLibrary.PERMISSION_WITHDRAW_ETHER
-
-```solidity
-function PERMISSION_WITHDRAW_ETHER() view returns (bytes2);
-```
-
-
-
-
-
-## ++dnt++contract ProcedureLibrary
-
-### Events
-
-#### ++dnt++ProcedureLibrary.AdminUpdated
-
-```solidity
-event AdminUpdated(address from, address admin);
-```
-
-
-
-#### ++dnt++ProcedureLibrary.CidUpdated
-
-```solidity
-event CidUpdated(address from, string cid);
-```
-
-
-
-#### ++dnt++ProcedureLibrary.ProposalApplied
-
-```solidity
-event ProposalApplied(uint256 indexed proposalKey);
-```
-
-
-
-#### ++dnt++ProcedureLibrary.ProposalBlocked
-
-```solidity
-event ProposalBlocked(address indexed moderator, uint256 indexed proposalKey, string reason);
-```
-
-
-
-#### ++dnt++ProcedureLibrary.ProposalCreated
-
-```solidity
-event ProposalCreated(address indexed creator, uint256 indexed proposalKey);
-```
-
-
-
-#### ++dnt++ProcedureLibrary.ProposalPresented
-
-```solidity
-event ProposalPresented(address indexed presenter, uint256 indexed proposalKey);
-```
-
-
-
-### Functions
+</div>
 
 #### ++dnt++ProcedureLibrary.isInOrgan
 
 Utils.
 
+<details>
+<summary>Signature</summary>
+
 ```solidity
 function isInOrgan(address organ, address caller) view returns (bool);
 ```
 
+</details>
 
+#### ++dnt++ProcedureLibrary.ProposalApplied
 
+A proposal was settled.
 
+<details>
+<summary>Event</summary>
+
+```solidity
+event ProposalApplied(uint256 indexed proposalKey);
+```
+
+</details>
+
+#### ++dnt++ProcedureLibrary.ProposalBlocked
+
+A moderator blocked a proposal.
+
+<details>
+<summary>Event</summary>
+
+```solidity
+event ProposalBlocked(address indexed moderator, uint256 indexed proposalKey, string reason);
+```
+
+</details>
+
+#### ++dnt++ProcedureLibrary.ProposalCreated
+
+A proposal was submitted.
+
+<details>
+<summary>Event</summary>
+
+```solidity
+event ProposalCreated(address indexed creator, uint256 indexed proposalKey);
+```
+
+</details>
+
+#### ++dnt++ProcedureLibrary.ProposalPresented
+
+A moderator presented a proposal to the deciders.
+
+<details>
+<summary>Event</summary>
+
+```solidity
+event ProposalPresented(address indexed presenter, uint256 indexed proposalKey);
+```
+
+</details>
+
+## Assets
+
+Assets are ERC-20 tokens with voting checkpoints, so that a vote can weigh balances at a past moment. An `EquityToken` represents company shares: its transfers must be approved by a procedure.
+
+### ++dnt++Asset
+
+<div data-summary>
+
+An ERC-20 token with voting checkpoints, held by organs.
+
+</div>
+
+<details>
+<summary>Constructor</summary>
+
+```solidity
+constructor();
+```
+
+</details>
+
+#### ++dnt++Asset.allowance
+
+Returns the remaining number of tokens that `spender` will be allowed to spend on behalf of `owner` through \{transferFrom\}. This is zero by default. This value changes when \{approve\} or \{transferFrom\} are called.
+
+<details>
+<summary>Signature</summary>
+
+```solidity
+function allowance(address owner, address spender) view returns (uint256);
+```
+
+</details>
+
+#### ++dnt++Asset.approve
+
+See \{IERC20-approve\}. NOTE: If `value` is the maximum `uint256`, the allowance is not updated on `transferFrom`. This is semantically equivalent to an infinite approval. Requirements: - `spender` cannot be the zero address.
+
+<details>
+<summary>Signature</summary>
+
+```solidity
+function approve(address spender, uint256 value) returns (bool);
+```
+
+</details>
+
+#### ++dnt++Asset.balanceOf
+
+Returns the value of tokens owned by `account`.
+
+<details>
+<summary>Signature</summary>
+
+```solidity
+function balanceOf(address account) view returns (uint256);
+```
+
+</details>
+
+#### ++dnt++Asset.checkpoints
+
+Get the `pos`-th checkpoint for `account`.
+
+<details>
+<summary>Signature</summary>
+
+```solidity
+function checkpoints(address account, uint32 pos) view returns ((uint48, uint208));
+```
+
+</details>
+
+#### ++dnt++Asset.clock
+
+Clock used for flagging checkpoints. Can be overridden to implement timestamp based checkpoints (and voting), in which case \{CLOCK_MODE\} should be overridden as well to match.
+
+<details>
+<summary>Signature</summary>
+
+```solidity
+function clock() view returns (uint48);
+```
+
+</details>
+
+#### ++dnt++Asset.CLOCK_MODE
+
+Machine-readable description of the clock as specified in ERC-6372.
+
+<details>
+<summary>Signature</summary>
+
+```solidity
+function CLOCK_MODE() view returns (string);
+```
+
+</details>
+
+#### ++dnt++Asset.decimals
+
+Returns the number of decimals used to get its user representation. For example, if `decimals` equals `2`, a balance of `505` tokens should be displayed to a user as `5.05` (`505 / 10 ** 2`). Tokens usually opt for a value of 18, imitating the relationship between Ether and Wei. This is the default value returned by this function, unless it's overridden. NOTE: This information is only used for _display_ purposes: it in no way affects any of the arithmetic of the contract, including \{IERC20-balanceOf\} and \{IERC20-transfer\}.
+
+<details>
+<summary>Signature</summary>
+
+```solidity
+function decimals() view returns (uint8);
+```
+
+</details>
+
+#### ++dnt++Asset.delegate
+
+Delegates votes from the sender to `delegatee`.
+
+<details>
+<summary>Signature</summary>
+
+```solidity
+function delegate(address delegatee);
+```
+
+</details>
+
+#### ++dnt++Asset.delegateBySig
+
+Delegates votes from signer to `delegatee`.
+
+<details>
+<summary>Signature</summary>
+
+```solidity
+function delegateBySig(address delegatee, uint256 nonce, uint256 expiry, uint8 v, bytes32 r, bytes32 s);
+```
+
+</details>
+
+#### ++dnt++Asset.delegates
+
+Returns the delegate that `account` has chosen.
+
+<details>
+<summary>Signature</summary>
+
+```solidity
+function delegates(address account) view returns (address);
+```
+
+</details>
+
+#### ++dnt++Asset.eip712Domain
+
+returns the fields and values that describe the domain separator used by this contract for EIP-712 signature.
+
+<details>
+<summary>Signature</summary>
+
+```solidity
+function eip712Domain() view returns (bytes1 fields, string name, string version, uint256 chainId, address verifyingContract, bytes32 salt, uint256[] extensions);
+```
+
+</details>
+
+#### ++dnt++Asset.getPastTotalSupply
+
+Returns the total supply of votes available at a specific moment in the past. If the `clock()` is configured to use block numbers, this will return the value at the end of the corresponding block. NOTE: This value is the sum of all available votes, which is not necessarily the sum of all delegated votes. Votes that have not been delegated are still part of total supply, even though they would not participate in a vote. Requirements: - `timepoint` must be in the past. If operating using block numbers, the block must be already mined.
+
+<details>
+<summary>Signature</summary>
+
+```solidity
+function getPastTotalSupply(uint256 timepoint) view returns (uint256);
+```
+
+</details>
+
+#### ++dnt++Asset.getPastVotes
+
+Returns the amount of votes that `account` had at a specific moment in the past. If the `clock()` is configured to use block numbers, this will return the value at the end of the corresponding block. Requirements: - `timepoint` must be in the past. If operating using block numbers, the block must be already mined.
+
+<details>
+<summary>Signature</summary>
+
+```solidity
+function getPastVotes(address account, uint256 timepoint) view returns (uint256);
+```
+
+</details>
+
+#### ++dnt++Asset.getVotes
+
+Returns the current amount of votes that `account` has.
+
+<details>
+<summary>Signature</summary>
+
+```solidity
+function getVotes(address account) view returns (uint256);
+```
+
+</details>
+
+#### ++dnt++Asset.initialize
+
+Initialize an asset clone and mint its supply.
+
+<details>
+<summary>Signature</summary>
+
+```solidity
+function initialize(string name_, string symbol_, address initialReceiver_, uint256 initialSupply_);
+```
+
+**Parameters**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| `name_` | `string` | Token name. |
+| `symbol_` | `string` | Token symbol. |
+| `initialReceiver_` | `address` | Account receiving the initial supply. |
+| `initialSupply_` | `uint256` | Supply minted at initialization. |
+
+</details>
+
+#### ++dnt++Asset.name
+
+Returns the name of the token.
+
+<details>
+<summary>Signature</summary>
+
+```solidity
+function name() view returns (string);
+```
+
+</details>
+
+#### ++dnt++Asset.nonces
+
+Returns the next unused nonce for an address.
+
+<details>
+<summary>Signature</summary>
+
+```solidity
+function nonces(address owner) view returns (uint256);
+```
+
+</details>
+
+#### ++dnt++Asset.numCheckpoints
+
+Get number of checkpoints for `account`.
+
+<details>
+<summary>Signature</summary>
+
+```solidity
+function numCheckpoints(address account) view returns (uint32);
+```
+
+</details>
+
+#### ++dnt++Asset.symbol
+
+Returns the symbol of the token, usually a shorter version of the name.
+
+<details>
+<summary>Signature</summary>
+
+```solidity
+function symbol() view returns (string);
+```
+
+</details>
+
+#### ++dnt++Asset.totalSupply
+
+Returns the value of tokens in existence.
+
+<details>
+<summary>Signature</summary>
+
+```solidity
+function totalSupply() view returns (uint256);
+```
+
+</details>
+
+#### ++dnt++Asset.transfer
+
+See \{IERC20-transfer\}. Requirements: - `to` cannot be the zero address. - the caller must have a balance of at least `value`.
+
+<details>
+<summary>Signature</summary>
+
+```solidity
+function transfer(address to, uint256 value) returns (bool);
+```
+
+</details>
+
+#### ++dnt++Asset.transferFrom
+
+See \{IERC20-transferFrom\}. Skips emitting an \{Approval\} event indicating an allowance update. This is not required by the ERC. See \{xref-ERC20-_approve-address-address-uint256-bool-\}[_approve]. NOTE: Does not update the allowance if the current allowance is the maximum `uint256`. Requirements: - `from` and `to` cannot be the zero address. - `from` must have a balance of at least `value`. - the caller must have allowance for ``from``'s tokens of at least `value`.
+
+<details>
+<summary>Signature</summary>
+
+```solidity
+function transferFrom(address from, address to, uint256 value) returns (bool);
+```
+
+</details>
+
+#### ++dnt++Asset.Approval
+
+Emitted when the allowance of a `spender` for an `owner` is set by a call to \{approve\}. `value` is the new allowance.
+
+<details>
+<summary>Event</summary>
+
+```solidity
+event Approval(address indexed owner, address indexed spender, uint256 value);
+```
+
+</details>
+
+#### ++dnt++Asset.DelegateChanged
+
+Emitted when an account changes their delegate.
+
+<details>
+<summary>Event</summary>
+
+```solidity
+event DelegateChanged(address indexed delegator, address indexed fromDelegate, address indexed toDelegate);
+```
+
+</details>
+
+#### ++dnt++Asset.DelegateVotesChanged
+
+Emitted when a token transfer or delegate change results in changes to a delegate's number of voting units.
+
+<details>
+<summary>Event</summary>
+
+```solidity
+event DelegateVotesChanged(address indexed delegate, uint256 previousVotes, uint256 newVotes);
+```
+
+</details>
+
+#### ++dnt++Asset.EIP712DomainChanged
+
+MAY be emitted to signal that the domain could have changed.
+
+<details>
+<summary>Event</summary>
+
+```solidity
+event EIP712DomainChanged();
+```
+
+</details>
+
+#### ++dnt++Asset.Initialized
+
+Triggered when the contract has been initialized or reinitialized.
+
+<details>
+<summary>Event</summary>
+
+```solidity
+event Initialized(uint64 version);
+```
+
+</details>
+
+#### ++dnt++Asset.Transfer
+
+Emitted when `value` tokens are moved from one account (`from`) to another (`to`). Note that `value` may be zero.
+
+<details>
+<summary>Event</summary>
+
+```solidity
+event Transfer(address indexed from, address indexed to, uint256 value);
+```
+
+</details>
+
+### ++dnt++EquityToken
+
+<div data-summary>
+
+ERC-20 representation of equity settled by an approved procedure.
+
+</div>
+
+It has every function and event of [Asset](/docs/reference/solidity#Asset), and the ones below.
+
+<details>
+<summary>Constructor</summary>
+
+```solidity
+constructor();
+```
+
+</details>
+
+#### ++dnt++EquityToken.ADMIN_PROCEDURE_ROLE
+
+Role of the procedures that change which procedures hold a role.
+
+<details>
+<summary>Signature</summary>
+
+```solidity
+function ADMIN_PROCEDURE_ROLE() view returns (bytes32);
+```
+
+</details>
+
+#### ++dnt++EquityToken.initialize
+
+Initialize an equity token clone and mint its supply.
+
+<details>
+<summary>Signature</summary>
+
+```solidity
+function initialize(string name_, string symbol_, address initialHolder_, uint256 initialSupply_, address transferProcedure_);
+```
+
+**Parameters**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| `name_` | `string` | Token name. |
+| `symbol_` | `string` | Token symbol. |
+| `initialHolder_` | `address` | Account receiving the initial supply. |
+| `initialSupply_` | `uint256` | Supply minted at initialization. |
+| `transferProcedure_` | `address` | Procedure settling transfers, which also receives the admin role. |
+
+</details>
+
+#### ++dnt++EquityToken.isProcedureAuthorized
+
+Tell whether a procedure holds a role.
+
+<details>
+<summary>Signature</summary>
+
+```solidity
+function isProcedureAuthorized(bytes32 role, address procedure) view returns (bool);
+```
+
+</details>
+
+#### ++dnt++EquityToken.isTransferProcedure
+
+Tell whether a procedure may settle transfers.
+
+<details>
+<summary>Signature</summary>
+
+```solidity
+function isTransferProcedure(address procedure) view returns (bool);
+```
+
+</details>
+
+#### ++dnt++EquityToken.setProcedureAuthorization
+
+Grant or revoke a transfer or administration procedure through governance.
+
+<details>
+<summary>Signature</summary>
+
+```solidity
+function setProcedureAuthorization(bytes32 role, address procedure, bool authorized);
+```
+
+</details>
+
+#### ++dnt++EquityToken.settleTransfer
+
+Settles a transfer of the applying proposal's creator and records the movement.
+
+<details>
+<summary>Signature</summary>
+
+```solidity
+function settleTransfer(address recipient, uint256 amount, string movementCid);
+```
+
+</details>
+
+#### ++dnt++EquityToken.TRANSFER_PROCEDURE_ROLE
+
+Role of the procedures that settle transfers.
+
+<details>
+<summary>Signature</summary>
+
+```solidity
+function TRANSFER_PROCEDURE_ROLE() view returns (bytes32);
+```
+
+</details>
+
+#### ++dnt++EquityToken.validateTransfer
+
+Checks the transfer conditions during proposal creation.
+
+<details>
+<summary>Signature</summary>
+
+```solidity
+function validateTransfer(address creator, address recipient, uint256 amount, string movementCid) view;
+```
+
+</details>
+
+#### ++dnt++EquityToken.MovementSettled
+
+Movement record of a settled transfer, from which the register of share movements is built.
+
+<details>
+<summary>Event</summary>
+
+```solidity
+event MovementSettled(address indexed procedure, uint256 indexed proposalKey, address indexed seller, address recipient, uint256 amount, string movementCid);
+```
+
+</details>
+
+#### ++dnt++EquityToken.ProcedureAuthorizationUpdated
+
+A procedure received or lost a role.
+
+<details>
+<summary>Event</summary>
+
+```solidity
+event ProcedureAuthorizationUpdated(bytes32 indexed role, address indexed procedure, bool authorized);
+```
+
+</details>
+
+## Gasless transactions
+
+The `MetaGasStation` is the trusted forwarder of the protocol contracts: it relays transactions signed by users who hold no ether, and the contracts read the original signer instead of the relayer.
+
+### ++dnt++MetaGasStation
+
+<div data-summary>
+
+Trusted forwarder of the protocol contracts: it relays requests signed by accounts that hold no ether, and the contracts read the signer instead of the relayer.
+
+</div>
+
+<details>
+<summary>Constructor</summary>
+
+```solidity
+constructor(string name);
+```
+
+</details>
+
+#### ++dnt++MetaGasStation.eip712Domain
+
+returns the fields and values that describe the domain separator used by this contract for EIP-712 signature.
+
+<details>
+<summary>Signature</summary>
+
+```solidity
+function eip712Domain() view returns (bytes1 fields, string name, string version, uint256 chainId, address verifyingContract, bytes32 salt, uint256[] extensions);
+```
+
+</details>
+
+#### ++dnt++MetaGasStation.execute
+
+Executes a `request` on behalf of `signature`'s signer using the ERC-2771 protocol. The gas provided to the requested call may not be exactly the amount requested, but the call will not run out of gas. Will revert if the request is invalid or the call reverts, in this case the nonce is not consumed. Requirements: - The request value should be equal to the provided `msg.value`. - The request should be valid according to \{verify\}.
+
+<details>
+<summary>Signature</summary>
+
+```solidity
+function execute((address, address, uint256, uint256, uint48, bytes, bytes) request) payable;
+```
+
+</details>
+
+#### ++dnt++MetaGasStation.executeBatch
+
+Batch version of \{execute\} with optional refunding and atomic execution. In case a batch contains at least one invalid request (see \{verify\}), the request will be skipped and the `refundReceiver` parameter will receive back the unused requested value at the end of the execution. This is done to prevent reverting the entire batch when a request is invalid or has already been submitted. If the `refundReceiver` is the `address(0)`, this function will revert when at least one of the requests was not valid instead of skipping it. This could be useful if a batch is required to get executed atomically (at least at the top-level). For example, refunding (and thus atomicity) can be opt-out if the relayer is using a service that avoids including reverted transactions. Requirements: - The sum of the requests' values should be equal to the provided `msg.value`. - All of the requests should be valid (see \{verify\}) when `refundReceiver` is the zero address. NOTE: Setting a zero `refundReceiver` guarantees an all-or-nothing requests execution only for the first-level forwarded calls. In case a forwarded request calls to a contract with another subcall, the second-level call may revert without the top-level call reverting.
+
+<details>
+<summary>Signature</summary>
+
+```solidity
+function executeBatch((address, address, uint256, uint256, uint48, bytes, bytes)[] requests, address refundReceiver) payable;
+```
+
+</details>
+
+#### ++dnt++MetaGasStation.nonces
+
+Returns the next unused nonce for an address.
+
+<details>
+<summary>Signature</summary>
+
+```solidity
+function nonces(address owner) view returns (uint256);
+```
+
+</details>
+
+#### ++dnt++MetaGasStation.verify
+
+Returns `true` if a request is valid for a provided `signature` at the current block timestamp. A transaction is considered valid when the target trusts this forwarder, the request hasn't expired (deadline is not met), and the signer matches the `from` parameter of the signed request. NOTE: A request may return false here but it won't cause \{executeBatch\} to revert if a refund receiver is provided.
+
+<details>
+<summary>Signature</summary>
+
+```solidity
+function verify((address, address, uint256, uint256, uint48, bytes, bytes) request) view returns (bool);
+```
+
+</details>
+
+#### ++dnt++MetaGasStation.EIP712DomainChanged
+
+MAY be emitted to signal that the domain could have changed.
+
+<details>
+<summary>Event</summary>
+
+```solidity
+event EIP712DomainChanged();
+```
+
+</details>
+
+#### ++dnt++MetaGasStation.ExecutedForwardRequest
+
+Emitted when a `ForwardRequest` is executed. NOTE: An unsuccessful forward request could be due to an invalid signature, an expired deadline, or simply a revert in the requested call. The contract guarantees that the relayer is not able to force the requested call to run out of gas.
+
+<details>
+<summary>Event</summary>
+
+```solidity
+event ExecutedForwardRequest(address indexed signer, uint256 nonce, bool success);
+```
+
+</details>
 

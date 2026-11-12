@@ -40,12 +40,13 @@ const PricingTable: React.FC = () => {
       <TableHead>
         <TableRow>
           <TableCell>{t('Service')}</TableCell>
-          <TableCell>{t('Current price')}</TableCell>
+          <TableCell>{t('Current price, excl. VAT')}</TableCell>
           <TableCell>{t('Notes')}</TableCell>
         </TableRow>
       </TableHead>
       <TableBody>
-        {pricing.items.map(item => (
+        {/* Plans have their own cards on the Pricing page. */}
+        {pricing.items.filter(item => !item.key.endsWith('Plan')).map(item => (
           <TableRow key={item.key}>
             <TableCell>{t(item.label)}</TableCell>
             <TableCell>

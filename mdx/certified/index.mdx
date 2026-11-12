@@ -13,59 +13,49 @@ export const metadata = {
 
 # 🛡️ Organigram Certified Program
 
-Organigram Certified is the paid service layer for organizations and independent operators that need stronger evidence around sensitive decisions.
+Organigram Certified is the set of paid services that give legal weight to the decisions of an organization: verified identities, advanced e-signatures, sponsored transactions, certified storage and durable proof records.
 
-Use it when a vote, approval, appointment, transaction authorization, or governance change should be tied to identity-backed certificates, advanced signatures, sponsored transactions, certified storage, and durable proof records.
+Use it when a vote, approval, appointment, transaction authorization, or governance change should be tied to identity-backed certificates, advanced signatures and proof that can be checked later.
 
-## Certified Solo and Certified Entity
+## Who it is for
 
-Certified Solo is designed for independent founders, freelancers, and individuals who need Certified services without joining a specific organization.
+Certified services run in organizations: companies, associations, cooperatives and digital organizations whose verified members act on their behalf.
 
-Certified Entity is designed for companies, associations, cooperatives, and digital organizations that want verified members to use Certified services on behalf of the organization.
+Members verify their identity from a Certified organization. Their verification stays attached to them if they leave it, and is reused in any organization they join later. Partners, directors and members invited by an organization pay nothing: it covers their verified identity and their signatures.
 
-Both use the same core Certified services.
+Personal workspaces do not run Certified services: they only pay for certified storage and sponsored transactions, as they use them.
 
-<Grid container spacing={2} my={4}>
+<Grid container my={4} spacing={2} justifyContent='center'>
   <Grid item xs={12} md={6}>
-    <CertifiedSettingsButton plan='solo' />
+    <CertifiedSettingsButton target='personal' />
   </Grid>
   <Grid item xs={12} md={6}>
-    <CertifiedSettingsButton plan='entity' />
+    <CertifiedSettingsButton target='organization' />
   </Grid>
 </Grid>
 
+## Plans
+
+Every Certified organization subscribes to a plan, monthly without commitment or yearly for less, which includes quotas of verified members, signatures and storage. Usage beyond these quotas is billed at the public prices. Each plan has a maximum number of verified members: beyond it, the organization moves to a larger plan or to a quote.
+
+See the [Pricing](/pricing) page for the plans, their quotas and the public prices.
+
 ## What the program includes
 
-Both plans enable users to execute [Binding actions](/docs/certified/binding-actions): legally-binding automations and records with on-chain evidence. They achieve this by combining the following services:
+Certified services enable users to execute [Binding actions](/docs/certified/binding-actions): legally-binding automations and records with on-chain evidence. They achieve this by combining the following services:
 - [ID certificates](/docs/certified/id-certificates): keep a verified identity linked to the wallet used for governance decisions.
 - [Advanced signatures](/docs/certified/advanced-signatures): add stronger signature evidence to sensitive approvals and records.
 - [Sponsored transactions](/docs/certified/sponsored-transactions): let users participate without managing cryptocurrency for network fees.
 - [Certified storage](/docs/certified/storage): preserve governance metadata and certified proofs on decentralized, encrypted storage infrastructure.
 
-See the [Pricing](/pricing) page for more details on these services.
+## Start with a pilot
 
-## Start with a first decision
-
-The fastest way to evaluate Organigram Certified is to run one real decision end to end:
-
-1. choose a decision that already matters
-2. configure the workspace and participants
-3. collect the vote or approval
-4. sign with the required level of assurance
-5. keep the certified proof
-
-Start a Certified Governance Pilot for help choosing and setting up your first certified decision:
+For a first decision, a group of companies, an integration inside your own software or specific signature requirements, our team sets up a pilot with you, technical and legal, on quote.
 
 <Grid container my={3} justifyContent='center'>
   <Grid item>
     <Link href={'/certified-governance-pilot'}>
-      <Button variant='contained'>{t('Start a pilot')}</Button>
+      <Button variant='contained'>{t('Talk to an expert')}</Button>
     </Link>
   </Grid>
 </Grid>
-
-## Activating an organization
-
-Organization preparation is free. Certified Entity is required to launch governance operations in the hosted application. An administrator subscribes on behalf of the organization and confirms a payment method, including when nothing is due immediately. The organization receives its invoices, including zero-value invoices, in its billing history. Participants do not need Certified Solo.
-
-After cancellation takes effect at the end of the subscribed period, existing archives remain accessible and decisions already launched can be completed without new Certified services or sponsored network fees. New launches require reactivation.

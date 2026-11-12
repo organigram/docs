@@ -1,5 +1,6 @@
 export interface DocsMetadata {
   title: string
+  description?: string
   order: number
   folderName?: string
 }

@@ -1,1230 +1,392 @@
 export const metadata = { title: "Passkey Wallet", order: 5.4 }
 
-# Passkey Wallet reference
+# Organigram Passkey Wallet
 
-The official TypeScript documentation for the Organigram Passkey Wallet primitives.
+**The ultimate web3 experience: unlock wallets and sign transactions with recoverable 
+passkeys in a breeze.**
 
+Organigram Passkey Wallet is a lightweight Ethereum wallet powered by
+WebAuthn passkeys. It gives users the day-to-day experience they expect from
+modern passwordless apps while preserving the core property that matters in
+web3: fully and safely owning a standard Ethereum address.
 
-## @organigram/passkey-wallet
+No cumbersome smart account deployment. No per-network account ceremony. No
+custodial key service. No protocol lock-in. Just a standard EOA, encrypted
+client-side, unlocked with rotative passkeys, and exposed via Wagmi and Rainbowkit.
 
-### Install
-
-```bash
+```sh
 pnpm add @organigram/passkey-wallet
 ```
 
-### Quick start
+## Web3 identity, solved
+
+Most web3 onboarding still asks users to understand browser extensions, seed
+phrases, hardware devices, account abstraction, gas sponsorship, recovery
+contracts, network-specific deployments, signer permissions... before they have
+even used the product. Organigram Passkey Wallet takes a simpler path.
+
+The user creates a wallet in the browser. The wallet is a normal Ethereum EOA
+derived from a recovery phrase. That recovery phrase is encrypted locally with a
+key derived from a WebAuthn passkey PRF output, then stored only as an encrypted
+vault envelope. When the user returns, their passkey unlocks the vault and the
+EOA signs messages or transactions like any other wallet.
+
+The result is a wallet experience that feels native to the web:
+- users unlock and sign with passkeys;
+- multiple backup passkeys can be added to the same address;
+- compromised or obsolete passkeys can be rotated;
+- seed phrases can be exported for disaster prevention;
+- encrypted backup vaults can be saved remotely or locally
+- one address across every EVM network;
+- standard EIP-1193 semantics for dapps;
+- no onchain deployment required;
+- no offchain signing relay or hosted signer to trust.
+
+## Highlights
+
+### Unlock and sign with passkeys
+
+Users unlock the wallet with a WebAuthn passkey. Once unlocked, the wallet signs
+messages, typed data, and transactions with the underlying EOA.
+
+### A fully-fledged Ethereum wallet
+
+The wallet exposes the same interface dapps already expect from injected wallets,
+WalletConnect wallets, and RainbowKit connectors. It supports account
+requests, chain switching, message signing, typed data signing, and transaction
+submission like any other standard wallet.
+
+### Multiple backup keys, one address
+
+Users can add additional passkeys for the same address. A backup phone, laptop,
+password manager, or security key can unlock the same encrypted wallet vault.
+
+### No smart-account deployment burden
+
+The address is a standard EOA, so it exists everywhere EVM accounts exist. There
+is no need to deploy account contracts across networks before the user can start.
+
+### Seed phrase export
+
+Passkeys optimize daily use, while the capacity to export seed phrases preserves portability and gives users a disaster prevention path for the case where every passkey is lost.
+
+### Recoverable vaults
+
+The app exports an encrypted vault that can be saved to and restored from anywhere.
+Use remote servers, save locally or in a password manager without fear to leak
+sensitive information. 
+
+## Wallet UI
+
+This package builds a production-ready app used to serve the wallet locally or on custom domains. 
+
+```sh
+pnpm dev
+pnpm build:artifact
+```
+
+`build:artifact` builds the TypeScript library to `app-dist`, and packages a deterministic
+`artifacts/passkey-wallet-app-v<version>.tar.gz` with a `.sha256` checksum and
+manifest.
+
+### Local development
+
+`pnpm dev` serves the wallet at `https://localhost:3002`, behind an HTTPS proxy
+in front of Vite (port 3003). The first run creates a local certificate with
+[mkcert](https://github.com/FiloSottile/mkcert).
+
+Any other hostname can be passed as an argument (`pnpm dev my.host.test`): the
+certificate is regenerated to include it.
+
+### Run your own wallet
+
+You do not have to trust the servers of wallet.organigram.ai, nor the code they
+serve, to use your Organigram accounts. The `local-organigram` profile serves
+your own copy of the wallet, built from this source code, on your machine:
+
+```sh
+pnpm dev local-organigram
+```
+
+(or `pnpm passkey-wallet dev local-organigram` from the repository root), then
+open `https://local.wallet.organigram.ai:3002`.
+
+`local.wallet.organigram.ai` is a subdomain of `wallet.organigram.ai`, so this
+copy unlocks the same passkeys, hence the same accounts: the profile sets the
+passkey RP ID to `wallet.organigram.ai`. Its browser storage is separate, so
+restore your encrypted vault there once (see [Recoverable vaults](#recoverable-vaults)):
+your passkey then unlocks it as usual. Your keys never leave your browser, and
+signing in no longer depends on wallet.organigram.ai being online or unaltered.
+
+The name already resolves to `127.0.0.1` through public DNS, so no setup is
+needed. For a stronger guarantee, also resolve it in your hosts file: a tampered
+DNS record could otherwise send it to a server able to request the PRF output of
+your passkeys (macOS and Linux):
+
+```sh
+grep -q 'local.wallet.organigram.ai' /etc/hosts || echo '127.0.0.1 local.wallet.organigram.ai' | sudo tee -a /etc/hosts
+```
+
+To use it from any app, turn on **Settings → Your own wallet** on
+wallet.organigram.ai. Requests then go to your copy, and once it has answered,
+apps open it directly: wallet.organigram.ai is no longer loaded at all. If your
+copy stops answering, for instance because it is not running, the request goes
+back to wallet.organigram.ai after a few seconds.
+
+Apps that use this package accept the local copy of the official wallet without
+any setting, on their pages and on their wallet endpoints (sign-in challenge,
+vault backups, RPC).
+
+A wallet deployed elsewhere can offer the same to its users with its own local
+copy, served under a subdomain of its host so that it unlocks the same passkeys:
+
+- the deployment declares it with `localWalletOrigin` in
+  `passkey-wallet.config.json` (or `PASSKEY_WALLET_LOCAL_WALLET_ORIGIN` at build
+  time), for example `https://local.wallet.example.com:3002`;
+- users run it with
+  `PASSKEY_WALLET_PASSKEY_RP_ID=wallet.example.com pnpm dev local.wallet.example.com`;
+- apps accept it with `NEXT_PUBLIC_ORGANIGRAM_PASSKEY_WALLET_LOCAL_URL`, next to
+  `NEXT_PUBLIC_ORGANIGRAM_PASSKEY_WALLET_URL`. The value is ignored unless it is
+  an HTTPS subdomain of the wallet host.
+
+Each production build of https://wallet.organigram.ai is published as a
+release of this repository, with the SHA-256 of every served file. To check
+that the live wallet serves one of these releases unchanged, run from a clone
+of this repository:
+
+```sh
+node scripts/verify-runtime-dist.mjs --url https://wallet.organigram.ai
+```
+
+With Node.js 24 and pnpm 10.28, rebuilding a release commit reproduces its files:
+
+```sh
+pnpm install --frozen-lockfile
+pnpm run build
+node scripts/verify-runtime-dist.mjs --dist app-dist --manifest <release manifest>
+```
+
+
+## Architecture
+
+```txt
+Browser
+  WebAuthn passkey with PRF
+        |
+        v
+  HKDF-derived vault key
+        |
+        v
+  AES-GCM encrypted wallet vault envelope
+        |
+        v
+  Recovery phrase -> EOA -> EIP-1193 provider
+
+Server
+  WebAuthn challenges
+  Credential public keys
+  Credential counters
+  Encrypted vault envelopes
+```
+
+In practice, the flow is:
+
+1. Generate a recovery phrase in the browser.
+2. Derive a standard Ethereum EOA from that phrase.
+3. Create a WebAuthn passkey with `residentKey: "required"`,
+   `userVerification: "required"`, and the `prf` extension.
+4. Derive a vault encryption key from the PRF output and a random salt.
+5. Encrypt the wallet vault with AES-GCM.
+6. Store only the credential metadata and encrypted vault envelope server-side.
+7. On unlock, verify WebAuthn, recover the PRF output, decrypt the envelope, and
+   expose the EOA through EIP-1193.
+
+The private wallet material is generated and decrypted in the browser. The server
+stores only WebAuthn verification material and encrypted vault envelopes. The
+server never needs the seed phrase, the private key, or the decrypted user vault.
+
+## Quick Start
+
+Create and unlock vaults in the UI with wallet
+helpers:
 
 ```ts
-import { registerBrowserPasskeyVault } from '@organigram/passkey-wallet/browser-wallet'
+import {
+  createGeneratedRecoveryPhrase,
+  registerBrowserPasskeyVault,
+  unlockBrowserPasskeyVault
+} from '@organigram/passkey-wallet/browser-wallet'
+
+const registration = await registerBrowserPasskeyVault({
+  recoveryPhrase: createGeneratedRecoveryPhrase(),
+  name: 'Account 1'
+})
+
+const unlocked = await unlockBrowserPasskeyVault({
+  records: [registration.record]
+})
+
+const signature = await unlocked.wallet.account.signMessage({
+  message: 'gm'
+})
+```
+
+The passkey ceremony and vault decryption happen in the wallet origin. Dapps
+should integrate through the remote connector.
+
+## RainbowKit Integration
+
+```ts
+import { connectorsForWallets } from '@rainbow-me/rainbowkit'
+import { createConfig, http } from 'wagmi'
+import { mainnet, sepolia } from 'wagmi/chains'
+import {
+  createOrganigramRemotePasskeyWallet
+} from '@organigram/passkey-wallet/remote-rainbowkit'
+
+const passkeyWallet = createOrganigramRemotePasskeyWallet({
+  walletOrigin: 'https://wallet.organigram.ai'
+})
+
+export const wagmiConfig = createConfig({
+  chains: [mainnet, sepolia],
+  connectors: connectorsForWallets(
+    [
+      {
+        groupName: 'Recommended',
+        wallets: [() => passkeyWallet]
+      }
+    ],
+    {
+      appName: 'Your App',
+      projectId: 'walletconnect-project-id'
+    }
+  ),
+  transports: {
+    [mainnet.id]: http(),
+    [sepolia.id]: http()
+  }
+})
 ```
+
+From the dapp's perspective, this behaves like a wallet. Calling
+`personal_sign`, `eth_signTypedData_v4`, or `eth_sendTransaction` goes through
+the wallet origin, where the user approves the request.
 
-### Classes
-
-- [PasskeyPrfUnavailableError](/docs/reference/passkey-wallet#class_PasskeyPrfUnavailableError)
-- [PasskeyVaultDecryptError](/docs/reference/passkey-wallet#class_PasskeyVaultDecryptError)
-
-### Interfaces
-
-
-
-### Types
-
-- [AuthorizePasskeyWalletCredentialsInput](/docs/reference/passkey-wallet#type_AuthorizePasskeyWalletCredentialsInput)
-- [BrowserPasskeyWalletVaultPayload](/docs/reference/passkey-wallet#type_BrowserPasskeyWalletVaultPayload)
-- [CreateOrganigramRemotePasskeyWalletInput](/docs/reference/passkey-wallet#type_CreateOrganigramRemotePasskeyWalletInput)
-- [HydrateOrganigramRemoteWalletConnectionConnector](/docs/reference/passkey-wallet#type_HydrateOrganigramRemoteWalletConnectionConnector)
-- [HydrateOrganigramRemoteWalletConnectionInput](/docs/reference/passkey-wallet#type_HydrateOrganigramRemoteWalletConnectionInput)
-- [HydrateOrganigramRemoteWalletConnectionOptions](/docs/reference/passkey-wallet#type_HydrateOrganigramRemoteWalletConnectionOptions)
-- [OrganigramRemotePasskeyWalletConnection](/docs/reference/passkey-wallet#type_OrganigramRemotePasskeyWalletConnection)
-- [PasskeyPrfCredential](/docs/reference/passkey-wallet#type_PasskeyPrfCredential)
-- [PasskeyProviderEvent](/docs/reference/passkey-wallet#type_PasskeyProviderEvent)
-- [PasskeyProviderListener](/docs/reference/passkey-wallet#type_PasskeyProviderListener)
-- [PasskeyRegistrationResult](/docs/reference/passkey-wallet#type_PasskeyRegistrationResult)
-- [PasskeyVaultEnvelopeData](/docs/reference/passkey-wallet#type_PasskeyVaultEnvelopeData)
-- [PasskeyWalletChallenge](/docs/reference/passkey-wallet#type_PasskeyWalletChallenge)
-- [PasskeyWalletConnectPopupInput](/docs/reference/passkey-wallet#type_PasskeyWalletConnectPopupInput)
-- [PasskeyWalletConnectRequest](/docs/reference/passkey-wallet#type_PasskeyWalletConnectRequest)
-- [PasskeyWalletConnectResult](/docs/reference/passkey-wallet#type_PasskeyWalletConnectResult)
-- [PasskeyWalletDecryptPayloadRequest](/docs/reference/passkey-wallet#type_PasskeyWalletDecryptPayloadRequest)
-- [PasskeyWalletDecryptPayloadResult](/docs/reference/passkey-wallet#type_PasskeyWalletDecryptPayloadResult)
-- [PasskeyWalletEncryptPayloadRequest](/docs/reference/passkey-wallet#type_PasskeyWalletEncryptPayloadRequest)
-- [PasskeyWalletEncryptPayloadResult](/docs/reference/passkey-wallet#type_PasskeyWalletEncryptPayloadResult)
-- [PasskeyWalletErrorResult](/docs/reference/passkey-wallet#type_PasskeyWalletErrorResult)
-- [PasskeyWalletManifest](/docs/reference/passkey-wallet#type_PasskeyWalletManifest)
-- [PasskeyWalletNextAuthCredentials](/docs/reference/passkey-wallet#type_PasskeyWalletNextAuthCredentials)
-- [PasskeyWalletPopupInput](/docs/reference/passkey-wallet#type_PasskeyWalletPopupInput)
-- [PasskeyWalletRemoteErrorResult](/docs/reference/passkey-wallet#type_PasskeyWalletRemoteErrorResult)
-- [PasskeyWalletRemotePopupInput](/docs/reference/passkey-wallet#type_PasskeyWalletRemotePopupInput)
-- [PasskeyWalletRemoteRequest](/docs/reference/passkey-wallet#type_PasskeyWalletRemoteRequest)
-- [PasskeyWalletRemoteRequestPayloadMessage](/docs/reference/passkey-wallet#type_PasskeyWalletRemoteRequestPayloadMessage)
-- [PasskeyWalletRemoteRequestType](/docs/reference/passkey-wallet#type_PasskeyWalletRemoteRequestType)
-- [PasskeyWalletRemoteResult](/docs/reference/passkey-wallet#type_PasskeyWalletRemoteResult)
-- [PasskeyWalletSendTransactionRequest](/docs/reference/passkey-wallet#type_PasskeyWalletSendTransactionRequest)
-- [PasskeyWalletSendTransactionResult](/docs/reference/passkey-wallet#type_PasskeyWalletSendTransactionResult)
-- [PasskeyWalletSignInRequest](/docs/reference/passkey-wallet#type_PasskeyWalletSignInRequest)
-- [PasskeyWalletSignInResult](/docs/reference/passkey-wallet#type_PasskeyWalletSignInResult)
-- [PasskeyWalletSignMessagePopupInput](/docs/reference/passkey-wallet#type_PasskeyWalletSignMessagePopupInput)
-- [PasskeyWalletSignMessageRequest](/docs/reference/passkey-wallet#type_PasskeyWalletSignMessageRequest)
-- [PasskeyWalletSignMessageResult](/docs/reference/passkey-wallet#type_PasskeyWalletSignMessageResult)
-- [PasskeyWalletSignTypedDataPopupInput](/docs/reference/passkey-wallet#type_PasskeyWalletSignTypedDataPopupInput)
-- [PasskeyWalletSignTypedDataRequest](/docs/reference/passkey-wallet#type_PasskeyWalletSignTypedDataRequest)
-- [PasskeyWalletSignTypedDataResult](/docs/reference/passkey-wallet#type_PasskeyWalletSignTypedDataResult)
-- [PasskeyWalletStackSessionChangedMessage](/docs/reference/passkey-wallet#type_PasskeyWalletStackSessionChangedMessage)
-- [PasskeyWalletTransaction](/docs/reference/passkey-wallet#type_PasskeyWalletTransaction)
-- [PasskeyWalletTypedData](/docs/reference/passkey-wallet#type_PasskeyWalletTypedData)
-- [PasskeyWalletVerifiedSiwe](/docs/reference/passkey-wallet#type_PasskeyWalletVerifiedSiwe)
-- [PasskeyWalletVerifySiweInput](/docs/reference/passkey-wallet#type_PasskeyWalletVerifySiweInput)
-- [RemoteVaultBackupPackage](/docs/reference/passkey-wallet#type_RemoteVaultBackupPackage)
-- [RemoteVaultBackupRecord](/docs/reference/passkey-wallet#type_RemoteVaultBackupRecord)
-- [SignInWithPasskeyWalletInput](/docs/reference/passkey-wallet#type_SignInWithPasskeyWalletInput)
-- [StoredVaultAccount](/docs/reference/passkey-wallet#type_StoredVaultAccount)
-- [StoredVaultRecord](/docs/reference/passkey-wallet#type_StoredVaultRecord)
-- [UnlockedPasskeyWallet](/docs/reference/passkey-wallet#type_UnlockedPasskeyWallet)
-- [VaultRegistry](/docs/reference/passkey-wallet#type_VaultRegistry)
-- [VaultRegistryGroup](/docs/reference/passkey-wallet#type_VaultRegistryGroup)
-- [WalletDecryptedFile](/docs/reference/passkey-wallet#type_WalletDecryptedFile)
-- [WalletEncryptedFilePackage](/docs/reference/passkey-wallet#type_WalletEncryptedFilePackage)
-- [WalletEncryptedPayload](/docs/reference/passkey-wallet#type_WalletEncryptedPayload)
-- [WalletEncryptionKeyPairPayload](/docs/reference/passkey-wallet#type_WalletEncryptionKeyPairPayload)
-- [WalletEncryptionPublicKeySiweResource](/docs/reference/passkey-wallet#type_WalletEncryptionPublicKeySiweResource)
-- [WalletGroup](/docs/reference/passkey-wallet#type_WalletGroup)
-
-### Enums
-
-
-
-### Functions
-
-- [addAccountToVaultRecords](/docs/reference/passkey-wallet#function_addAccountToVaultRecords)
-- [assertPasskeyWalletSignMessageResult](/docs/reference/passkey-wallet#function_assertPasskeyWalletSignMessageResult)
-- [assertPasskeyWalletSignTypedDataResult](/docs/reference/passkey-wallet#function_assertPasskeyWalletSignTypedDataResult)
-- [assertSignInDomainMatches](/docs/reference/passkey-wallet#function_assertSignInDomainMatches)
-- [authorizePasskeyWalletCredentials](/docs/reference/passkey-wallet#function_authorizePasskeyWalletCredentials)
-- [base64UrlToBytes](/docs/reference/passkey-wallet#function_base64UrlToBytes)
-- [beginOrganigramWalletApprovalSequence](/docs/reference/passkey-wallet#function_beginOrganigramWalletApprovalSequence)
-- [buildPasskeyWalletPopupUrl](/docs/reference/passkey-wallet#function_buildPasskeyWalletPopupUrl)
-- [buildPasskeyWalletRemotePopupUrl](/docs/reference/passkey-wallet#function_buildPasskeyWalletRemotePopupUrl)
-- [buildPasskeyWalletSignInPopupUrl](/docs/reference/passkey-wallet#function_buildPasskeyWalletSignInPopupUrl)
-- [bytesToBase64Url](/docs/reference/passkey-wallet#function_bytesToBase64Url)
-- [clearOrganigramRemotePasskeyWalletConnection](/docs/reference/passkey-wallet#function_clearOrganigramRemotePasskeyWalletConnection)
-- [createBrowserPasskeyWalletVaultPayload](/docs/reference/passkey-wallet#function_createBrowserPasskeyWalletVaultPayload)
-- [createGeneratedRecoveryPhrase](/docs/reference/passkey-wallet#function_createGeneratedRecoveryPhrase)
-- [createOrganigramRemotePasskeyWallet](/docs/reference/passkey-wallet#function_createOrganigramRemotePasskeyWallet)
-- [createPasskeyWalletChallenge](/docs/reference/passkey-wallet#function_createPasskeyWalletChallenge)
-- [createPasskeyWalletManifest](/docs/reference/passkey-wallet#function_createPasskeyWalletManifest)
-- [createPasskeyWalletStackSessionChangedMessage](/docs/reference/passkey-wallet#function_createPasskeyWalletStackSessionChangedMessage)
-- [createRemoteVaultBackupPackage](/docs/reference/passkey-wallet#function_createRemoteVaultBackupPackage)
-- [createRemoteVaultBackupRecord](/docs/reference/passkey-wallet#function_createRemoteVaultBackupRecord)
-- [createVaultBackupDigest](/docs/reference/passkey-wallet#function_createVaultBackupDigest)
-- [createVaultBackupSignatureMessage](/docs/reference/passkey-wallet#function_createVaultBackupSignatureMessage)
-- [createVaultRegistry](/docs/reference/passkey-wallet#function_createVaultRegistry)
-- [createWalletEncryptionKeyPair](/docs/reference/passkey-wallet#function_createWalletEncryptionKeyPair)
-- [createWalletEncryptionPublicKeySiweResource](/docs/reference/passkey-wallet#function_createWalletEncryptionPublicKeySiweResource)
-- [decryptFileWithWalletEncryptionKey](/docs/reference/passkey-wallet#function_decryptFileWithWalletEncryptionKey)
-- [decryptPasskeyVaultSecret](/docs/reference/passkey-wallet#function_decryptPasskeyVaultSecret)
-- [decryptPayloadWithWalletEncryptionKey](/docs/reference/passkey-wallet#function_decryptPayloadWithWalletEncryptionKey)
-- [decryptRemoteVaultBackupRecord](/docs/reference/passkey-wallet#function_decryptRemoteVaultBackupRecord)
-- [decryptVaultPayloadWithPrfOutput](/docs/reference/passkey-wallet#function_decryptVaultPayloadWithPrfOutput)
-- [derivePasskeyVaultKey](/docs/reference/passkey-wallet#function_derivePasskeyVaultKey)
-- [derivePasskeyWalletAccount](/docs/reference/passkey-wallet#function_derivePasskeyWalletAccount)
-- [deriveStoredVaultAccount](/docs/reference/passkey-wallet#function_deriveStoredVaultAccount)
-- [encryptFileWithWalletEncryptionKey](/docs/reference/passkey-wallet#function_encryptFileWithWalletEncryptionKey)
-- [encryptPasskeyVaultSecret](/docs/reference/passkey-wallet#function_encryptPasskeyVaultSecret)
-- [encryptPayloadWithWalletEncryptionKey](/docs/reference/passkey-wallet#function_encryptPayloadWithWalletEncryptionKey)
-- [formatAddress](/docs/reference/passkey-wallet#function_formatAddress)
-- [formatCredentialId](/docs/reference/passkey-wallet#function_formatCredentialId)
-- [getAcceptedWalletOrigins](/docs/reference/passkey-wallet#function_getAcceptedWalletOrigins)
-- [getCrypto](/docs/reference/passkey-wallet#function_getCrypto)
-- [getDerivationPath](/docs/reference/passkey-wallet#function_getDerivationPath)
-- [getLocalWalletOrigin](/docs/reference/passkey-wallet#function_getLocalWalletOrigin)
-- [getNextAddressIndex](/docs/reference/passkey-wallet#function_getNextAddressIndex)
-- [getOrganigramRemotePasskeyWalletConnection](/docs/reference/passkey-wallet#function_getOrganigramRemotePasskeyWalletConnection)
-- [getPasskeyWalletCorsAllowedOrigins](/docs/reference/passkey-wallet#function_getPasskeyWalletCorsAllowedOrigins)
-- [getPasskeyWalletCorsOrigin](/docs/reference/passkey-wallet#function_getPasskeyWalletCorsOrigin)
-- [getPasskeyWalletRequestOrigin](/docs/reference/passkey-wallet#function_getPasskeyWalletRequestOrigin)
-- [getVaultAccount](/docs/reference/passkey-wallet#function_getVaultAccount)
-- [getVaultRegistryGroupId](/docs/reference/passkey-wallet#function_getVaultRegistryGroupId)
-- [groupVaultRecordsBySeed](/docs/reference/passkey-wallet#function_groupVaultRecordsBySeed)
-- [groupVaultsByWallet](/docs/reference/passkey-wallet#function_groupVaultsByWallet)
-- [hasBase64UrlByteLength](/docs/reference/passkey-wallet#function_hasBase64UrlByteLength)
-- [hexEncodeMessage](/docs/reference/passkey-wallet#function_hexEncodeMessage)
-- [hydrateOrganigramRemoteWalletConnection](/docs/reference/passkey-wallet#function_hydrateOrganigramRemoteWalletConnection)
-- [isLocalWalletOriginOf](/docs/reference/passkey-wallet#function_isLocalWalletOriginOf)
-- [isPasskeyPrfSupported](/docs/reference/passkey-wallet#function_isPasskeyPrfSupported)
-- [isPasskeyVaultEnvelope](/docs/reference/passkey-wallet#function_isPasskeyVaultEnvelope)
-- [isPasskeyWalletRemoteRequestPayloadMessage](/docs/reference/passkey-wallet#function_isPasskeyWalletRemoteRequestPayloadMessage)
-- [isPasskeyWalletTransaction](/docs/reference/passkey-wallet#function_isPasskeyWalletTransaction)
-- [isStoredVaultRecord](/docs/reference/passkey-wallet#function_isStoredVaultRecord)
-- [isWalletSignInOriginAllowed](/docs/reference/passkey-wallet#function_isWalletSignInOriginAllowed)
-- [markVaultRecordUsed](/docs/reference/passkey-wallet#function_markVaultRecordUsed)
-- [mergeVaults](/docs/reference/passkey-wallet#function_mergeVaults)
-- [normalizeBackupAddress](/docs/reference/passkey-wallet#function_normalizeBackupAddress)
-- [notifyCurrentTabNextAuthSessionChanged](/docs/reference/passkey-wallet#function_notifyCurrentTabNextAuthSessionChanged)
-- [notifyPasskeyWalletStackSessionChanged](/docs/reference/passkey-wallet#function_notifyPasskeyWalletStackSessionChanged)
-- [parseBrowserPasskeyWalletVaultPayload](/docs/reference/passkey-wallet#function_parseBrowserPasskeyWalletVaultPayload)
-- [parsePasskeyWalletRemoteRequest](/docs/reference/passkey-wallet#function_parsePasskeyWalletRemoteRequest)
-- [parsePasskeyWalletSignInRequest](/docs/reference/passkey-wallet#function_parsePasskeyWalletSignInRequest)
-- [parsePasskeyWalletStackSessionChangedMessage](/docs/reference/passkey-wallet#function_parsePasskeyWalletStackSessionChangedMessage)
-- [parsePasskeyWalletTypedData](/docs/reference/passkey-wallet#function_parsePasskeyWalletTypedData)
-- [parseRemoteVaultBackupPackage](/docs/reference/passkey-wallet#function_parseRemoteVaultBackupPackage)
-- [parseVaultRegistry](/docs/reference/passkey-wallet#function_parseVaultRegistry)
-- [parseWalletEncryptedFilePackage](/docs/reference/passkey-wallet#function_parseWalletEncryptedFilePackage)
-- [parseWalletEncryptedPayload](/docs/reference/passkey-wallet#function_parseWalletEncryptedPayload)
-- [parseWalletEncryptionKeyPair](/docs/reference/passkey-wallet#function_parseWalletEncryptionKeyPair)
-- [parseWalletEncryptionPublicKeySiweResource](/docs/reference/passkey-wallet#function_parseWalletEncryptionPublicKeySiweResource)
-- [postToWalletPopup](/docs/reference/passkey-wallet#function_postToWalletPopup)
-- [randomBytes](/docs/reference/passkey-wallet#function_randomBytes)
-- [registerAdditionalBrowserPasskeyVault](/docs/reference/passkey-wallet#function_registerAdditionalBrowserPasskeyVault)
-- [registerBrowserPasskeyVault](/docs/reference/passkey-wallet#function_registerBrowserPasskeyVault)
-- [rememberOrganigramRemotePasskeyWalletConnection](/docs/reference/passkey-wallet#function_rememberOrganigramRemotePasskeyWalletConnection)
-- [rememberWalletOrigin](/docs/reference/passkey-wallet#function_rememberWalletOrigin)
-- [removeAccountFromVaultRecords](/docs/reference/passkey-wallet#function_removeAccountFromVaultRecords)
-- [removeVaultRecord](/docs/reference/passkey-wallet#function_removeVaultRecord)
-- [removeVaultRecords](/docs/reference/passkey-wallet#function_removeVaultRecords)
-- [requestPasskeyPrfOutput](/docs/reference/passkey-wallet#function_requestPasskeyPrfOutput)
-- [requestPasskeyWalletConnect](/docs/reference/passkey-wallet#function_requestPasskeyWalletConnect)
-- [requestPasskeyWalletDecryptPayload](/docs/reference/passkey-wallet#function_requestPasskeyWalletDecryptPayload)
-- [requestPasskeyWalletEncryptPayload](/docs/reference/passkey-wallet#function_requestPasskeyWalletEncryptPayload)
-- [requestPasskeyWalletSignIn](/docs/reference/passkey-wallet#function_requestPasskeyWalletSignIn)
-- [requestPasskeyWalletSignMessage](/docs/reference/passkey-wallet#function_requestPasskeyWalletSignMessage)
-- [resolveSiweDomain](/docs/reference/passkey-wallet#function_resolveSiweDomain)
-- [serializeVaultRegistry](/docs/reference/passkey-wallet#function_serializeVaultRegistry)
-- [signInWithPasskeyWallet](/docs/reference/passkey-wallet#function_signInWithPasskeyWallet)
-- [signPersonalMessage](/docs/reference/passkey-wallet#function_signPersonalMessage)
-- [signTypedDataMessage](/docs/reference/passkey-wallet#function_signTypedDataMessage)
-- [stringifyPasskeyWalletTypedData](/docs/reference/passkey-wallet#function_stringifyPasskeyWalletTypedData)
-- [toArrayBuffer](/docs/reference/passkey-wallet#function_toArrayBuffer)
-- [toPreferredWalletUrl](/docs/reference/passkey-wallet#function_toPreferredWalletUrl)
-- [unlockBrowserPasskeyVault](/docs/reference/passkey-wallet#function_unlockBrowserPasskeyVault)
-- [updateStaticPasskeyVaultEncryptionKey](/docs/reference/passkey-wallet#function_updateStaticPasskeyVaultEncryptionKey)
-- [upsertVaultRecord](/docs/reference/passkey-wallet#function_upsertVaultRecord)
-- [validatePasskeyWalletManifest](/docs/reference/passkey-wallet#function_validatePasskeyWalletManifest)
-- [vaultHasAccount](/docs/reference/passkey-wallet#function_vaultHasAccount)
-- [verifyPasskeyWalletSiwe](/docs/reference/passkey-wallet#function_verifyPasskeyWalletSiwe)
-- [watchLocalWalletPopup](/docs/reference/passkey-wallet#function_watchLocalWalletPopup)
-- [withPasskeyWalletCorsHeaders](/docs/reference/passkey-wallet#function_withPasskeyWalletCorsHeaders)
-
-
-## Utility functions
-
-## function ++dnt++addAccountToVaultRecords
-
-```typescript
-addAccountToVaultRecords: (input: {
-    vaults: StoredVaultRecord[];
-    sourceAddress: `0x${string}`;
-    account: StoredVaultAccount;
-}) => StoredVaultRecord[]
-```
-
-
-## function ++dnt++assertPasskeyWalletSignMessageResult
-
-```typescript
-assertPasskeyWalletSignMessageResult: (input: {
-    result: PasskeyWalletSignMessageResult;
-    address: `0x${string}`;
-    chainId: number;
-    message: string;
-}) => Promise<void>
-```
-
-
-## function ++dnt++assertPasskeyWalletSignTypedDataResult
-
-```typescript
-assertPasskeyWalletSignTypedDataResult: (input: {
-    result: PasskeyWalletSignTypedDataResult;
-    address: `0x${string}`;
-    chainId: number;
-    typedData: PasskeyWalletTypedData;
-}) => Promise<void>
-```
-
-
-## function ++dnt++assertSignInDomainMatches
-
-```typescript
-assertSignInDomainMatches: (message: string, expectedDomain: string) => void
-```
-
-
-## function ++dnt++authorizePasskeyWalletCredentials
-
-```typescript
-authorizePasskeyWalletCredentials: (input: AuthorizePasskeyWalletCredentialsInput) => Promise<PasskeyWalletVerifiedSiwe | null>
-```
-
-
-## function ++dnt++base64UrlToBytes
-
-```typescript
-base64UrlToBytes: (value: string) => Uint8Array
-```
-
-
-## function ++dnt++beginOrganigramWalletApprovalSequence
-
-Adds presentation-only context to the next wallet approvals. This lets an app tell the wallet that one user action requires several signatures, without broadening any approval or altering its signed payload.
-
-```typescript
-beginOrganigramWalletApprovalSequence: (input: {
-    count: number;
-    label?: string;
-}) => (() => void)
-```
-
-
-## function ++dnt++buildPasskeyWalletPopupUrl
-
-```typescript
-buildPasskeyWalletPopupUrl: (input: {
-    walletOrigin: string;
-    domain: string;
-    challengeUrl: string;
-    requestId?: string;
-    requestedAt?: string;
-    returnUrl?: string;
-}) => URL
-```
-
-
-## function ++dnt++buildPasskeyWalletRemotePopupUrl
-
-```typescript
-buildPasskeyWalletRemotePopupUrl: (input: PasskeyWalletRemotePopupInput & {
-    type: PasskeyWalletRemoteRequestType;
-    address?: `0x${string}`;
-}) => URL
-```
-
-
-## function ++dnt++buildPasskeyWalletSignInPopupUrl
-
-```typescript
-buildPasskeyWalletSignInPopupUrl: (input: PasskeyWalletPopupInput) => URL
-```
-
-
-## function ++dnt++bytesToBase64Url
-
-```typescript
-bytesToBase64Url: (bytes: Uint8Array) => string
-```
-
-
-## function ++dnt++clearOrganigramRemotePasskeyWalletConnection
-
-```typescript
-clearOrganigramRemotePasskeyWalletConnection: () => void
-```
-
-
-## function ++dnt++createBrowserPasskeyWalletVaultPayload
-
-```typescript
-createBrowserPasskeyWalletVaultPayload: (recoveryPhrase: string) => Promise<BrowserPasskeyWalletVaultPayload>
-```
-
-
-## function ++dnt++createGeneratedRecoveryPhrase
-
-```typescript
-createGeneratedRecoveryPhrase: () => string
-```
-
-
-## function ++dnt++createOrganigramRemotePasskeyWallet
-
-```typescript
-createOrganigramRemotePasskeyWallet: (input?: CreateOrganigramRemotePasskeyWalletInput) => Wallet
-```
-
-
-## function ++dnt++createPasskeyWalletChallenge
-
-```typescript
-createPasskeyWalletChallenge: (input: {
-    request: Request;
-    address: `0x${string}`;
-    chainId: number;
-    encryptionPublicKeyResource?: string;
-    nonce?: string;
-    now?: Date;
-    statement?: string;
-    uri?: string;
-}) => PasskeyWalletChallenge
-```
-
-
-## function ++dnt++createPasskeyWalletManifest
-
-```typescript
-createPasskeyWalletManifest: (request: Request) => PasskeyWalletManifest
-```
-
-
-## function ++dnt++createPasskeyWalletStackSessionChangedMessage
-
-```typescript
-createPasskeyWalletStackSessionChangedMessage: (input: {
-    event: "revoked";
-    appOrigin: string;
-    address?: `0x${string}` | null;
-}) => PasskeyWalletStackSessionChangedMessage
-```
-
-
-## function ++dnt++createRemoteVaultBackupPackage
-
-```typescript
-createRemoteVaultBackupPackage: (input: {
-    address: `0x${string}`;
-    backups: RemoteVaultBackupRecord[];
-}) => RemoteVaultBackupPackage
-```
-
-
-## function ++dnt++createRemoteVaultBackupRecord
-
-```typescript
-createRemoteVaultBackupRecord: (input: {
-    address: `0x${string}`;
-    record: StoredVaultRecord;
-    recoveryPhrase: string;
-}) => Promise<RemoteVaultBackupRecord>
-```
-
-
-## function ++dnt++createVaultBackupDigest
-
-```typescript
-createVaultBackupDigest: (backups: RemoteVaultBackupRecord[]) => Promise<string>
-```
-
-
-## function ++dnt++createVaultBackupSignatureMessage
-
-```typescript
-createVaultBackupSignatureMessage: (input: {
-    address: `0x${string}`;
-    vaultCount: number;
-    digest: string;
-}) => string
-```
-
-
-## function ++dnt++createVaultRegistry
-
-```typescript
-createVaultRegistry: (vaults: StoredVaultRecord[]) => VaultRegistry
-```
-
-
-## function ++dnt++createWalletEncryptionKeyPair
-
-```typescript
-createWalletEncryptionKeyPair: () => Promise<WalletEncryptionKeyPairPayload>
-```
-
-
-## function ++dnt++createWalletEncryptionPublicKeySiweResource
-
-```typescript
-createWalletEncryptionPublicKeySiweResource: (input: {
-    address: `0x${string}`;
-    keyPair: WalletEncryptionKeyPairPayload;
-}) => string
-```
-
-
-## function ++dnt++decryptFileWithWalletEncryptionKey
-
-```typescript
-decryptFileWithWalletEncryptionKey: (input: {
-    encryptedPackage: WalletEncryptedFilePackage;
-    keyPair: WalletEncryptionKeyPairPayload;
-}) => Promise<WalletDecryptedFile>
-```
-
-
-## function ++dnt++decryptPasskeyVaultSecret
-
-```typescript
-decryptPasskeyVaultSecret: (input: DecryptPasskeyVaultSecretInput) => Promise<string>
-```
-
-
-## function ++dnt++decryptPayloadWithWalletEncryptionKey
-
-```typescript
-decryptPayloadWithWalletEncryptionKey: (input: {
-    encryptedPayload: WalletEncryptedPayload;
-    appOrigin: string;
-    keyPair: WalletEncryptionKeyPairPayload;
-}) => Promise<string>
-```
-
-
-## function ++dnt++decryptRemoteVaultBackupRecord
-
-```typescript
-decryptRemoteVaultBackupRecord: (input: {
-    address: `0x${string}`;
-    backup: RemoteVaultBackupRecord;
-    recoveryPhrase: string;
-}) => Promise<StoredVaultRecord>
-```
-
-
-## function ++dnt++decryptVaultPayloadWithPrfOutput
-
-```typescript
-decryptVaultPayloadWithPrfOutput: (input: {
-    envelope: PasskeyVaultEnvelopeData;
-    prfOutput: Uint8Array;
-}) => Promise<BrowserPasskeyWalletVaultPayload>
-```
-
-
-## function ++dnt++derivePasskeyVaultKey
-
-```typescript
-derivePasskeyVaultKey: (input: DerivePasskeyVaultKeyInput) => Promise<CryptoKey>
-```
-
-
-## function ++dnt++derivePasskeyWalletAccount
-
-```typescript
-derivePasskeyWalletAccount: (input: {
-    wallet: UnlockedPasskeyWallet;
-    account: StoredVaultAccount;
-}) => UnlockedPasskeyWallet
-```
-
-
-## function ++dnt++deriveStoredVaultAccount
-
-```typescript
-deriveStoredVaultAccount: (input: {
-    recoveryPhrase: string;
-    addressIndex: number;
-    name: string;
-}) => StoredVaultAccount
-```
-
-
-## function ++dnt++encryptFileWithWalletEncryptionKey
-
-```typescript
-encryptFileWithWalletEncryptionKey: (input: {
-    address: `0x${string}`;
-    file: File;
-    keyPair: WalletEncryptionKeyPairPayload;
-}) => Promise<WalletEncryptedFilePackage>
-```
-
-
-## function ++dnt++encryptPasskeyVaultSecret
-
-```typescript
-encryptPasskeyVaultSecret: (input: EncryptPasskeyVaultSecretInput) => Promise<PasskeyVaultEnvelopeData>
-```
-
-
-## function ++dnt++encryptPayloadWithWalletEncryptionKey
-
-```typescript
-encryptPayloadWithWalletEncryptionKey: (input: {
-    address: `0x${string}`;
-    appOrigin: string;
-    plaintext: string;
-    keyPair: WalletEncryptionKeyPairPayload;
-}) => Promise<WalletEncryptedPayload>
-```
-
-
-## function ++dnt++formatAddress
-
-```typescript
-formatAddress: (address: string) => string
-```
-
-
-## function ++dnt++formatCredentialId
-
-```typescript
-formatCredentialId: (credentialId: string) => string
-```
-
-
-## function ++dnt++getAcceptedWalletOrigins
-
-The origins whose messages an app expecting `walletOrigin` accepts.
-
-```typescript
-getAcceptedWalletOrigins: (walletOrigin: string) => string[]
-```
-
-
-## function ++dnt++getCrypto
-
-```typescript
-getCrypto: () => Crypto
-```
-
-
-## function ++dnt++getDerivationPath
-
-```typescript
-getDerivationPath: (addressIndex: number) => string
-```
-
-
-## function ++dnt++getLocalWalletOrigin
-
-The local copy of `walletOrigin`, if it has one.
-
-```typescript
-getLocalWalletOrigin: (walletOrigin: string) => string | null
-```
-
-
-## function ++dnt++getNextAddressIndex
-
-```typescript
-getNextAddressIndex: (records: StoredVaultRecord[]) => number
-```
-
-
-## function ++dnt++getOrganigramRemotePasskeyWalletConnection
-
-```typescript
-getOrganigramRemotePasskeyWalletConnection: () => OrganigramRemotePasskeyWalletConnection | null
-```
-
-
-## function ++dnt++getPasskeyWalletCorsAllowedOrigins
-
-```typescript
-getPasskeyWalletCorsAllowedOrigins: (input: {
-    request: Request;
-    walletUrl?: string;
-    allowedOrigins?: string;
-}) => string[]
-```
-
-
-## function ++dnt++getPasskeyWalletCorsOrigin
-
-```typescript
-getPasskeyWalletCorsOrigin: (input: {
-    request: Request;
-    walletUrl?: string;
-    allowedOrigins?: string;
-}) => string | null
-```
-
-
-## function ++dnt++getPasskeyWalletRequestOrigin
-
-```typescript
-getPasskeyWalletRequestOrigin: (request: Request) => string
-```
-
-
-## function ++dnt++getVaultAccount
-
-```typescript
-getVaultAccount: (vault: StoredVaultRecord, address: string) => StoredVaultAccount | null
-```
-
-
-## function ++dnt++getVaultRegistryGroupId
-
-```typescript
-getVaultRegistryGroupId: (vault: StoredVaultRecord) => string
-```
-
-
-## function ++dnt++groupVaultRecordsBySeed
-
-```typescript
-groupVaultRecordsBySeed: (vaults: StoredVaultRecord[]) => VaultRegistryGroup[]
-```
-
-
-## function ++dnt++groupVaultsByWallet
-
-```typescript
-groupVaultsByWallet: (vaults: StoredVaultRecord[]) => WalletGroup[]
-```
-
-
-## function ++dnt++hasBase64UrlByteLength
-
-```typescript
-hasBase64UrlByteLength: (value: unknown, isValidLength: (byteLength: number) => boolean) => boolean
-```
-
-
-## function ++dnt++hexEncodeMessage
-
-```typescript
-hexEncodeMessage: (message: string) => `0x${string}`
-```
-
+## Server Responsibilities
 
-## function ++dnt++hydrateOrganigramRemoteWalletConnection
+The wallet app is static. A server is optional and should only receive encrypted
+backup packages or dapp sign-in challenges. It should not create WebAuthn
+credentials, unlock vaults, or receive decrypted wallet material.
 
-```typescript
-hydrateOrganigramRemoteWalletConnection: <TConnector extends HydrateOrganigramRemoteWalletConnectionConnector>(input: HydrateOrganigramRemoteWalletConnectionOptions<TConnector>) => Promise<void>
-```
-
-
-## function ++dnt++isLocalWalletOriginOf
-
-Only an HTTPS subdomain of the wallet host can unlock its passkeys.
-
-```typescript
-isLocalWalletOriginOf: (localWalletOrigin: string, walletOrigin: string) => boolean
-```
-
-
-## function ++dnt++isPasskeyPrfSupported
-
-```typescript
-isPasskeyPrfSupported: (input: {
-    credential: PrfSupportCredential | null;
-}) => Promise<boolean>
-```
-
-
-## function ++dnt++isPasskeyVaultEnvelope
-
-```typescript
-isPasskeyVaultEnvelope: (value: unknown) => value is PasskeyVaultEnvelopeData
-```
-
-
-## function ++dnt++isPasskeyWalletRemoteRequestPayloadMessage
-
-```typescript
-isPasskeyWalletRemoteRequestPayloadMessage: (value: unknown, expectedRequestId?: string) => value is PasskeyWalletRemoteRequestPayloadMessage
-```
-
-
-## function ++dnt++isPasskeyWalletTransaction
-
-```typescript
-isPasskeyWalletTransaction: (value: unknown) => value is PasskeyWalletTransaction
-```
-
-
-## function ++dnt++isStoredVaultRecord
-
-```typescript
-isStoredVaultRecord: (value: unknown) => value is StoredVaultRecord
-```
-
-
-## function ++dnt++isWalletSignInOriginAllowed
-
-```typescript
-isWalletSignInOriginAllowed: (origin: string, allowedOrigins: readonly string[]) => boolean
-```
-
-
-## function ++dnt++markVaultRecordUsed
-
-```typescript
-markVaultRecordUsed: (input: {
-    vaults: StoredVaultRecord[];
-    credentialId: string;
-    usedAt?: string;
-}) => StoredVaultRecord[]
-```
-
-
-## function ++dnt++mergeVaults
-
-```typescript
-mergeVaults: (localVaults: StoredVaultRecord[], importedVaults: StoredVaultRecord[]) => StoredVaultRecord[]
-```
-
-
-## function ++dnt++normalizeBackupAddress
-
-```typescript
-normalizeBackupAddress: (value: string) => `0x${string}`
-```
-
-
-## function ++dnt++notifyCurrentTabNextAuthSessionChanged
-
-```typescript
-notifyCurrentTabNextAuthSessionChanged: () => void
-```
-
-
-## function ++dnt++notifyPasskeyWalletStackSessionChanged
-
-```typescript
-notifyPasskeyWalletStackSessionChanged: (input: {
-    event: "revoked";
-    appOrigin: string;
-    address?: `0x${string}` | null;
-    targetOrigin?: string;
-}) => void
-```
-
-
-## function ++dnt++parseBrowserPasskeyWalletVaultPayload
-
-```typescript
-parseBrowserPasskeyWalletVaultPayload: (plaintext: string) => BrowserPasskeyWalletVaultPayload
-```
-
-
-## function ++dnt++parsePasskeyWalletRemoteRequest
-
-```typescript
-parsePasskeyWalletRemoteRequest: (params: URLSearchParams) => PasskeyWalletRemoteRequest
-```
-
-
-## function ++dnt++parsePasskeyWalletSignInRequest
-
-```typescript
-parsePasskeyWalletSignInRequest: (params: URLSearchParams) => PasskeyWalletSignInRequest
-```
-
-
-## function ++dnt++parsePasskeyWalletStackSessionChangedMessage
-
-```typescript
-parsePasskeyWalletStackSessionChangedMessage: (value: unknown) => PasskeyWalletStackSessionChangedMessage | null
-```
-
-
-## function ++dnt++parsePasskeyWalletTypedData
-
-```typescript
-parsePasskeyWalletTypedData: (value: unknown) => PasskeyWalletTypedData
-```
-
-
-## function ++dnt++parseRemoteVaultBackupPackage
-
-```typescript
-parseRemoteVaultBackupPackage: (value: unknown) => RemoteVaultBackupPackage
-```
-
-
-## function ++dnt++parseVaultRegistry
-
-```typescript
-parseVaultRegistry: (value: unknown) => VaultRegistry
-```
-
-
-## function ++dnt++parseWalletEncryptedFilePackage
-
-```typescript
-parseWalletEncryptedFilePackage: (value: unknown) => WalletEncryptedFilePackage
-```
-
-
-## function ++dnt++parseWalletEncryptedPayload
-
-```typescript
-parseWalletEncryptedPayload: (value: unknown) => WalletEncryptedPayload
-```
-
-
-## function ++dnt++parseWalletEncryptionKeyPair
-
-```typescript
-parseWalletEncryptionKeyPair: (value: unknown) => WalletEncryptionKeyPairPayload
-```
-
-
-## function ++dnt++parseWalletEncryptionPublicKeySiweResource
-
-```typescript
-parseWalletEncryptionPublicKeySiweResource: (input: {
-    address: string;
-    resources: string[] | undefined;
-}) => WalletEncryptionPublicKeySiweResource | null
-```
-
-
-## function ++dnt++postToWalletPopup
-
-Sends a message to the wallet popup, whichever accepted origin it shows: the browser only delivers it to the one the popup is on.
-
-```typescript
-postToWalletPopup: (popup: Window, message: unknown, walletOrigin: string) => void
-```
-
-
-## function ++dnt++randomBytes
-
-```typescript
-randomBytes: (length: number) => Uint8Array
-```
-
-
-## function ++dnt++registerAdditionalBrowserPasskeyVault
-
-```typescript
-registerAdditionalBrowserPasskeyVault: (input: {
-    wallet: UnlockedPasskeyWallet;
-    name: string;
-    accounts: StoredVaultAccount[];
-    rpId?: string;
-    rpName?: string;
-}) => Promise<{
-    record: StoredVaultRecord;
-    wallet: UnlockedPasskeyWallet;
-}>
-```
+## Backup Keys And Rotation
 
+A passkey wallet should never depend on a single authenticator.
 
-## function ++dnt++registerBrowserPasskeyVault
-
-```typescript
-registerBrowserPasskeyVault: (input: {
-    recoveryPhrase: string;
-    name: string;
-    rpId?: string;
-    rpName?: string;
-}) => Promise<{
-    record: StoredVaultRecord;
-    wallet: UnlockedPasskeyWallet;
-}>
-```
-
-
-## function ++dnt++rememberOrganigramRemotePasskeyWalletConnection
-
-```typescript
-rememberOrganigramRemotePasskeyWalletConnection: (input: {
-    address: `0x${string}`;
-    chainId: number;
-}) => void
-```
-
-
-## function ++dnt++rememberWalletOrigin
-
-Remembers which of the accepted origins answered for `walletOrigin`.
-
-```typescript
-rememberWalletOrigin: (walletOrigin: string, answeringOrigin: string) => void
-```
-
-
-## function ++dnt++removeAccountFromVaultRecords
-
-```typescript
-removeAccountFromVaultRecords: (input: {
-    vaults: StoredVaultRecord[];
-    address: `0x${string}`;
-}) => StoredVaultRecord[]
-```
-
-
-## function ++dnt++removeVaultRecord
-
-```typescript
-removeVaultRecord: (input: {
-    vaults: StoredVaultRecord[];
-    credentialId: string;
-}) => StoredVaultRecord[]
-```
-
-
-## function ++dnt++removeVaultRecords
-
-```typescript
-removeVaultRecords: (input: {
-    vaults: StoredVaultRecord[];
-    credentialIds: Set<string>;
-}) => StoredVaultRecord[]
-```
-
-
-## function ++dnt++requestPasskeyPrfOutput
-
-Runs one user-verified assertion restricted to the given passkeys, each evaluated with its own PRF salt, and returns the PRF output of the passkey the person selected. The caller owns the returned PRF output and must zero it once its key is derived.
-
-```typescript
-requestPasskeyPrfOutput: (input: {
-    credentials: PasskeyPrfCredential[];
-    rpId?: string;
-}) => Promise<{
-    credentialId: string;
-    prfOutput: Uint8Array;
-}>
-```
-
-
-## function ++dnt++requestPasskeyWalletConnect
-
-```typescript
-requestPasskeyWalletConnect: (input: PasskeyWalletConnectPopupInput & {
-    timeoutMs?: number;
-}) => Promise<PasskeyWalletConnectResult>
-```
-
-
-## function ++dnt++requestPasskeyWalletDecryptPayload
-
-```typescript
-requestPasskeyWalletDecryptPayload: (input: PasskeyWalletRemotePopupInput & {
-    address: `0x${string}`;
-    encryptedPayload: WalletEncryptedPayload;
-    timeoutMs?: number;
-}) => Promise<PasskeyWalletDecryptPayloadResult>
-```
-
-
-## function ++dnt++requestPasskeyWalletEncryptPayload
-
-```typescript
-requestPasskeyWalletEncryptPayload: (input: PasskeyWalletRemotePopupInput & {
-    address: `0x${string}`;
-    plaintext: string;
-    timeoutMs?: number;
-}) => Promise<PasskeyWalletEncryptPayloadResult>
-```
-
-
-## function ++dnt++requestPasskeyWalletSignIn
-
-```typescript
-requestPasskeyWalletSignIn: (input: PasskeyWalletPopupInput & {
-    timeoutMs?: number;
-}) => Promise<PasskeyWalletSignInResult>
-```
-
-
-## function ++dnt++requestPasskeyWalletSignMessage
-
-```typescript
-requestPasskeyWalletSignMessage: (input: PasskeyWalletSignMessagePopupInput & {
-    timeoutMs?: number;
-}) => Promise<PasskeyWalletSignMessageResult>
-```
-
-
-## function ++dnt++resolveSiweDomain
-
-```typescript
-resolveSiweDomain: (message: string) => string
-```
-
-
-## function ++dnt++serializeVaultRegistry
+Organigram Passkey Wallet supports adding another passkey to the same wallet by
+re-encrypting the same vault payload for a new credential. The address does not
+change. The user can keep using the same EOA while adding a laptop passkey, a
+phone passkey, a password manager passkey, or a hardware security key.
 
-```typescript
-serializeVaultRegistry: (vaults: StoredVaultRecord[], space?: number) => string
-```
-
-
-## function ++dnt++signInWithPasskeyWallet
-
-```typescript
-signInWithPasskeyWallet: (input: SignInWithPasskeyWalletInput) => Promise<PasskeyWalletSignInResult>
-```
-
-
-## function ++dnt++signPersonalMessage
-
-```typescript
-signPersonalMessage: (input: {
-    wallet: UnlockedPasskeyWallet;
-    message: string;
-}) => Promise<`0x${string}`>
-```
-
-
-## function ++dnt++signTypedDataMessage
-
-```typescript
-signTypedDataMessage: (input: {
-    wallet: UnlockedPasskeyWallet;
-    typedData: PasskeyWalletTypedData;
-}) => Promise<`0x${string}`>
-```
-
-
-## function ++dnt++stringifyPasskeyWalletTypedData
-
-```typescript
-stringifyPasskeyWalletTypedData: (typedData: PasskeyWalletTypedData) => string
-```
-
-
-## function ++dnt++toArrayBuffer
-
-```typescript
-toArrayBuffer: (bytes: Uint8Array) => ArrayBuffer
-```
-
-
-## function ++dnt++toPreferredWalletUrl
-
-Opens requests on the local copy once it has answered on this device, so that the official wallet is no longer loaded at all.
-
-```typescript
-toPreferredWalletUrl: (url: URL) => URL
-```
+Rotation is the same idea in reverse: remove obsolete credentials only when
+another recovery method remains. The package gives you the wallet and envelope
+building blocks; your product should decide the UX policy for deletion,
+confirmation, and minimum backup requirements.
 
+## Recovery
 
-## function ++dnt++unlockBrowserPasskeyVault
+Passkeys make daily wallet use simple, but users still need an escape hatch.
 
-```typescript
-unlockBrowserPasskeyVault: (input: {
-    records: StoredVaultRecord[];
-    rpId?: string;
-}) => Promise<{
-    record: StoredVaultRecord;
-    wallet: UnlockedPasskeyWallet;
-}>
-```
-
-
-## function ++dnt++updateStaticPasskeyVaultEncryptionKey
-
-```typescript
-updateStaticPasskeyVaultEncryptionKey: (input: {
-    records: StoredVaultRecord[];
-    walletEncryptionKey: WalletEncryptionKeyPairPayload;
-    rpId?: string;
-}) => Promise<{
-    record: StoredVaultRecord;
-    wallet: UnlockedPasskeyWallet;
-}>
-```
-
-
-## function ++dnt++upsertVaultRecord
-
-```typescript
-upsertVaultRecord: (input: {
-    vaults: StoredVaultRecord[];
-    record: StoredVaultRecord;
-}) => StoredVaultRecord[]
-```
-
-
-## function ++dnt++validatePasskeyWalletManifest
-
-```typescript
-validatePasskeyWalletManifest: (manifest: unknown, servingHost: string) => PasskeyWalletManifest
-```
-
+Organigram Passkey Wallet keeps the wallet portable by deriving the EOA from a
+standard recovery phrase. If every passkey is lost, the user can recover the
+account with the seed phrase, or use it in any other wallet.
 
-## function ++dnt++vaultHasAccount
+The recovery phrase should always be exported **before** the user loses all passkeys.
+The package provides a helper to export a seed phrase after a successful
+WebAuthn ceremony, but cannot do so after all access to the vault is lost.
 
-```typescript
-vaultHasAccount: (vault: StoredVaultRecord, address: string) => boolean
-```
-
-
-## function ++dnt++verifyPasskeyWalletSiwe
-
-```typescript
-verifyPasskeyWalletSiwe: (input: PasskeyWalletVerifySiweInput) => Promise<PasskeyWalletVerifiedSiwe | null>
-```
-
-
-## function ++dnt++watchLocalWalletPopup
+## Security Model
 
-Brings the popup back to the wallet when its local copy does not answer, for instance because it is not running. Returns the cleanup.
+Organigram Passkey Wallet is non-custodial by design.
 
-```typescript
-watchLocalWalletPopup: (input: {
-    popup: Window;
-    popupUrl: URL;
-    walletOrigin: string;
-    requestId: string;
-    timeoutMs?: number;
-}) => (() => void)
-```
+The browser creates the wallet. The browser encrypts the vault. The browser
+decrypts the vault after a successful WebAuthn ceremony. The server stores
+encrypted envelopes and verifies that WebAuthn responses are valid for the
+expected challenge, origin, RP ID, and credential public key.
 
+This model assumes:
 
-## function ++dnt++withPasskeyWalletCorsHeaders
-
-```typescript
-withPasskeyWalletCorsHeaders: <Response extends {
-    headers: Headers;
-}>(request: Request, response: Response, options?: {
-    allowedMethods?: string;
-    walletUrl?: string;
-    allowedOrigins?: string;
-}) => Response
-```
+- WebAuthn PRF support is required for the passkey vault flow;
+- the host app serves the wallet UI from a trustworthy origin;
+- the server correctly expires and consumes challenges;
+- the server verifies credential counters and user verification;
+- recovery phrase export is treated as a sensitive operation;
+- backup passkey deletion never leaves the user without a recovery method;
+- a compromised browser session can read unlocked wallet material while a
+  request is being processed.
 
+### Passkey scope
 
-## class ++dnt++PasskeyPrfUnavailableError
+Passkeys are created for the exact hostname serving the wallet (for example
+`wallet.organigram.ai`). Any page served under the passkey RP ID can request
+the PRF output that decrypts the vault, so no other application should be
+hosted under it. Dapps never need the wallet RP ID: they reach the wallet
+through its popup and `postMessage`.
 
-### Constructors
+A wallet served from a subdomain can reuse the passkeys of its parent wallet
+host by setting `passkeyRpId` in `passkey-wallet.config.json` (or
+`PASSKEY_WALLET_PASSKEY_RP_ID`) to that host. The value must be the current
+hostname or one of its parent domains. `pnpm dev local-organigram` does so for
+`wallet.organigram.ai` (see [Run your own wallet](#run-your-own-wallet)).
 
-#### ++dnt++constructor
+The wallet sends a `Content-Security-Policy` that forbids third-party scripts
+and any framing of the wallet origin.
 
-Constructs a new instance of the `PasskeyPrfUnavailableError` class
+## Browser Compatibility
 
-```typescript
-constructor(message?: string);
-```
+The passkey vault depends on the WebAuthn `prf` extension. Browsers or password
+managers that do not return PRF output cannot unlock the encrypted vault.
 
+Apps should present a clear fallback when PRF is unavailable:
 
+- retry with another passkey provider;
+- use a platform authenticator that supports PRF;
+- connect an external crypto wallet instead.
 
-## class ++dnt++PasskeyVaultDecryptError
+## What This Is Not
 
-### Constructors
+Organigram Passkey Wallet is not a smart account framework. It does not require
+4337 infrastructure, paymasters, bundlers, module registries, or per-chain
+deployments.
 
-#### ++dnt++constructor
+It is not a custodial wallet. The server does not receive the recovery phrase or
+private key in clear text.
 
-Constructs a new instance of the `PasskeyVaultDecryptError` class
+It is not a hosted wallet service. The package is open source; the
+host app owns persistence, authentication, and backup policy.
 
-```typescript
-constructor(message?: string);
-```
+It is not a replacement for hardware wallets in high-assurance custody flows. It
+is designed for the safest mainstream web UX possible while staying portable and
+EVM-compatible.
 
+## License
 
+MIT
 
-## type ++dnt++AuthorizePasskeyWalletCredentialsInput
+## Connect an app
 
-```typescript
-export type AuthorizePasskeyWalletCredentialsInput = {
-    credentials: PasskeyWalletNextAuthCredentials | undefined;
-    domain: string;
-    nonce: string | null | undefined;
-    chain?: Chain;
-    transportUrl: string;
-    transportOptions?: Parameters<typeof import('viem').http>[1];
-};
-```
+Apps reach the wallet through `createOrganigramRemotePasskeyWallet()`, a RainbowKit wallet whose wagmi connector opens the wallet in a popup. Each connection, signature, transaction or encryption is a request that the user approves in the popup. Apps exchange requests and answers with the popup through `postMessage`, and only accept answers from the wallet origin and its local copy. Signatures are checked against the connected address and chain before they reach the app. Private keys never leave the wallet origin.
 
+### ++dnt++CreateOrganigramRemotePasskeyWalletInput
 
-## type ++dnt++BrowserPasskeyWalletVaultPayload
+<div data-summary>
 
-```typescript
-export type BrowserPasskeyWalletVaultPayload = {
-    version: 1;
-    recoveryPhrase: string;
-    walletEncryptionKey?: WalletEncryptionKeyPairPayload;
-};
-```
+Input of `createOrganigramRemotePasskeyWallet()`.
 
+</div>
 
-## type ++dnt++CreateOrganigramRemotePasskeyWalletInput
+<details>
+<summary>Definition</summary>
 
 ```typescript
 export type CreateOrganigramRemotePasskeyWalletInput = {
@@ -1236,8 +398,18 @@ export type CreateOrganigramRemotePasskeyWalletInput = {
 };
 ```
 
+</details>
 
-## type ++dnt++HydrateOrganigramRemoteWalletConnectionConnector
+### ++dnt++HydrateOrganigramRemoteWalletConnectionConnector
+
+<div data-summary>
+
+A wagmi connector, identified by its `id`.
+
+</div>
+
+<details>
+<summary>Definition</summary>
 
 ```typescript
 export type HydrateOrganigramRemoteWalletConnectionConnector = {
@@ -1245,8 +417,18 @@ export type HydrateOrganigramRemoteWalletConnectionConnector = {
 };
 ```
 
+</details>
 
-## type ++dnt++HydrateOrganigramRemoteWalletConnectionInput
+### ++dnt++HydrateOrganigramRemoteWalletConnectionInput
+
+<div data-summary>
+
+An address already known to the app, for example from its session.
+
+</div>
+
+<details>
+<summary>Definition</summary>
 
 ```typescript
 export type HydrateOrganigramRemoteWalletConnectionInput = {
@@ -1255,8 +437,18 @@ export type HydrateOrganigramRemoteWalletConnectionInput = {
 };
 ```
 
+</details>
 
-## type ++dnt++HydrateOrganigramRemoteWalletConnectionOptions
+### ++dnt++HydrateOrganigramRemoteWalletConnectionOptions
+
+<div data-summary>
+
+Input of `hydrateOrganigramRemoteWalletConnection()`.
+
+</div>
+
+<details>
+<summary>Definition</summary>
 
 ```typescript
 export type HydrateOrganigramRemoteWalletConnectionOptions<TConnector extends HydrateOrganigramRemoteWalletConnectionConnector> = HydrateOrganigramRemoteWalletConnectionInput & {
@@ -1268,8 +460,20 @@ export type HydrateOrganigramRemoteWalletConnectionOptions<TConnector extends Hy
 };
 ```
 
+</details>
 
-## type ++dnt++OrganigramRemotePasskeyWalletConnection
+### ++dnt++OrganigramRemotePasskeyWalletConnection
+
+<div data-summary>
+
+A connection to the wallet remembered in the local storage of the app.
+
+</div>
+
+It only holds the public address and chain, never a key: every signature still asks the user in the wallet popup.
+
+<details>
+<summary>Definition</summary>
 
 ```typescript
 export type OrganigramRemotePasskeyWalletConnection = {
@@ -1280,77 +484,189 @@ export type OrganigramRemotePasskeyWalletConnection = {
 };
 ```
 
+</details>
 
-## type ++dnt++PasskeyPrfCredential
+### ++dnt++beginOrganigramWalletApprovalSequence
+
+<div data-summary>
+
+Adds presentation-only context to the next wallet approvals. This lets an app tell the wallet that one user action requires several signatures, without broadening any approval or altering its signed payload.
+
+</div>
+
+<details>
+<summary>Signature</summary>
 
 ```typescript
-export type PasskeyPrfCredential = {
-    credentialId: string;
-    transports?: string[];
-    prfSalt: string;
-};
+beginOrganigramWalletApprovalSequence: (input: {
+    count: number;
+    label?: string;
+}) => (() => void)
 ```
 
+</details>
 
-## type ++dnt++PasskeyProviderEvent
+### ++dnt++clearOrganigramRemotePasskeyWalletConnection
+
+<div data-summary>
+
+Forget the remembered connection to the wallet.
+
+</div>
+
+<details>
+<summary>Signature</summary>
 
 ```typescript
-export type PasskeyProviderEvent = 'accountsChanged' | 'chainChanged' | 'disconnect';
+clearOrganigramRemotePasskeyWalletConnection: () => void
 ```
 
+</details>
 
-## type ++dnt++PasskeyProviderListener
+### ++dnt++createOrganigramRemotePasskeyWallet
 
-```typescript
-export type PasskeyProviderListener = (...args: unknown[]) => void;
+<div data-summary>
+
+Create the RainbowKit wallet of the passkey wallet, which opens the wallet in a popup.
+
+</div>
+
+The connector exposes an EIP-1193 provider. Account and signing requests open the wallet popup, and every signature is checked against the connected address and chain. Other JSON-RPC requests go to the default RPC URL of the active chain.
+
+```ts
+const connectors = connectorsForWallets(
+  [{ groupName: 'Organigram', wallets: [() => createOrganigramRemotePasskeyWallet()] }],
+  { appName: 'My app', projectId }
+)
 ```
 
-
-## type ++dnt++PasskeyRegistrationResult
+<details>
+<summary>Signature</summary>
 
 ```typescript
-export type PasskeyRegistrationResult = {
+createOrganigramRemotePasskeyWallet: (input?: CreateOrganigramRemotePasskeyWalletInput) => Wallet
+```
+
+**Parameters**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| `input` | `CreateOrganigramRemotePasskeyWalletInput` | The origin of the wallet, and replacements of its requests. |
+
+</details>
+
+### ++dnt++getOrganigramRemotePasskeyWalletConnection
+
+<div data-summary>
+
+Read the remembered connection to the wallet.
+
+</div>
+
+<details>
+<summary>Signature</summary>
+
+```typescript
+getOrganigramRemotePasskeyWalletConnection: () => OrganigramRemotePasskeyWalletConnection | null
+```
+
+**Returns**
+
+| Type | Description |
+| --- | --- |
+| `OrganigramRemotePasskeyWalletConnection \| null` | The connection, or `null` if none is valid. |
+
+</details>
+
+### ++dnt++hydrateOrganigramRemoteWalletConnection
+
+<div data-summary>
+
+Connect wagmi to the wallet for an address the app already knows, without opening the wallet popup.
+
+</div>
+
+Remembers the connection, then connects the wallet connector, which restores it. If connecting fails, the connection is forgotten.
+
+<details>
+<summary>Signature</summary>
+
+```typescript
+hydrateOrganigramRemoteWalletConnection: <TConnector extends HydrateOrganigramRemoteWalletConnectionConnector>(input: HydrateOrganigramRemoteWalletConnectionOptions<TConnector>) => Promise<void>
+```
+
+</details>
+
+### ++dnt++rememberOrganigramRemotePasskeyWalletConnection
+
+<div data-summary>
+
+Remember a connection to the wallet in local storage.
+
+</div>
+
+<details>
+<summary>Signature</summary>
+
+```typescript
+rememberOrganigramRemotePasskeyWalletConnection: (input: {
     address: `0x${string}`;
-    credentialId: string;
-};
+    chainId: number;
+}) => void
 ```
 
+**Parameters**
 
-## type ++dnt++PasskeyVaultEnvelopeData
+| Name | Type | Description |
+| --- | --- | --- |
+| `input` | `` { address: `0x${string}`; chainId: number; } `` | The connected address and chain. |
+
+</details>
+
+### ++dnt++organigramRemotePasskeyWalletId
+
+<div data-summary>
+
+Identifier of the wagmi connector of the wallet, `organigramPasskeyWalletId`.
+
+</div>
+
+<details>
+<summary>Definition</summary>
 
 ```typescript
-export type PasskeyVaultEnvelopeData = {
-    algorithm: typeof passkeyVaultAlgorithm;
-    keyVersion: typeof passkeyVaultKeyVersion;
-    ciphertext: string;
-    salt: string;
-    prfSalt: string;
-    nonce: string;
-};
+const organigramRemotePasskeyWalletId = "organigram-passkeys"
 ```
 
+</details>
 
-## type ++dnt++PasskeyWalletChallenge
+### ++dnt++PasskeyWalletConnectPopupInput
 
-```typescript
-export type PasskeyWalletChallenge = {
-    domain: string;
-    nonce: string;
-    issuedAt: string;
-    expiresAt: string;
-    message: string;
-};
-```
+<div data-summary>
 
+Input of `requestPasskeyWalletConnect()`.
 
-## type ++dnt++PasskeyWalletConnectPopupInput
+</div>
+
+<details>
+<summary>Definition</summary>
 
 ```typescript
 export type PasskeyWalletConnectPopupInput = PasskeyWalletRemotePopupInput;
 ```
 
+</details>
 
-## type ++dnt++PasskeyWalletConnectRequest
+### ++dnt++PasskeyWalletConnectRequest
+
+<div data-summary>
+
+A request to connect an app to the wallet, which answers with the selected address.
+
+</div>
+
+<details>
+<summary>Definition</summary>
 
 ```typescript
 export type PasskeyWalletConnectRequest = PasskeyWalletRemoteRequestBase & {
@@ -1358,8 +674,18 @@ export type PasskeyWalletConnectRequest = PasskeyWalletRemoteRequestBase & {
 };
 ```
 
+</details>
 
-## type ++dnt++PasskeyWalletConnectResult
+### ++dnt++PasskeyWalletConnectResult
+
+<div data-summary>
+
+The answer to a connect request, with the address the user selected.
+
+</div>
+
+<details>
+<summary>Definition</summary>
 
 ```typescript
 export type PasskeyWalletConnectResult = PasskeyWalletRemoteResultBase & {
@@ -1367,8 +693,18 @@ export type PasskeyWalletConnectResult = PasskeyWalletRemoteResultBase & {
 };
 ```
 
+</details>
 
-## type ++dnt++PasskeyWalletDecryptPayloadRequest
+### ++dnt++PasskeyWalletDecryptPayloadRequest
+
+<div data-summary>
+
+A request to decrypt a text encrypted for the origin of the app.
+
+</div>
+
+<details>
+<summary>Definition</summary>
 
 ```typescript
 export type PasskeyWalletDecryptPayloadRequest = PasskeyWalletRemoteRequestBase & {
@@ -1378,8 +714,18 @@ export type PasskeyWalletDecryptPayloadRequest = PasskeyWalletRemoteRequestBase 
 };
 ```
 
+</details>
 
-## type ++dnt++PasskeyWalletDecryptPayloadResult
+### ++dnt++PasskeyWalletDecryptPayloadResult
+
+<div data-summary>
+
+The answer to a decrypt payload request.
+
+</div>
+
+<details>
+<summary>Definition</summary>
 
 ```typescript
 export type PasskeyWalletDecryptPayloadResult = PasskeyWalletRemoteResultBase & {
@@ -1388,8 +734,18 @@ export type PasskeyWalletDecryptPayloadResult = PasskeyWalletRemoteResultBase & 
 };
 ```
 
+</details>
 
-## type ++dnt++PasskeyWalletEncryptPayloadRequest
+### ++dnt++PasskeyWalletEncryptPayloadRequest
+
+<div data-summary>
+
+A request to encrypt a text with the wallet encryption key, for the origin of the app.
+
+</div>
+
+<details>
+<summary>Definition</summary>
 
 ```typescript
 export type PasskeyWalletEncryptPayloadRequest = PasskeyWalletRemoteRequestBase & {
@@ -1399,8 +755,18 @@ export type PasskeyWalletEncryptPayloadRequest = PasskeyWalletRemoteRequestBase 
 };
 ```
 
+</details>
 
-## type ++dnt++PasskeyWalletEncryptPayloadResult
+### ++dnt++PasskeyWalletEncryptPayloadResult
+
+<div data-summary>
+
+The answer to an encrypt payload request.
+
+</div>
+
+<details>
+<summary>Definition</summary>
 
 ```typescript
 export type PasskeyWalletEncryptPayloadResult = PasskeyWalletRemoteResultBase & {
@@ -1409,59 +775,18 @@ export type PasskeyWalletEncryptPayloadResult = PasskeyWalletRemoteResultBase & 
 };
 ```
 
+</details>
 
-## type ++dnt++PasskeyWalletErrorResult
+### ++dnt++PasskeyWalletRemoteErrorResult
 
-```typescript
-export type PasskeyWalletErrorResult = {
-    type: typeof passkeyWalletErrorType;
-    version: 1;
-    requestId: string;
-    code: 'user_rejected' | 'challenge_unavailable' | 'domain_mismatch' | 'wallet_locked' | 'unsupported_origin' | 'internal_error';
-    message: string;
-};
-```
+<div data-summary>
 
+The answer to a request the wallet could not serve.
 
-## type ++dnt++PasskeyWalletManifest
+</div>
 
-```typescript
-export type PasskeyWalletManifest = {
-    version: 1;
-    domain: string;
-    signInChallengeUrl: string;
-    signInCompletionUrl?: string;
-};
-```
-
-
-## type ++dnt++PasskeyWalletNextAuthCredentials
-
-```typescript
-export type PasskeyWalletNextAuthCredentials = {
-    message?: unknown;
-    signature?: unknown;
-    csrfToken?: unknown;
-};
-```
-
-
-## type ++dnt++PasskeyWalletPopupInput
-
-```typescript
-export type PasskeyWalletPopupInput = {
-    walletOrigin?: string;
-    appOrigin?: string;
-    nonce: string;
-    chainId: number;
-    requestId?: string;
-    requestedAt?: string;
-    popup?: Window | null;
-};
-```
-
-
-## type ++dnt++PasskeyWalletRemoteErrorResult
+<details>
+<summary>Definition</summary>
 
 ```typescript
 export type PasskeyWalletRemoteErrorResult = Omit<PasskeyWalletRemoteResultBase, 'address'> & {
@@ -1471,8 +796,18 @@ export type PasskeyWalletRemoteErrorResult = Omit<PasskeyWalletRemoteResultBase,
 };
 ```
 
+</details>
 
-## type ++dnt++PasskeyWalletRemotePopupInput
+### ++dnt++PasskeyWalletRemotePopupInput
+
+<div data-summary>
+
+Common input of the requests to the wallet popup.
+
+</div>
+
+<details>
+<summary>Definition</summary>
 
 ```typescript
 export type PasskeyWalletRemotePopupInput = {
@@ -1487,15 +822,35 @@ export type PasskeyWalletRemotePopupInput = {
 };
 ```
 
+</details>
 
-## type ++dnt++PasskeyWalletRemoteRequest
+### ++dnt++PasskeyWalletRemoteRequest
+
+<div data-summary>
+
+A request an app can send to the wallet.
+
+</div>
+
+<details>
+<summary>Definition</summary>
 
 ```typescript
 export type PasskeyWalletRemoteRequest = PasskeyWalletConnectRequest | PasskeyWalletSignMessageRequest | PasskeyWalletSignTypedDataRequest | PasskeyWalletSendTransactionRequest | PasskeyWalletEncryptPayloadRequest | PasskeyWalletDecryptPayloadRequest;
 ```
 
+</details>
 
-## type ++dnt++PasskeyWalletRemoteRequestPayloadMessage
+### ++dnt++PasskeyWalletRemoteRequestPayloadMessage
+
+<div data-summary>
+
+The message by which an app posts a request to the wallet popup.
+
+</div>
+
+<details>
+<summary>Definition</summary>
 
 ```typescript
 export type PasskeyWalletRemoteRequestPayloadMessage = {
@@ -1505,22 +860,52 @@ export type PasskeyWalletRemoteRequestPayloadMessage = {
 };
 ```
 
+</details>
 
-## type ++dnt++PasskeyWalletRemoteRequestType
+### ++dnt++PasskeyWalletRemoteRequestType
+
+<div data-summary>
+
+Types of the requests an app can send to the wallet.
+
+</div>
+
+<details>
+<summary>Definition</summary>
 
 ```typescript
 export type PasskeyWalletRemoteRequestType = typeof passkeyWalletConnectType | typeof passkeyWalletSignMessageType | typeof passkeyWalletSignTypedDataType | typeof passkeyWalletSendTransactionType | typeof passkeyWalletEncryptPayloadType | typeof passkeyWalletDecryptPayloadType;
 ```
 
+</details>
 
-## type ++dnt++PasskeyWalletRemoteResult
+### ++dnt++PasskeyWalletRemoteResult
+
+<div data-summary>
+
+An answer of the wallet to a request.
+
+</div>
+
+<details>
+<summary>Definition</summary>
 
 ```typescript
 export type PasskeyWalletRemoteResult = PasskeyWalletConnectResult | PasskeyWalletSignMessageResult | PasskeyWalletSignTypedDataResult | PasskeyWalletSendTransactionResult | PasskeyWalletEncryptPayloadResult | PasskeyWalletDecryptPayloadResult | PasskeyWalletRemoteErrorResult;
 ```
 
+</details>
 
-## type ++dnt++PasskeyWalletSendTransactionRequest
+### ++dnt++PasskeyWalletSendTransactionRequest
+
+<div data-summary>
+
+A request to sign and send a transaction.
+
+</div>
+
+<details>
+<summary>Definition</summary>
 
 ```typescript
 export type PasskeyWalletSendTransactionRequest = PasskeyWalletRemoteRequestBase & {
@@ -1530,8 +915,18 @@ export type PasskeyWalletSendTransactionRequest = PasskeyWalletRemoteRequestBase
 };
 ```
 
+</details>
 
-## type ++dnt++PasskeyWalletSendTransactionResult
+### ++dnt++PasskeyWalletSendTransactionResult
+
+<div data-summary>
+
+The answer to a send transaction request.
+
+</div>
+
+<details>
+<summary>Definition</summary>
 
 ```typescript
 export type PasskeyWalletSendTransactionResult = PasskeyWalletRemoteResultBase & {
@@ -1540,39 +935,18 @@ export type PasskeyWalletSendTransactionResult = PasskeyWalletRemoteResultBase &
 };
 ```
 
+</details>
 
-## type ++dnt++PasskeyWalletSignInRequest
+### ++dnt++PasskeyWalletSignMessagePopupInput
 
-```typescript
-export type PasskeyWalletSignInRequest = {
-    type: typeof passkeyWalletSignInType;
-    version: 1;
-    requestId: string;
-    domain: string;
-    challengeUrl: string;
-    returnUrl?: string;
-    requestedAt: string;
-};
-```
+<div data-summary>
 
+Input of `requestPasskeyWalletSignMessage()`.
 
-## type ++dnt++PasskeyWalletSignInResult
+</div>
 
-```typescript
-export type PasskeyWalletSignInResult = {
-    type: typeof passkeyWalletSignInResultType;
-    version: 1;
-    requestId: string;
-    domain: string;
-    address: `0x${string}`;
-    message: string;
-    signature: `0x${string}`;
-    completedAt: string;
-};
-```
-
-
-## type ++dnt++PasskeyWalletSignMessagePopupInput
+<details>
+<summary>Definition</summary>
 
 ```typescript
 export type PasskeyWalletSignMessagePopupInput = PasskeyWalletRemotePopupInput & {
@@ -1581,8 +955,18 @@ export type PasskeyWalletSignMessagePopupInput = PasskeyWalletRemotePopupInput &
 };
 ```
 
+</details>
 
-## type ++dnt++PasskeyWalletSignMessageRequest
+### ++dnt++PasskeyWalletSignMessageRequest
+
+<div data-summary>
+
+A request to sign a message with EIP-191 `personal_sign`.
+
+</div>
+
+<details>
+<summary>Definition</summary>
 
 ```typescript
 export type PasskeyWalletSignMessageRequest = PasskeyWalletRemoteRequestBase & {
@@ -1592,8 +976,18 @@ export type PasskeyWalletSignMessageRequest = PasskeyWalletRemoteRequestBase & {
 };
 ```
 
+</details>
 
-## type ++dnt++PasskeyWalletSignMessageResult
+### ++dnt++PasskeyWalletSignMessageResult
+
+<div data-summary>
+
+The answer to a sign message request.
+
+</div>
+
+<details>
+<summary>Definition</summary>
 
 ```typescript
 export type PasskeyWalletSignMessageResult = PasskeyWalletRemoteResultBase & {
@@ -1603,8 +997,18 @@ export type PasskeyWalletSignMessageResult = PasskeyWalletRemoteResultBase & {
 };
 ```
 
+</details>
 
-## type ++dnt++PasskeyWalletSignTypedDataPopupInput
+### ++dnt++PasskeyWalletSignTypedDataPopupInput
+
+<div data-summary>
+
+Input of a request to sign typed data.
+
+</div>
+
+<details>
+<summary>Definition</summary>
 
 ```typescript
 export type PasskeyWalletSignTypedDataPopupInput = PasskeyWalletRemotePopupInput & {
@@ -1613,8 +1017,18 @@ export type PasskeyWalletSignTypedDataPopupInput = PasskeyWalletRemotePopupInput
 };
 ```
 
+</details>
 
-## type ++dnt++PasskeyWalletSignTypedDataRequest
+### ++dnt++PasskeyWalletSignTypedDataRequest
+
+<div data-summary>
+
+A request to sign EIP-712 typed data.
+
+</div>
+
+<details>
+<summary>Definition</summary>
 
 ```typescript
 export type PasskeyWalletSignTypedDataRequest = PasskeyWalletRemoteRequestBase & {
@@ -1624,8 +1038,18 @@ export type PasskeyWalletSignTypedDataRequest = PasskeyWalletRemoteRequestBase &
 };
 ```
 
+</details>
 
-## type ++dnt++PasskeyWalletSignTypedDataResult
+### ++dnt++PasskeyWalletSignTypedDataResult
+
+<div data-summary>
+
+The answer to a sign typed data request.
+
+</div>
+
+<details>
+<summary>Definition</summary>
 
 ```typescript
 export type PasskeyWalletSignTypedDataResult = PasskeyWalletRemoteResultBase & {
@@ -1635,21 +1059,18 @@ export type PasskeyWalletSignTypedDataResult = PasskeyWalletRemoteResultBase & {
 };
 ```
 
+</details>
 
-## type ++dnt++PasskeyWalletStackSessionChangedMessage
+### ++dnt++PasskeyWalletTransaction
 
-```typescript
-export type PasskeyWalletStackSessionChangedMessage = {
-    type: typeof passkeyWalletStackSessionChangedType;
-    version: 1;
-    event: 'revoked';
-    appOrigin: string;
-    address: `0x${string}` | null;
-};
-```
+<div data-summary>
 
+A transaction to send, with quantities in hex.
 
-## type ++dnt++PasskeyWalletTransaction
+</div>
+
+<details>
+<summary>Definition</summary>
 
 ```typescript
 export type PasskeyWalletTransaction = {
@@ -1665,8 +1086,18 @@ export type PasskeyWalletTransaction = {
 };
 ```
 
+</details>
 
-## type ++dnt++PasskeyWalletTypedData
+### ++dnt++PasskeyWalletTypedData
+
+<div data-summary>
+
+EIP-712 typed data.
+
+</div>
+
+<details>
+<summary>Definition</summary>
 
 ```typescript
 export type PasskeyWalletTypedData = {
@@ -1680,8 +1111,1223 @@ export type PasskeyWalletTypedData = {
 };
 ```
 
+</details>
 
-## type ++dnt++PasskeyWalletVerifiedSiwe
+### ++dnt++assertPasskeyWalletSignMessageResult
+
+<div data-summary>
+
+Check that a signed message comes from the expected address and chain.
+
+</div>
+
+Recovers the signer from the signature, so that a forged answer is rejected. This only works for EOA signatures, which the wallet produces.
+
+<details>
+<summary>Signature</summary>
+
+```typescript
+assertPasskeyWalletSignMessageResult: (input: {
+    result: PasskeyWalletSignMessageResult;
+    address: `0x${string}`;
+    chainId: number;
+    message: string;
+}) => Promise<void>
+```
+
+**Parameters**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| `input` | `` { result: PasskeyWalletSignMessageResult; address: `0x${string}`; chainId: number; message: string; } `` | The answer, and the address, chain and message of the request. |
+
+</details>
+
+### ++dnt++assertPasskeyWalletSignTypedDataResult
+
+<div data-summary>
+
+Check that signed typed data comes from the expected address and chain.
+
+</div>
+
+Recovers the signer from the signature, so that a forged answer is rejected.
+
+<details>
+<summary>Signature</summary>
+
+```typescript
+assertPasskeyWalletSignTypedDataResult: (input: {
+    result: PasskeyWalletSignTypedDataResult;
+    address: `0x${string}`;
+    chainId: number;
+    typedData: PasskeyWalletTypedData;
+}) => Promise<void>
+```
+
+**Parameters**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| `input` | `` { result: PasskeyWalletSignTypedDataResult; address: `0x${string}`; chainId: number; typedData: PasskeyWalletTypedData; } `` | The answer, and the address, chain and typed data of the request. |
+
+</details>
+
+### ++dnt++buildPasskeyWalletRemotePopupUrl
+
+<div data-summary>
+
+Build the URL of the wallet popup for a request.
+
+</div>
+
+Every request other than connect is then delivered by `postMessage`. The wallet reads the requesting origin from the browser-authenticated `MessageEvent` instead of trusting the `appOrigin` written in the URL, and no message, transaction or secret lands in a URL.
+
+<details>
+<summary>Signature</summary>
+
+```typescript
+buildPasskeyWalletRemotePopupUrl: (input: PasskeyWalletRemotePopupInput & {
+    type: PasskeyWalletRemoteRequestType;
+    address?: `0x${string}`;
+}) => URL
+```
+
+**Parameters**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| `input` | `` PasskeyWalletRemotePopupInput & { type: PasskeyWalletRemoteRequestType; address?: `0x${string}`; } `` | The request, with its type and address. |
+
+</details>
+
+### ++dnt++isPasskeyWalletRemoteRequestPayloadMessage
+
+<div data-summary>
+
+Check that a posted message is a valid request to the wallet.
+
+</div>
+
+The domain of the request must be the host of its `appOrigin`. The wallet must still compare `appOrigin` with the origin of the `MessageEvent`, which the browser authenticates.
+
+<details>
+<summary>Signature</summary>
+
+```typescript
+isPasskeyWalletRemoteRequestPayloadMessage: (value: unknown, expectedRequestId?: string) => value is PasskeyWalletRemoteRequestPayloadMessage
+```
+
+**Parameters**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| `value` | `unknown` | The data of the message. |
+| `expectedRequestId` | `string` | The identifier of the expected request, if known. |
+
+</details>
+
+### ++dnt++isPasskeyWalletTransaction
+
+<div data-summary>
+
+Check that a value is a transaction with valid addresses and hex quantities.
+
+</div>
+
+<details>
+<summary>Signature</summary>
+
+```typescript
+isPasskeyWalletTransaction: (value: unknown) => value is PasskeyWalletTransaction
+```
+
+**Parameters**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| `value` | `unknown` | The value to check. |
+
+</details>
+
+### ++dnt++parsePasskeyWalletRemoteRequest
+
+<div data-summary>
+
+Read and check a request from the URL parameters of the wallet popup.
+
+</div>
+
+Rejects encrypt and decrypt requests, which must be delivered by `postMessage`, and requests whose domain is not the host of their `appOrigin`.
+
+<details>
+<summary>Signature</summary>
+
+```typescript
+parsePasskeyWalletRemoteRequest: (params: URLSearchParams) => PasskeyWalletRemoteRequest
+```
+
+**Parameters**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| `params` | `URLSearchParams` | The URL parameters. |
+
+</details>
+
+### ++dnt++parsePasskeyWalletTypedData
+
+<div data-summary>
+
+Read typed data.
+
+</div>
+
+<details>
+<summary>Signature</summary>
+
+```typescript
+parsePasskeyWalletTypedData: (value: unknown) => PasskeyWalletTypedData
+```
+
+**Parameters**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| `value` | `unknown` | The typed data, or its JSON. |
+
+</details>
+
+### ++dnt++requestPasskeyWalletConnect
+
+<div data-summary>
+
+Ask the wallet, in a popup, to connect the app.
+
+</div>
+
+<details>
+<summary>Signature</summary>
+
+```typescript
+requestPasskeyWalletConnect: (input: PasskeyWalletConnectPopupInput & {
+    timeoutMs?: number;
+}) => Promise<PasskeyWalletConnectResult>
+```
+
+**Parameters**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| `input` | `PasskeyWalletConnectPopupInput & { timeoutMs?: number; }` | The request, and a timeout, 5 minutes by default. |
+
+**Returns**
+
+| Type | Description |
+| --- | --- |
+| `Promise<PasskeyWalletConnectResult>` | The answer, with the address the user selected. |
+
+</details>
+
+### ++dnt++requestPasskeyWalletDecryptPayload
+
+<div data-summary>
+
+Ask the wallet, in a popup, to decrypt a text encrypted for the origin of the app.
+
+</div>
+
+<details>
+<summary>Signature</summary>
+
+```typescript
+requestPasskeyWalletDecryptPayload: (input: PasskeyWalletRemotePopupInput & {
+    address: `0x${string}`;
+    encryptedPayload: WalletEncryptedPayload;
+    timeoutMs?: number;
+}) => Promise<PasskeyWalletDecryptPayloadResult>
+```
+
+**Parameters**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| `input` | `` PasskeyWalletRemotePopupInput & { address: `0x${string}`; encryptedPayload: WalletEncryptedPayload; timeoutMs?: number; } `` | The request, the address, the encrypted payload, and a timeout, 5 minutes by default. |
+
+**Returns**
+
+| Type | Description |
+| --- | --- |
+| `Promise<PasskeyWalletDecryptPayloadResult>` | The answer, with the decrypted text. |
+
+</details>
+
+### ++dnt++requestPasskeyWalletEncryptPayload
+
+<div data-summary>
+
+Ask the wallet, in a popup, to encrypt a text for the origin of the app.
+
+</div>
+
+<details>
+<summary>Signature</summary>
+
+```typescript
+requestPasskeyWalletEncryptPayload: (input: PasskeyWalletRemotePopupInput & {
+    address: `0x${string}`;
+    plaintext: string;
+    timeoutMs?: number;
+}) => Promise<PasskeyWalletEncryptPayloadResult>
+```
+
+**Parameters**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| `input` | `` PasskeyWalletRemotePopupInput & { address: `0x${string}`; plaintext: string; timeoutMs?: number; } `` | The request, the address, the text, and a timeout, 5 minutes by default. |
+
+**Returns**
+
+| Type | Description |
+| --- | --- |
+| `Promise<PasskeyWalletEncryptPayloadResult>` | The answer, with the encrypted payload. |
+
+</details>
+
+### ++dnt++requestPasskeyWalletSignMessage
+
+<div data-summary>
+
+Ask the wallet, in a popup, to sign a message.
+
+</div>
+
+The answer is checked with `assertPasskeyWalletSignMessageResult()`.
+
+<details>
+<summary>Signature</summary>
+
+```typescript
+requestPasskeyWalletSignMessage: (input: PasskeyWalletSignMessagePopupInput & {
+    timeoutMs?: number;
+}) => Promise<PasskeyWalletSignMessageResult>
+```
+
+**Parameters**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| `input` | `PasskeyWalletSignMessagePopupInput & { timeoutMs?: number; }` | The request, the address, the message, and a timeout, 5 minutes by default. |
+
+**Returns**
+
+| Type | Description |
+| --- | --- |
+| `Promise<PasskeyWalletSignMessageResult>` | The answer, with the signature. |
+
+</details>
+
+### ++dnt++stringifyPasskeyWalletTypedData
+
+<div data-summary>
+
+Serialize typed data in JSON, writing bigints as decimal strings.
+
+</div>
+
+<details>
+<summary>Signature</summary>
+
+```typescript
+stringifyPasskeyWalletTypedData: (typedData: PasskeyWalletTypedData) => string
+```
+
+**Parameters**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| `typedData` | `PasskeyWalletTypedData` | The typed data. |
+
+</details>
+
+### ++dnt++passkeyWalletConnectResultType
+
+<div data-summary>
+
+Type of the answer to a connect request.
+
+</div>
+
+<details>
+<summary>Definition</summary>
+
+```typescript
+const passkeyWalletConnectResultType = "organigram:wallet:connect-result"
+```
+
+</details>
+
+### ++dnt++passkeyWalletConnectType
+
+<div data-summary>
+
+Type of a request to connect an app to the wallet.
+
+</div>
+
+<details>
+<summary>Definition</summary>
+
+```typescript
+const passkeyWalletConnectType = "organigram:wallet:connect"
+```
+
+</details>
+
+### ++dnt++passkeyWalletDecryptPayloadResultType
+
+<div data-summary>
+
+Type of the answer to a decrypt payload request.
+
+</div>
+
+<details>
+<summary>Definition</summary>
+
+```typescript
+const passkeyWalletDecryptPayloadResultType = "organigram:wallet:decrypt-payload-result"
+```
+
+</details>
+
+### ++dnt++passkeyWalletDecryptPayloadType
+
+<div data-summary>
+
+Type of a request to decrypt a text with the wallet encryption key.
+
+</div>
+
+<details>
+<summary>Definition</summary>
+
+```typescript
+const passkeyWalletDecryptPayloadType = "organigram:wallet:decrypt-payload"
+```
+
+</details>
+
+### ++dnt++passkeyWalletEncryptPayloadResultType
+
+<div data-summary>
+
+Type of the answer to an encrypt payload request.
+
+</div>
+
+<details>
+<summary>Definition</summary>
+
+```typescript
+const passkeyWalletEncryptPayloadResultType = "organigram:wallet:encrypt-payload-result"
+```
+
+</details>
+
+### ++dnt++passkeyWalletEncryptPayloadType
+
+<div data-summary>
+
+Type of a request to encrypt a text with the wallet encryption key.
+
+</div>
+
+<details>
+<summary>Definition</summary>
+
+```typescript
+const passkeyWalletEncryptPayloadType = "organigram:wallet:encrypt-payload"
+```
+
+</details>
+
+### ++dnt++passkeyWalletRemoteErrorResultType
+
+<div data-summary>
+
+Type of the answer to a request the wallet could not serve.
+
+</div>
+
+<details>
+<summary>Definition</summary>
+
+```typescript
+const passkeyWalletRemoteErrorResultType = "organigram:wallet:remote-error"
+```
+
+</details>
+
+### ++dnt++passkeyWalletRemoteRequestPayloadType
+
+<div data-summary>
+
+Type of the message by which an app posts a request to the wallet popup.
+
+</div>
+
+<details>
+<summary>Definition</summary>
+
+```typescript
+const passkeyWalletRemoteRequestPayloadType = "organigram:wallet:request-payload"
+```
+
+</details>
+
+### ++dnt++passkeyWalletSendTransactionResultType
+
+<div data-summary>
+
+Type of the answer to a send transaction request.
+
+</div>
+
+<details>
+<summary>Definition</summary>
+
+```typescript
+const passkeyWalletSendTransactionResultType = "organigram:wallet:send-transaction-result"
+```
+
+</details>
+
+### ++dnt++passkeyWalletSendTransactionType
+
+<div data-summary>
+
+Type of a request to send a transaction.
+
+</div>
+
+<details>
+<summary>Definition</summary>
+
+```typescript
+const passkeyWalletSendTransactionType = "organigram:wallet:send-transaction"
+```
+
+</details>
+
+### ++dnt++passkeyWalletSignMessageResultType
+
+<div data-summary>
+
+Type of the answer to a sign message request.
+
+</div>
+
+<details>
+<summary>Definition</summary>
+
+```typescript
+const passkeyWalletSignMessageResultType = "organigram:wallet:sign-message-result"
+```
+
+</details>
+
+### ++dnt++passkeyWalletSignMessageType
+
+<div data-summary>
+
+Type of a request to sign a message.
+
+</div>
+
+<details>
+<summary>Definition</summary>
+
+```typescript
+const passkeyWalletSignMessageType = "organigram:wallet:sign-message"
+```
+
+</details>
+
+### ++dnt++passkeyWalletSignTypedDataResultType
+
+<div data-summary>
+
+Type of the answer to a sign typed data request.
+
+</div>
+
+<details>
+<summary>Definition</summary>
+
+```typescript
+const passkeyWalletSignTypedDataResultType = "organigram:wallet:sign-typed-data-result"
+```
+
+</details>
+
+### ++dnt++passkeyWalletSignTypedDataType
+
+<div data-summary>
+
+Type of a request to sign EIP-712 typed data.
+
+</div>
+
+<details>
+<summary>Definition</summary>
+
+```typescript
+const passkeyWalletSignTypedDataType = "organigram:wallet:sign-typed-data"
+```
+
+</details>
+
+### ++dnt++getAcceptedWalletOrigins
+
+<div data-summary>
+
+The origins whose messages an app expecting `walletOrigin` accepts.
+
+</div>
+
+<details>
+<summary>Signature</summary>
+
+```typescript
+getAcceptedWalletOrigins: (walletOrigin: string) => string[]
+```
+
+</details>
+
+### ++dnt++getLocalWalletOrigin
+
+<div data-summary>
+
+The local copy of `walletOrigin`, if it has one.
+
+</div>
+
+<details>
+<summary>Signature</summary>
+
+```typescript
+getLocalWalletOrigin: (walletOrigin: string) => string | null
+```
+
+</details>
+
+### ++dnt++isLocalWalletOriginOf
+
+<div data-summary>
+
+Only an HTTPS subdomain of the wallet host can unlock its passkeys.
+
+</div>
+
+<details>
+<summary>Signature</summary>
+
+```typescript
+isLocalWalletOriginOf: (localWalletOrigin: string, walletOrigin: string) => boolean
+```
+
+</details>
+
+### ++dnt++postToWalletPopup
+
+<div data-summary>
+
+Sends a message to the wallet popup, whichever accepted origin it shows: the browser only delivers it to the one the popup is on.
+
+</div>
+
+<details>
+<summary>Signature</summary>
+
+```typescript
+postToWalletPopup: (popup: Window, message: unknown, walletOrigin: string) => void
+```
+
+</details>
+
+### ++dnt++rememberWalletOrigin
+
+<div data-summary>
+
+Remembers which of the accepted origins answered for `walletOrigin`.
+
+</div>
+
+<details>
+<summary>Signature</summary>
+
+```typescript
+rememberWalletOrigin: (walletOrigin: string, answeringOrigin: string) => void
+```
+
+</details>
+
+### ++dnt++toPreferredWalletUrl
+
+<div data-summary>
+
+Opens requests on the local copy once it has answered on this device, so that the official wallet is no longer loaded at all.
+
+</div>
+
+<details>
+<summary>Signature</summary>
+
+```typescript
+toPreferredWalletUrl: (url: URL) => URL
+```
+
+</details>
+
+### ++dnt++watchLocalWalletPopup
+
+<div data-summary>
+
+Brings the popup back to the wallet when its local copy does not answer, for instance because it is not running. Returns the cleanup.
+
+</div>
+
+<details>
+<summary>Signature</summary>
+
+```typescript
+watchLocalWalletPopup: (input: {
+    popup: Window;
+    popupUrl: URL;
+    walletOrigin: string;
+    requestId: string;
+    timeoutMs?: number;
+}) => (() => void)
+```
+
+</details>
+
+### ++dnt++localWalletOptOutParam
+
+<div data-summary>
+
+Asks a wallet to serve a request itself.
+
+</div>
+
+<details>
+<summary>Definition</summary>
+
+```typescript
+const localWalletOptOutParam = "localWallet"
+```
+
+</details>
+
+### ++dnt++officialLocalWalletOrigin
+
+<div data-summary>
+
+Origin of the local copy of the official wallet.
+
+</div>
+
+A wallet can have a local copy: the same wallet run on the user's own machine, served under a subdomain of the wallet host, so that it unlocks the same passkeys. An app that trusts the wallet then also trusts that copy. The official wallet's copy is `pnpm dev local-organigram`; another deployment declares its own through `NEXT_PUBLIC_ORGANIGRAM_PASSKEY_WALLET_LOCAL_URL`.
+
+<details>
+<summary>Definition</summary>
+
+```typescript
+const officialLocalWalletOrigin = "https://local.wallet.organigram.ai:3002"
+```
+
+</details>
+
+### ++dnt++officialWalletOrigin
+
+<div data-summary>
+
+Origin of the official Organigram passkey wallet.
+
+</div>
+
+<details>
+<summary>Definition</summary>
+
+```typescript
+const officialWalletOrigin = "https://wallet.organigram.ai"
+```
+
+</details>
+
+### ++dnt++passkeyWalletLocalHandoffType
+
+<div data-summary>
+
+Posted by a wallet before it hands a request to its local copy.
+
+</div>
+
+<details>
+<summary>Definition</summary>
+
+```typescript
+const passkeyWalletLocalHandoffType = "organigram:wallet:local-handoff"
+```
+
+</details>
+
+### ++dnt++passkeyWalletReadyType
+
+<div data-summary>
+
+Posted by the local copy's request page as soon as it loads.
+
+</div>
+
+<details>
+<summary>Definition</summary>
+
+```typescript
+const passkeyWalletReadyType = "organigram:wallet:ready"
+```
+
+</details>
+
+## Sign in
+
+Users sign in to an app with Sign-In with Ethereum. The app issues a message with a nonce from its server, the wallet signs it in a popup, and the server verifies the signature, the domain and the nonce before opening a session. With NextAuth, `signInWithPasskeyWallet()` runs the whole flow in the browser, and `authorizePasskeyWalletCredentials()` verifies the result in a credentials provider.
+
+### ++dnt++PasskeyWalletPopupInput
+
+<div data-summary>
+
+Input of a sign-in request through the wallet popup.
+
+</div>
+
+<details>
+<summary>Definition</summary>
+
+```typescript
+export type PasskeyWalletPopupInput = {
+    walletOrigin?: string;
+    appOrigin?: string;
+    nonce: string;
+    chainId: number;
+    requestId?: string;
+    requestedAt?: string;
+    popup?: Window | null;
+};
+```
+
+</details>
+
+### ++dnt++PasskeyWalletStackSessionChangedMessage
+
+<div data-summary>
+
+A message posted by the wallet to the app that opened it when the user revokes the session of that app.
+
+</div>
+
+<details>
+<summary>Definition</summary>
+
+```typescript
+export type PasskeyWalletStackSessionChangedMessage = {
+    type: typeof passkeyWalletStackSessionChangedType;
+    version: 1;
+    event: 'revoked';
+    appOrigin: string;
+    address: `0x${string}` | null;
+};
+```
+
+</details>
+
+### ++dnt++SignInWithPasskeyWalletInput
+
+<div data-summary>
+
+Input of `signInWithPasskeyWallet()`.
+
+</div>
+
+<details>
+<summary>Definition</summary>
+
+```typescript
+export type SignInWithPasskeyWalletInput = {
+    chainId?: number;
+    walletOrigin?: string;
+    getCsrfToken: () => Promise<string | null | undefined>;
+    requestWalletSignIn?: (input: WalletSignInInput) => Promise<PasskeyWalletSignInResult>;
+    submitCredentials?: SubmitCredentials;
+};
+```
+
+</details>
+
+### ++dnt++buildPasskeyWalletSignInPopupUrl
+
+<div data-summary>
+
+Build the URL of the wallet popup for a sign-in request, with the challenge URL `/api/auth/wallet/challenge` of the app.
+
+</div>
+
+<details>
+<summary>Signature</summary>
+
+```typescript
+buildPasskeyWalletSignInPopupUrl: (input: PasskeyWalletPopupInput) => URL
+```
+
+**Parameters**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| `input` | `PasskeyWalletPopupInput` | The sign-in request. |
+
+</details>
+
+### ++dnt++createPasskeyWalletStackSessionChangedMessage
+
+<div data-summary>
+
+Create a session change message.
+
+</div>
+
+<details>
+<summary>Signature</summary>
+
+```typescript
+createPasskeyWalletStackSessionChangedMessage: (input: {
+    event: "revoked";
+    appOrigin: string;
+    address?: `0x${string}` | null;
+}) => PasskeyWalletStackSessionChangedMessage
+```
+
+**Parameters**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| `input` | `` { event: "revoked"; appOrigin: string; address?: `0x${string}` \| null; } `` | The event, the origin of the app and the address of the session. |
+
+</details>
+
+### ++dnt++notifyCurrentTabNextAuthSessionChanged
+
+<div data-summary>
+
+Tell NextAuth in the current tab that the session changed, so that it reloads it.
+
+</div>
+
+<details>
+<summary>Signature</summary>
+
+```typescript
+notifyCurrentTabNextAuthSessionChanged: () => void
+```
+
+</details>
+
+### ++dnt++notifyPasskeyWalletStackSessionChanged
+
+<div data-summary>
+
+Post a session change message to the window that opened the wallet.
+
+</div>
+
+<details>
+<summary>Signature</summary>
+
+```typescript
+notifyPasskeyWalletStackSessionChanged: (input: {
+    event: "revoked";
+    appOrigin: string;
+    address?: `0x${string}` | null;
+    targetOrigin?: string;
+}) => void
+```
+
+**Parameters**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| `input` | `` { event: "revoked"; appOrigin: string; address?: `0x${string}` \| null; targetOrigin?: string; } `` | The event, the origin of the app, the address of the session, and the origin to post to, the app origin by default. |
+
+</details>
+
+### ++dnt++parsePasskeyWalletStackSessionChangedMessage
+
+<div data-summary>
+
+Read a session change message.
+
+</div>
+
+Also check the origin of the `MessageEvent` carrying it: only trust messages from the wallet.
+
+<details>
+<summary>Signature</summary>
+
+```typescript
+parsePasskeyWalletStackSessionChangedMessage: (value: unknown) => PasskeyWalletStackSessionChangedMessage | null
+```
+
+**Parameters**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| `value` | `unknown` | The data of the message. |
+
+**Returns**
+
+| Type | Description |
+| --- | --- |
+| `PasskeyWalletStackSessionChangedMessage \| null` | The message, or `null` if it is invalid. |
+
+</details>
+
+### ++dnt++requestPasskeyWalletSignIn
+
+<div data-summary>
+
+Ask the wallet, in a popup, to sign a Sign-In with Ethereum message for the app.
+
+</div>
+
+Only accepts answers from the wallet origin and its local copy, for this request. The result is not verified: the server must verify it with `verifyPasskeyWalletSiwe()`.
+
+<details>
+<summary>Signature</summary>
+
+```typescript
+requestPasskeyWalletSignIn: (input: PasskeyWalletPopupInput & {
+    timeoutMs?: number;
+}) => Promise<PasskeyWalletSignInResult>
+```
+
+**Parameters**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| `input` | `PasskeyWalletPopupInput & { timeoutMs?: number; }` | The sign-in request, and a timeout, 5 minutes by default. |
+
+**Returns**
+
+| Type | Description |
+| --- | --- |
+| `Promise<PasskeyWalletSignInResult>` | The signed message. |
+
+</details>
+
+### ++dnt++signInWithPasskeyWallet
+
+<div data-summary>
+
+Sign in to a NextAuth app with the wallet.
+
+</div>
+
+Opens the wallet popup, uses the CSRF token as the nonce of the Sign-In with Ethereum message, and submits the signed message to the NextAuth credentials provider, which verifies it with `authorizePasskeyWalletCredentials()`.
+
+```ts
+import { getCsrfToken } from 'next-auth/react'
+
+await signInWithPasskeyWallet({ getCsrfToken })
+```
+
+<details>
+<summary>Signature</summary>
+
+```typescript
+signInWithPasskeyWallet: (input: SignInWithPasskeyWalletInput) => Promise<PasskeyWalletSignInResult>
+```
+
+**Parameters**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| `input` | `SignInWithPasskeyWalletInput` | The CSRF token getter, the chain and the wallet origin. |
+
+**Returns**
+
+| Type | Description |
+| --- | --- |
+| `Promise<PasskeyWalletSignInResult>` | The signed message. |
+
+</details>
+
+### ++dnt++passkeyWalletStackSessionChangedType
+
+<div data-summary>
+
+Type of the message telling an app that its session changed in the wallet.
+
+</div>
+
+<details>
+<summary>Definition</summary>
+
+```typescript
+const passkeyWalletStackSessionChangedType = "organigram:wallet:stack-session-changed"
+```
+
+</details>
+
+### ++dnt++submitPasskeyWalletCredentials
+
+<div data-summary>
+
+Submit a signed message to the NextAuth credentials callback of the app, at `/api/auth/callback/credentials`.
+
+</div>
+
+<details>
+<summary>Definition</summary>
+
+```typescript
+const submitPasskeyWalletCredentials: SubmitCredentials
+```
+
+</details>
+
+### ++dnt++AuthorizePasskeyWalletCredentialsInput
+
+<div data-summary>
+
+Input of `authorizePasskeyWalletCredentials()`.
+
+</div>
+
+<details>
+<summary>Definition</summary>
+
+```typescript
+export type AuthorizePasskeyWalletCredentialsInput = {
+    credentials: PasskeyWalletNextAuthCredentials | undefined;
+    domain: string;
+    nonce: string | null | undefined;
+    chain?: Chain;
+    transportUrl: string;
+    transportOptions?: Parameters<typeof import('viem').http>[1];
+};
+```
+
+</details>
+
+### ++dnt++PasskeyWalletNextAuthCredentials
+
+<div data-summary>
+
+Credentials submitted to the NextAuth credentials provider.
+
+</div>
+
+<details>
+<summary>Definition</summary>
+
+```typescript
+export type PasskeyWalletNextAuthCredentials = {
+    message?: unknown;
+    signature?: unknown;
+    csrfToken?: unknown;
+};
+```
+
+</details>
+
+### ++dnt++authorizePasskeyWalletCredentials
+
+<div data-summary>
+
+Verify the credentials submitted to a NextAuth credentials provider by `signInWithPasskeyWallet()`.
+
+</div>
+
+Rejects credentials without message, signature or nonce, then verifies them with `verifyPasskeyWalletSiwe()`. The nonce is the CSRF token of the session, which `signInWithPasskeyWallet()` puts in the message.
+
+```ts
+CredentialsProvider({
+  credentials: { message: {}, signature: {} },
+  authorize: async credentials =>
+    await authorizePasskeyWalletCredentials({
+      credentials,
+      domain: 'app.example.com',
+      nonce: csrfToken,
+      transportUrl: rpcUrl
+    })
+})
+```
+
+<details>
+<summary>Signature</summary>
+
+```typescript
+authorizePasskeyWalletCredentials: (input: AuthorizePasskeyWalletCredentialsInput) => Promise<PasskeyWalletVerifiedSiwe | null>
+```
+
+**Parameters**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| `input` | `AuthorizePasskeyWalletCredentialsInput` | The credentials, the domain and nonce of the app, and an RPC endpoint. |
+
+**Returns**
+
+| Type | Description |
+| --- | --- |
+| `Promise<PasskeyWalletVerifiedSiwe \| null>` | The verified sign-in, or `null`. |
+
+</details>
+
+### ++dnt++PasskeyWalletChallenge
+
+<div data-summary>
+
+A Sign-In with Ethereum message issued by an app for the wallet to sign.
+
+</div>
+
+<details>
+<summary>Definition</summary>
+
+```typescript
+export type PasskeyWalletChallenge = {
+    domain: string;
+    nonce: string;
+    issuedAt: string;
+    expiresAt: string;
+    message: string;
+};
+```
+
+</details>
+
+### ++dnt++PasskeyWalletVerifiedSiwe
+
+<div data-summary>
+
+A verified Sign-In with Ethereum message.
+
+</div>
+
+<details>
+<summary>Definition</summary>
 
 ```typescript
 export type PasskeyWalletVerifiedSiwe = {
@@ -1694,8 +2340,18 @@ export type PasskeyWalletVerifiedSiwe = {
 };
 ```
 
+</details>
 
-## type ++dnt++PasskeyWalletVerifySiweInput
+### ++dnt++PasskeyWalletVerifySiweInput
+
+<div data-summary>
+
+Input of `verifyPasskeyWalletSiwe()`.
+
+</div>
+
+<details>
+<summary>Definition</summary>
 
 ```typescript
 export type PasskeyWalletVerifySiweInput = {
@@ -1709,49 +2365,1475 @@ export type PasskeyWalletVerifySiweInput = {
 };
 ```
 
+</details>
 
-## type ++dnt++RemoteVaultBackupPackage
+### ++dnt++buildPasskeyWalletPopupUrl
+
+<div data-summary>
+
+Build the URL of the wallet popup for a sign-in request.
+
+</div>
+
+<details>
+<summary>Signature</summary>
 
 ```typescript
-export type RemoteVaultBackupPackage = {
-    version: 1;
+buildPasskeyWalletPopupUrl: (input: {
+    walletOrigin: string;
+    domain: string;
+    challengeUrl: string;
+    requestId?: string;
+    requestedAt?: string;
+    returnUrl?: string;
+}) => URL
+```
+
+**Parameters**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| `input` | `{ walletOrigin: string; domain: string; challengeUrl: string; requestId?: string; requestedAt?: string; returnUrl?: string; }` | The origin of the wallet, the domain of the app, its challenge URL, and optionally the request identifier, date and return URL. |
+
+</details>
+
+### ++dnt++createPasskeyWalletChallenge
+
+<div data-summary>
+
+Create a Sign-In with Ethereum message for an address, valid for 5 minutes.
+
+</div>
+
+Store the nonce on the server, for example in the session, and check it with `verifyPasskeyWalletSiwe()`.
+
+<details>
+<summary>Signature</summary>
+
+```typescript
+createPasskeyWalletChallenge: (input: {
+    request: Request;
     address: `0x${string}`;
-    backups: RemoteVaultBackupRecord[];
-    exportedAt: string;
+    chainId: number;
+    encryptionPublicKeyResource?: string;
+    nonce?: string;
+    now?: Date;
+    statement?: string;
+    uri?: string;
+}) => PasskeyWalletChallenge
+```
+
+**Parameters**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| `input` | `` { request: Request; address: `0x${string}`; chainId: number; encryptionPublicKeyResource?: string; nonce?: string; now?: Date; statement?: string; uri?: string; } `` | The request, the address and chain, and optionally the public key resource from `createWalletEncryptionPublicKeySiweResource()`, a nonce, the current date, a statement and the URI of the app, the origin of the request by default. |
+
+</details>
+
+### ++dnt++createPasskeyWalletManifest
+
+<div data-summary>
+
+Create the manifest of an app, with the challenge URL `/api/auth/wallet/challenge` on the origin of the request.
+
+</div>
+
+<details>
+<summary>Signature</summary>
+
+```typescript
+createPasskeyWalletManifest: (request: Request) => PasskeyWalletManifest
+```
+
+**Parameters**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| `request` | `Request` | The request for the manifest. |
+
+</details>
+
+### ++dnt++getPasskeyWalletCorsAllowedOrigins
+
+<div data-summary>
+
+List the wallet origins allowed to call the sign-in endpoints of an app.
+
+</div>
+
+Allows the official wallet and its local copy, the configured wallet and its local copy, other configured origins, and, when the app runs on localhost, the wallet served on port 3002 of the same host.
+
+<details>
+<summary>Signature</summary>
+
+```typescript
+getPasskeyWalletCorsAllowedOrigins: (input: {
+    request: Request;
+    walletUrl?: string;
+    allowedOrigins?: string;
+}) => string[]
+```
+
+**Parameters**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| `input` | `{ request: Request; walletUrl?: string; allowedOrigins?: string; }` | The request, the URL of the configured wallet, and other allowed origins, separated by commas. |
+
+</details>
+
+### ++dnt++getPasskeyWalletCorsOrigin
+
+<div data-summary>
+
+Get the origin of a request if it is an allowed wallet origin.
+
+</div>
+
+<details>
+<summary>Signature</summary>
+
+```typescript
+getPasskeyWalletCorsOrigin: (input: {
+    request: Request;
+    walletUrl?: string;
+    allowedOrigins?: string;
+}) => string | null
+```
+
+**Parameters**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| `input` | `{ request: Request; walletUrl?: string; allowedOrigins?: string; }` | The request, the URL of the configured wallet, and other allowed origins, separated by commas. |
+
+**Returns**
+
+| Type | Description |
+| --- | --- |
+| `string \| null` | The origin, or `null`. |
+
+</details>
+
+### ++dnt++getPasskeyWalletRequestOrigin
+
+<div data-summary>
+
+Get the public origin of a request, from the `X-Forwarded-Host` and `X-Forwarded-Proto` headers when present.
+
+</div>
+
+Clients can set these headers. Only rely on the result behind a proxy that overwrites them.
+
+<details>
+<summary>Signature</summary>
+
+```typescript
+getPasskeyWalletRequestOrigin: (request: Request) => string
+```
+
+**Parameters**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| `request` | `Request` | The request. |
+
+</details>
+
+### ++dnt++isWalletSignInOriginAllowed
+
+<div data-summary>
+
+Check whether an origin is one of a list of allowed origins.
+
+</div>
+
+<details>
+<summary>Signature</summary>
+
+```typescript
+isWalletSignInOriginAllowed: (origin: string, allowedOrigins: readonly string[]) => boolean
+```
+
+**Parameters**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| `origin` | `string` | The origin to check. |
+| `allowedOrigins` | `readonly string[]` | The allowed origins. |
+
+</details>
+
+### ++dnt++verifyPasskeyWalletSiwe
+
+<div data-summary>
+
+Verify a Sign-In with Ethereum message signed by the wallet.
+
+</div>
+
+Checks the signature, the domain, the nonce and the validity dates of the message with viem. Never pass an empty domain or nonce: viem then skips their check. Check that the nonce is the one the app issued for this session, and use it only once.
+
+```ts
+const verified = await verifyPasskeyWalletSiwe({
+  message,
+  signature,
+  domain: 'app.example.com',
+  nonce: session.nonce,
+  transportUrl: rpcUrl
+})
+```
+
+<details>
+<summary>Signature</summary>
+
+```typescript
+verifyPasskeyWalletSiwe: (input: PasskeyWalletVerifySiweInput) => Promise<PasskeyWalletVerifiedSiwe | null>
+```
+
+**Parameters**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| `input` | `PasskeyWalletVerifySiweInput` | The message, signature, expected domain and nonce, and an RPC endpoint. |
+
+**Returns**
+
+| Type | Description |
+| --- | --- |
+| `Promise<PasskeyWalletVerifiedSiwe \| null>` | The verified sign-in, or `null` if the message is invalid. |
+
+</details>
+
+### ++dnt++withPasskeyWalletCorsHeaders
+
+<div data-summary>
+
+Add CORS headers with credentials to a response, if the request comes from an allowed wallet origin.
+
+</div>
+
+<details>
+<summary>Signature</summary>
+
+```typescript
+withPasskeyWalletCorsHeaders: <Response extends {
+    headers: Headers;
+}>(request: Request, response: Response, options?: {
+    allowedMethods?: string;
+    walletUrl?: string;
+    allowedOrigins?: string;
+}) => Response
+```
+
+**Parameters**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| `request` | `Request` | The request. |
+| `response` | `Response` | The response, returned with its headers changed. |
+| `options` | `{ allowedMethods?: string; walletUrl?: string; allowedOrigins?: string; }` | Allowed methods, `GET, OPTIONS` by default, the URL of the configured wallet, and other allowed origins. |
+
+</details>
+
+### ++dnt++PasskeyWalletErrorResult
+
+<div data-summary>
+
+The answer of the wallet to a request it could not serve.
+
+</div>
+
+<details>
+<summary>Definition</summary>
+
+```typescript
+export type PasskeyWalletErrorResult = {
+    type: typeof passkeyWalletErrorType;
+    version: 1;
+    requestId: string;
+    code: 'user_rejected' | 'challenge_unavailable' | 'domain_mismatch' | 'wallet_locked' | 'unsupported_origin' | 'internal_error';
+    message: string;
 };
 ```
 
+</details>
 
-## type ++dnt++RemoteVaultBackupRecord
+### ++dnt++PasskeyWalletManifest
+
+<div data-summary>
+
+How an app accepts sign-ins with the wallet.
+
+</div>
+
+<details>
+<summary>Definition</summary>
 
 ```typescript
-export type RemoteVaultBackupRecord = {
-    version: 2;
-    backupId: string;
+export type PasskeyWalletManifest = {
+    version: 1;
+    domain: string;
+    signInChallengeUrl: string;
+    signInCompletionUrl?: string;
+};
+```
+
+</details>
+
+### ++dnt++PasskeyWalletSignInRequest
+
+<div data-summary>
+
+A request to sign in to an app with the wallet, read from the URL of the wallet popup.
+
+</div>
+
+<details>
+<summary>Definition</summary>
+
+```typescript
+export type PasskeyWalletSignInRequest = {
+    type: typeof passkeyWalletSignInType;
+    version: 1;
+    requestId: string;
+    domain: string;
+    challengeUrl: string;
+    returnUrl?: string;
+    requestedAt: string;
+};
+```
+
+</details>
+
+### ++dnt++PasskeyWalletSignInResult
+
+<div data-summary>
+
+The answer of the wallet to a sign-in request: a signed Sign-In with Ethereum message.
+
+</div>
+
+<details>
+<summary>Definition</summary>
+
+```typescript
+export type PasskeyWalletSignInResult = {
+    type: typeof passkeyWalletSignInResultType;
+    version: 1;
+    requestId: string;
+    domain: string;
+    address: `0x${string}`;
+    message: string;
+    signature: `0x${string}`;
+    completedAt: string;
+};
+```
+
+</details>
+
+### ++dnt++assertSignInDomainMatches
+
+<div data-summary>
+
+Check that a Sign-In with Ethereum message is for the expected domain, before signing it.
+
+</div>
+
+<details>
+<summary>Signature</summary>
+
+```typescript
+assertSignInDomainMatches: (message: string, expectedDomain: string) => void
+```
+
+**Parameters**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| `message` | `string` | The message. |
+| `expectedDomain` | `string` | The domain of the request. |
+
+</details>
+
+### ++dnt++parsePasskeyWalletSignInRequest
+
+<div data-summary>
+
+Read and check a sign-in request from the URL parameters of the wallet popup.
+
+</div>
+
+The challenge URL must use HTTPS and belong to the requested domain or one of its subdomains, and the return URL must use HTTPS, so that the wallet only signs messages fetched from the app asking for them.
+
+<details>
+<summary>Signature</summary>
+
+```typescript
+parsePasskeyWalletSignInRequest: (params: URLSearchParams) => PasskeyWalletSignInRequest
+```
+
+**Parameters**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| `params` | `URLSearchParams` | The URL parameters. |
+
+</details>
+
+### ++dnt++resolveSiweDomain
+
+<div data-summary>
+
+Read the domain of a Sign-In with Ethereum message from its first line.
+
+</div>
+
+<details>
+<summary>Signature</summary>
+
+```typescript
+resolveSiweDomain: (message: string) => string
+```
+
+**Parameters**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| `message` | `string` | The message. |
+
+</details>
+
+### ++dnt++validatePasskeyWalletManifest
+
+<div data-summary>
+
+Check the manifest of an app.
+
+</div>
+
+The domain of the manifest must be the host serving it, and its URLs must use HTTPS and belong to that domain or its subdomains.
+
+<details>
+<summary>Signature</summary>
+
+```typescript
+validatePasskeyWalletManifest: (manifest: unknown, servingHost: string) => PasskeyWalletManifest
+```
+
+**Parameters**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| `manifest` | `unknown` | The manifest, parsed from JSON. |
+| `servingHost` | `string` | The host the manifest was fetched from. |
+
+</details>
+
+### ++dnt++passkeyWalletErrorType
+
+<div data-summary>
+
+Type of the message answering a request the wallet could not serve.
+
+</div>
+
+<details>
+<summary>Definition</summary>
+
+```typescript
+const passkeyWalletErrorType = "organigram:wallet:error"
+```
+
+</details>
+
+### ++dnt++passkeyWalletSignInResultType
+
+<div data-summary>
+
+Type of the message answering a sign-in request.
+
+</div>
+
+<details>
+<summary>Definition</summary>
+
+```typescript
+const passkeyWalletSignInResultType = "organigram:wallet:sign-in-result"
+```
+
+</details>
+
+### ++dnt++passkeyWalletSignInType
+
+<div data-summary>
+
+Type of a sign-in request to the wallet.
+
+</div>
+
+<details>
+<summary>Definition</summary>
+
+```typescript
+const passkeyWalletSignInType = "organigram:wallet:sign-in"
+```
+
+</details>
+
+## Passkey vaults
+
+The wallet is a standard Ethereum account derived from a BIP-39 recovery phrase. The recovery phrase is encrypted in a vault with AES-256-GCM, under a key derived from the PRF output of a WebAuthn passkey, so that only that passkey can decrypt it. A wallet can have several passkeys, each with its own vault. These functions run in the wallet app: an unlocked wallet holds the recovery phrase and keys in memory, so keep it there only as long as needed, and never store, send or log it.
+
+### ++dnt++BrowserPasskeyWalletVaultPayload
+
+<div data-summary>
+
+The secrets encrypted in a passkey vault.
+
+</div>
+
+Holds the recovery phrase in clear: never store, send or log it outside an encrypted envelope.
+
+<details>
+<summary>Definition</summary>
+
+```typescript
+export type BrowserPasskeyWalletVaultPayload = {
+    version: 1;
+    recoveryPhrase: string;
+    walletEncryptionKey?: WalletEncryptionKeyPairPayload;
+};
+```
+
+</details>
+
+### ++dnt++PasskeyPrfCredential
+
+<div data-summary>
+
+A passkey to evaluate with its PRF salt.
+
+</div>
+
+<details>
+<summary>Definition</summary>
+
+```typescript
+export type PasskeyPrfCredential = {
     credentialId: string;
-    envelope: PasskeyVaultEnvelopeData;
-    salt: string;
-    iv: string;
-    ciphertext: string;
-    createdAt: string;
+    transports?: string[];
+    prfSalt: string;
 };
 ```
 
+</details>
 
-## type ++dnt++SignInWithPasskeyWalletInput
+### ++dnt++createBrowserPasskeyWalletVaultPayload
+
+<div data-summary>
+
+Create the payload of a new vault, with a new wallet encryption key pair.
+
+</div>
+
+<details>
+<summary>Signature</summary>
 
 ```typescript
-export type SignInWithPasskeyWalletInput = {
-    chainId?: number;
-    walletOrigin?: string;
-    getCsrfToken: () => Promise<string | null | undefined>;
-    requestWalletSignIn?: (input: WalletSignInInput) => Promise<PasskeyWalletSignInResult>;
-    submitCredentials?: SubmitCredentials;
+createBrowserPasskeyWalletVaultPayload: (recoveryPhrase: string) => Promise<BrowserPasskeyWalletVaultPayload>
+```
+
+**Parameters**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| `recoveryPhrase` | `string` | The recovery phrase of the wallet. |
+
+</details>
+
+### ++dnt++createGeneratedRecoveryPhrase
+
+<div data-summary>
+
+Generate a new 12-word English BIP-39 recovery phrase.
+
+</div>
+
+<details>
+<summary>Signature</summary>
+
+```typescript
+createGeneratedRecoveryPhrase: () => string
+```
+
+</details>
+
+### ++dnt++decryptVaultPayloadWithPrfOutput
+
+<div data-summary>
+
+Decrypt a vault envelope with the PRF output of its passkey.
+
+</div>
+
+Does not zero the PRF output, so that the caller may try several envelopes with it. Zero it once done.
+
+<details>
+<summary>Signature</summary>
+
+```typescript
+decryptVaultPayloadWithPrfOutput: (input: {
+    envelope: PasskeyVaultEnvelopeData;
+    prfOutput: Uint8Array;
+}) => Promise<BrowserPasskeyWalletVaultPayload>
+```
+
+**Parameters**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| `input` | `{ envelope: PasskeyVaultEnvelopeData; prfOutput: Uint8Array; }` | The envelope and the PRF output. |
+
+</details>
+
+### ++dnt++derivePasskeyWalletAccount
+
+<div data-summary>
+
+Switch an unlocked wallet to another of its accounts.
+
+</div>
+
+<details>
+<summary>Signature</summary>
+
+```typescript
+derivePasskeyWalletAccount: (input: {
+    wallet: UnlockedPasskeyWallet;
+    account: StoredVaultAccount;
+}) => UnlockedPasskeyWallet
+```
+
+**Parameters**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| `input` | `{ wallet: UnlockedPasskeyWallet; account: StoredVaultAccount; }` | The unlocked wallet and the account to select. |
+
+</details>
+
+### ++dnt++deriveStoredVaultAccount
+
+<div data-summary>
+
+Derive the account of an address index from a recovery phrase.
+
+</div>
+
+<details>
+<summary>Signature</summary>
+
+```typescript
+deriveStoredVaultAccount: (input: {
+    recoveryPhrase: string;
+    addressIndex: number;
+    name: string;
+}) => StoredVaultAccount
+```
+
+**Parameters**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| `input` | `{ recoveryPhrase: string; addressIndex: number; name: string; }` | The recovery phrase, the address index, and the name of the account, `Account <index + 1>` by default. |
+
+</details>
+
+### ++dnt++getDerivationPath
+
+<div data-summary>
+
+Get the Ethereum BIP-44 derivation path of an address index.
+
+</div>
+
+<details>
+<summary>Signature</summary>
+
+```typescript
+getDerivationPath: (addressIndex: number) => string
+```
+
+**Parameters**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| `addressIndex` | `number` | The address index. |
+
+</details>
+
+### ++dnt++hexEncodeMessage
+
+<div data-summary>
+
+Encode a UTF-8 message in hex, as `personal_sign` requests carry it.
+
+</div>
+
+<details>
+<summary>Signature</summary>
+
+```typescript
+hexEncodeMessage: (message: string) => `0x${string}`
+```
+
+**Parameters**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| `message` | `string` | The message. |
+
+</details>
+
+### ++dnt++parseBrowserPasskeyWalletVaultPayload
+
+<div data-summary>
+
+Read a decrypted vault payload.
+
+</div>
+
+<details>
+<summary>Signature</summary>
+
+```typescript
+parseBrowserPasskeyWalletVaultPayload: (plaintext: string) => BrowserPasskeyWalletVaultPayload
+```
+
+**Parameters**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| `plaintext` | `string` | The decrypted payload, in JSON. |
+
+</details>
+
+### ++dnt++registerAdditionalBrowserPasskeyVault
+
+<div data-summary>
+
+Create another passkey able to unlock an unlocked wallet, for example as a backup.
+
+</div>
+
+<details>
+<summary>Signature</summary>
+
+```typescript
+registerAdditionalBrowserPasskeyVault: (input: {
+    wallet: UnlockedPasskeyWallet;
+    name: string;
+    accounts: StoredVaultAccount[];
+    rpId?: string;
+    rpName?: string;
+}) => Promise<{
+    record: StoredVaultRecord;
+    wallet: UnlockedPasskeyWallet;
+}>
+```
+
+**Parameters**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| `input` | `{ wallet: UnlockedPasskeyWallet; name: string; accounts: StoredVaultAccount[]; rpId?: string; rpName?: string; }` | The unlocked wallet, the name of the passkey, the accounts it unlocks, and the WebAuthn relying party. |
+
+**Returns**
+
+| Type | Description |
+| --- | --- |
+| `Promise<{ record: StoredVaultRecord; wallet: UnlockedPasskeyWallet; }>` | The new vault record and the wallet, now attached to the new passkey. |
+
+</details>
+
+### ++dnt++registerBrowserPasskeyVault
+
+<div data-summary>
+
+Create a passkey and a vault encrypting a recovery phrase with it.
+
+</div>
+
+Asks the browser to create a discoverable passkey with user verification and the PRF extension. The recovery phrase is encrypted with a key derived from the PRF output, which is then zeroed. Store the returned record, which holds no secret in clear, and keep the unlocked wallet in memory only.
+
+```ts
+const { record, wallet } = await registerBrowserPasskeyVault({
+  recoveryPhrase: createGeneratedRecoveryPhrase(),
+  name: 'My wallet'
+})
+```
+
+<details>
+<summary>Signature</summary>
+
+```typescript
+registerBrowserPasskeyVault: (input: {
+    recoveryPhrase: string;
+    name: string;
+    rpId?: string;
+    rpName?: string;
+}) => Promise<{
+    record: StoredVaultRecord;
+    wallet: UnlockedPasskeyWallet;
+}>
+```
+
+**Parameters**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| `input` | `{ recoveryPhrase: string; name: string; rpId?: string; rpName?: string; }` | The recovery phrase, the name of the wallet, the WebAuthn relying party identifier, the current host name by default, and the relying party name. |
+
+**Returns**
+
+| Type | Description |
+| --- | --- |
+| `Promise<{ record: StoredVaultRecord; wallet: UnlockedPasskeyWallet; }>` | The vault record and the unlocked wallet, on its first account. |
+
+</details>
+
+### ++dnt++requestPasskeyPrfOutput
+
+<div data-summary>
+
+Runs one user-verified assertion restricted to the given passkeys, each evaluated with its own PRF salt, and returns the PRF output of the passkey the person selected. The caller owns the returned PRF output and must zero it once its key is derived.
+
+</div>
+
+<details>
+<summary>Signature</summary>
+
+```typescript
+requestPasskeyPrfOutput: (input: {
+    credentials: PasskeyPrfCredential[];
+    rpId?: string;
+}) => Promise<{
+    credentialId: string;
+    prfOutput: Uint8Array;
+}>
+```
+
+</details>
+
+### ++dnt++signPersonalMessage
+
+<div data-summary>
+
+Sign a message with EIP-191 `personal_sign`.
+
+</div>
+
+<details>
+<summary>Signature</summary>
+
+```typescript
+signPersonalMessage: (input: {
+    wallet: UnlockedPasskeyWallet;
+    message: string;
+}) => Promise<`0x${string}`>
+```
+
+**Parameters**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| `input` | `{ wallet: UnlockedPasskeyWallet; message: string; }` | The unlocked wallet and the message. |
+
+</details>
+
+### ++dnt++signTypedDataMessage
+
+<div data-summary>
+
+Sign EIP-712 typed data.
+
+</div>
+
+<details>
+<summary>Signature</summary>
+
+```typescript
+signTypedDataMessage: (input: {
+    wallet: UnlockedPasskeyWallet;
+    typedData: PasskeyWalletTypedData;
+}) => Promise<`0x${string}`>
+```
+
+**Parameters**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| `input` | `{ wallet: UnlockedPasskeyWallet; typedData: PasskeyWalletTypedData; }` | The unlocked wallet and the typed data. |
+
+</details>
+
+### ++dnt++unlockBrowserPasskeyVault
+
+<div data-summary>
+
+Unlock a wallet with one of the passkeys of its vaults.
+
+</div>
+
+Asks the user to pick one of the passkeys of the records, with user verification. The vaults of that passkey are tried in turn, and the first whose recovery phrase derives the address of its record is unlocked. The PRF output is zeroed.
+
+```ts
+const { wallet } = await unlockBrowserPasskeyVault({ records })
+const signature = await signPersonalMessage({ wallet, message: 'Hello' })
+```
+
+<details>
+<summary>Signature</summary>
+
+```typescript
+unlockBrowserPasskeyVault: (input: {
+    records: StoredVaultRecord[];
+    rpId?: string;
+}) => Promise<{
+    record: StoredVaultRecord;
+    wallet: UnlockedPasskeyWallet;
+}>
+```
+
+**Parameters**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| `input` | `{ records: StoredVaultRecord[]; rpId?: string; }` | The vault records to choose from, and the WebAuthn relying party identifier, the current host name by default. |
+
+**Returns**
+
+| Type | Description |
+| --- | --- |
+| `Promise<{ record: StoredVaultRecord; wallet: UnlockedPasskeyWallet; }>` | The record unlocked and the wallet, on the first account of the record. |
+
+</details>
+
+### ++dnt++updateStaticPasskeyVaultEncryptionKey
+
+<div data-summary>
+
+Unlock a vault and re-encrypt it with another wallet encryption key pair.
+
+</div>
+
+Asks the user for a passkey, and keeps the PRF salt of the vault. Store the returned record in place of the old one.
+
+<details>
+<summary>Signature</summary>
+
+```typescript
+updateStaticPasskeyVaultEncryptionKey: (input: {
+    records: StoredVaultRecord[];
+    walletEncryptionKey: WalletEncryptionKeyPairPayload;
+    rpId?: string;
+}) => Promise<{
+    record: StoredVaultRecord;
+    wallet: UnlockedPasskeyWallet;
+}>
+```
+
+**Parameters**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| `input` | `{ records: StoredVaultRecord[]; walletEncryptionKey: WalletEncryptionKeyPairPayload; rpId?: string; }` | The vault records to choose from, the new key pair and the WebAuthn relying party identifier. |
+
+**Returns**
+
+| Type | Description |
+| --- | --- |
+| `Promise<{ record: StoredVaultRecord; wallet: UnlockedPasskeyWallet; }>` | The re-encrypted record and the unlocked wallet. |
+
+</details>
+
+### ++dnt++PasskeyVaultEnvelopeData
+
+<div data-summary>
+
+A secret encrypted with a key derived from a passkey, such as the recovery phrase of a wallet.
+
+</div>
+
+The envelope holds no secret: it can be stored anywhere, as only the passkey that created it can decrypt it.
+
+<details>
+<summary>Definition</summary>
+
+```typescript
+export type PasskeyVaultEnvelopeData = {
+    algorithm: typeof passkeyVaultAlgorithm;
+    keyVersion: typeof passkeyVaultKeyVersion;
+    ciphertext: string;
+    salt: string;
+    prfSalt: string;
+    nonce: string;
 };
 ```
 
+</details>
 
-## type ++dnt++StoredVaultAccount
+### ++dnt++base64UrlToBytes
+
+<div data-summary>
+
+Decode unpadded base64url.
+
+</div>
+
+Accepts canonical unpadded base64url only. Lenient decoders silently skip unknown characters, so a tampered value could otherwise decode to bytes other than the ones it appears to encode.
+
+<details>
+<summary>Signature</summary>
+
+```typescript
+base64UrlToBytes: (value: string) => Uint8Array
+```
+
+**Parameters**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| `value` | `string` | The value to decode. |
+
+</details>
+
+### ++dnt++bytesToBase64Url
+
+<div data-summary>
+
+Encode bytes in unpadded base64url.
+
+</div>
+
+<details>
+<summary>Signature</summary>
+
+```typescript
+bytesToBase64Url: (bytes: Uint8Array) => string
+```
+
+**Parameters**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| `bytes` | `Uint8Array` | The bytes to encode. |
+
+</details>
+
+### ++dnt++decryptPasskeyVaultSecret
+
+<div data-summary>
+
+Decrypt the secret of a vault envelope.
+
+</div>
+
+<details>
+<summary>Signature</summary>
+
+```typescript
+decryptPasskeyVaultSecret: (input: DecryptPasskeyVaultSecretInput) => Promise<string>
+```
+
+**Parameters**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| `input` | `~DecryptPasskeyVaultSecretInput` | The envelope and the key derived for it. |
+
+</details>
+
+### ++dnt++derivePasskeyVaultKey
+
+<div data-summary>
+
+Derive the AES-GCM key of a vault from the PRF output of a passkey.
+
+</div>
+
+The key cannot be exported. A copy of the PRF output made for the import is zeroed afterwards, but not the original: zero it once you no longer need it.
+
+<details>
+<summary>Signature</summary>
+
+```typescript
+derivePasskeyVaultKey: (input: DerivePasskeyVaultKeyInput) => Promise<CryptoKey>
+```
+
+**Parameters**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| `input` | `~DerivePasskeyVaultKeyInput` | The 32-byte PRF output, the 32-byte salt of the vault, and an optional HKDF `info` that separates keys derived from the same PRF output for different purposes. |
+
+</details>
+
+### ++dnt++encryptPasskeyVaultSecret
+
+<div data-summary>
+
+Encrypt a secret with a vault key into a vault envelope.
+
+</div>
+
+<details>
+<summary>Signature</summary>
+
+```typescript
+encryptPasskeyVaultSecret: (input: EncryptPasskeyVaultSecretInput) => Promise<PasskeyVaultEnvelopeData>
+```
+
+**Parameters**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| `input` | `~EncryptPasskeyVaultSecretInput` | The secret, the key from `derivePasskeyVaultKey()`, the salt it was derived with, the 32-byte PRF salt, and an optional 12-byte nonce, random by default. Never reuse a nonce with the same key. |
+
+</details>
+
+### ++dnt++getCrypto
+
+<div data-summary>
+
+Get the Web Crypto API of the environment.
+
+</div>
+
+<details>
+<summary>Signature</summary>
+
+```typescript
+getCrypto: () => Crypto
+```
+
+</details>
+
+### ++dnt++hasBase64UrlByteLength
+
+<div data-summary>
+
+Check that a value is canonical base64url whose decoded length passes a test.
+
+</div>
+
+<details>
+<summary>Signature</summary>
+
+```typescript
+hasBase64UrlByteLength: (value: unknown, isValidLength: (byteLength: number) => boolean) => boolean
+```
+
+**Parameters**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| `value` | `unknown` | The value to check. |
+| `isValidLength` | `(byteLength: number) => boolean` | Test of the decoded length, in bytes. |
+
+</details>
+
+### ++dnt++isPasskeyPrfSupported
+
+<div data-summary>
+
+Check whether a newly created passkey enabled the PRF extension, which the wallet needs to derive its keys.
+
+</div>
+
+<details>
+<summary>Signature</summary>
+
+```typescript
+isPasskeyPrfSupported: (input: {
+    credential: PrfSupportCredential | null;
+}) => Promise<boolean>
+```
+
+**Parameters**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| `input` | `{ credential: ~PrfSupportCredential \| null; }` | The credential returned by `navigator.credentials.create()`. |
+
+</details>
+
+### ++dnt++isPasskeyVaultEnvelope
+
+<div data-summary>
+
+Check that a value is a passkey vault envelope of the current algorithm and key version, with salts, nonce and ciphertext of valid lengths.
+
+</div>
+
+<details>
+<summary>Signature</summary>
+
+```typescript
+isPasskeyVaultEnvelope: (value: unknown) => value is PasskeyVaultEnvelopeData
+```
+
+**Parameters**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| `value` | `unknown` | The value to check. |
+
+</details>
+
+### ++dnt++randomBytes
+
+<div data-summary>
+
+Generate cryptographically secure random bytes.
+
+</div>
+
+<details>
+<summary>Signature</summary>
+
+```typescript
+randomBytes: (length: number) => Uint8Array
+```
+
+**Parameters**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| `length` | `number` | Number of bytes. |
+
+</details>
+
+### ++dnt++toArrayBuffer
+
+<div data-summary>
+
+Copy the bytes of a view into a new `ArrayBuffer`.
+
+</div>
+
+<details>
+<summary>Signature</summary>
+
+```typescript
+toArrayBuffer: (bytes: Uint8Array) => ArrayBuffer
+```
+
+**Parameters**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| `bytes` | `Uint8Array` | The bytes to copy. |
+
+</details>
+
+### ++dnt++passkeyVaultAlgorithm
+
+<div data-summary>
+
+Algorithm of passkey vaults: AES-256-GCM with a key derived by HKDF-SHA-256 from the passkey PRF output.
+
+</div>
+
+<details>
+<summary>Definition</summary>
+
+```typescript
+const passkeyVaultAlgorithm = "AES-GCM-HKDF-SHA-256"
+```
+
+</details>
+
+### ++dnt++passkeyVaultKeyVersion
+
+<div data-summary>
+
+Version of the key derivation of passkey vaults.
+
+</div>
+
+<details>
+<summary>Definition</summary>
+
+```typescript
+const passkeyVaultKeyVersion = 2
+```
+
+</details>
+
+### ++dnt++textDecoder
+
+<div data-summary>
+
+Shared UTF-8 decoder.
+
+</div>
+
+<details>
+<summary>Definition</summary>
+
+```typescript
+const textDecoder: TextDecoder
+```
+
+</details>
+
+### ++dnt++textEncoder
+
+<div data-summary>
+
+Shared UTF-8 encoder.
+
+</div>
+
+<details>
+<summary>Definition</summary>
+
+```typescript
+const textEncoder: TextEncoder
+```
+
+</details>
+
+### ++dnt++PasskeyProviderEvent
+
+<div data-summary>
+
+Events emitted by the EIP-1193 provider of the wallet.
+
+</div>
+
+<details>
+<summary>Definition</summary>
+
+```typescript
+export type PasskeyProviderEvent = 'accountsChanged' | 'chainChanged' | 'disconnect';
+```
+
+</details>
+
+### ++dnt++PasskeyProviderListener
+
+<div data-summary>
+
+Listener of a provider event.
+
+</div>
+
+<details>
+<summary>Definition</summary>
+
+```typescript
+export type PasskeyProviderListener = (...args: unknown[]) => void;
+```
+
+</details>
+
+### ++dnt++PasskeyRegistrationResult
+
+<div data-summary>
+
+The address and passkey of a newly registered wallet.
+
+</div>
+
+<details>
+<summary>Definition</summary>
+
+```typescript
+export type PasskeyRegistrationResult = {
+    address: `0x${string}`;
+    credentialId: string;
+};
+```
+
+</details>
+
+### ++dnt++UnlockedPasskeyWallet
+
+<div data-summary>
+
+A wallet unlocked with a passkey, ready to sign.
+
+</div>
+
+It holds the recovery phrase and the private keys in memory. Keep it in memory only for as long as needed, never store, send or log it.
+
+<details>
+<summary>Definition</summary>
+
+```typescript
+export type UnlockedPasskeyWallet = {
+    address: `0x${string}`;
+    account: HDAccount;
+    recoveryPhrase: string;
+    walletEncryptionKey?: WalletEncryptionKeyPairPayload;
+    credentialId: string;
+};
+```
+
+</details>
+
+### ++dnt++organigramPasskeyWalletIcon
+
+<div data-summary>
+
+Path of the icon of the passkey wallet, relative to the app serving it.
+
+</div>
+
+<details>
+<summary>Definition</summary>
+
+```typescript
+const organigramPasskeyWalletIcon = "/png/logo-gradient.png"
+```
+
+</details>
+
+### ++dnt++organigramPasskeyWalletId
+
+<div data-summary>
+
+Identifier of the passkey wallet connector.
+
+</div>
+
+<details>
+<summary>Definition</summary>
+
+```typescript
+const organigramPasskeyWalletId = "organigram-passkeys"
+```
+
+</details>
+
+## Vault records
+
+A vault record holds a vault envelope with the public details needed to unlock it: the accounts, the passkey and its device. Records hold no secret in clear, so that they can be stored in the browser or exported. These functions read, list and update records.
+
+### ++dnt++StoredVaultAccount
+
+<div data-summary>
+
+An account of a wallet, derived from its recovery phrase.
+
+</div>
+
+<details>
+<summary>Definition</summary>
 
 ```typescript
 export type StoredVaultAccount = {
@@ -1762,8 +3844,20 @@ export type StoredVaultAccount = {
 };
 ```
 
+</details>
 
-## type ++dnt++StoredVaultRecord
+### ++dnt++StoredVaultRecord
+
+<div data-summary>
+
+A wallet vault encrypted for one passkey, with the public details needed to unlock it.
+
+</div>
+
+A wallet has one record per passkey that can unlock it. The record holds no secret in clear: only its passkey can decrypt the envelope.
+
+<details>
+<summary>Definition</summary>
 
 ```typescript
 export type StoredVaultRecord = {
@@ -1784,21 +3878,18 @@ export type StoredVaultRecord = {
 };
 ```
 
+</details>
 
-## type ++dnt++UnlockedPasskeyWallet
+### ++dnt++VaultRegistry
 
-```typescript
-export type UnlockedPasskeyWallet = {
-    address: `0x${string}`;
-    account: HDAccount;
-    recoveryPhrase: string;
-    walletEncryptionKey?: WalletEncryptionKeyPairPayload;
-    credentialId: string;
-};
-```
+<div data-summary>
 
+A list of vault records, as stored or exported.
 
-## type ++dnt++VaultRegistry
+</div>
+
+<details>
+<summary>Definition</summary>
 
 ```typescript
 export type VaultRegistry = {
@@ -1807,8 +3898,295 @@ export type VaultRegistry = {
 };
 ```
 
+</details>
 
-## type ++dnt++VaultRegistryGroup
+### ++dnt++addAccountToVaultRecords
+
+<div data-summary>
+
+Add an account to every vault of the wallet that holds another account.
+
+</div>
+
+<details>
+<summary>Signature</summary>
+
+```typescript
+addAccountToVaultRecords: (input: {
+    vaults: StoredVaultRecord[];
+    sourceAddress: `0x${string}`;
+    account: StoredVaultAccount;
+}) => StoredVaultRecord[]
+```
+
+**Parameters**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| `input` | `` { vaults: StoredVaultRecord[]; sourceAddress: `0x${string}`; account: StoredVaultAccount; } `` | The vault records, an account the wallet already holds, and the account to add. |
+
+</details>
+
+### ++dnt++createVaultRegistry
+
+<div data-summary>
+
+Wrap vault records in a registry.
+
+</div>
+
+<details>
+<summary>Signature</summary>
+
+```typescript
+createVaultRegistry: (vaults: StoredVaultRecord[]) => VaultRegistry
+```
+
+**Parameters**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| `vaults` | `StoredVaultRecord[]` | The vault records. |
+
+</details>
+
+### ++dnt++isStoredVaultRecord
+
+<div data-summary>
+
+Check that a value is a valid vault record.
+
+</div>
+
+<details>
+<summary>Signature</summary>
+
+```typescript
+isStoredVaultRecord: (value: unknown) => value is StoredVaultRecord
+```
+
+**Parameters**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| `value` | `unknown` | The value to check. |
+
+</details>
+
+### ++dnt++markVaultRecordUsed
+
+<div data-summary>
+
+Set the date of the last unlock of a vault.
+
+</div>
+
+<details>
+<summary>Signature</summary>
+
+```typescript
+markVaultRecordUsed: (input: {
+    vaults: StoredVaultRecord[];
+    credentialId: string;
+    usedAt?: string;
+}) => StoredVaultRecord[]
+```
+
+**Parameters**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| `input` | `{ vaults: StoredVaultRecord[]; credentialId: string; usedAt?: string; }` | The vault records, the identifier of the passkey, and the date, now by default. |
+
+</details>
+
+### ++dnt++parseVaultRegistry
+
+<div data-summary>
+
+Read a vault registry, dropping invalid records.
+
+</div>
+
+<details>
+<summary>Signature</summary>
+
+```typescript
+parseVaultRegistry: (value: unknown) => VaultRegistry
+```
+
+**Parameters**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| `value` | `unknown` | The registry, parsed from JSON. |
+
+</details>
+
+### ++dnt++removeAccountFromVaultRecords
+
+<div data-summary>
+
+Remove an account from every vault, and the vaults left without accounts.
+
+</div>
+
+This only removes local records. Without a remaining vault or exported recovery phrase, the account can no longer be unlocked.
+
+<details>
+<summary>Signature</summary>
+
+```typescript
+removeAccountFromVaultRecords: (input: {
+    vaults: StoredVaultRecord[];
+    address: `0x${string}`;
+}) => StoredVaultRecord[]
+```
+
+**Parameters**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| `input` | `` { vaults: StoredVaultRecord[]; address: `0x${string}`; } `` | The vault records and the address of the account. |
+
+</details>
+
+### ++dnt++removeVaultRecord
+
+<div data-summary>
+
+Remove the vault record of a passkey.
+
+</div>
+
+<details>
+<summary>Signature</summary>
+
+```typescript
+removeVaultRecord: (input: {
+    vaults: StoredVaultRecord[];
+    credentialId: string;
+}) => StoredVaultRecord[]
+```
+
+**Parameters**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| `input` | `{ vaults: StoredVaultRecord[]; credentialId: string; }` | The vault records and the identifier of the passkey. |
+
+</details>
+
+### ++dnt++removeVaultRecords
+
+<div data-summary>
+
+Remove the vault records of several passkeys.
+
+</div>
+
+<details>
+<summary>Signature</summary>
+
+```typescript
+removeVaultRecords: (input: {
+    vaults: StoredVaultRecord[];
+    credentialIds: Set<string>;
+}) => StoredVaultRecord[]
+```
+
+**Parameters**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| `input` | `{ vaults: StoredVaultRecord[]; credentialIds: Set<string>; }` | The vault records and the identifiers of the passkeys. |
+
+</details>
+
+### ++dnt++serializeVaultRegistry
+
+<div data-summary>
+
+Serialize vault records as a registry in JSON.
+
+</div>
+
+<details>
+<summary>Signature</summary>
+
+```typescript
+serializeVaultRegistry: (vaults: StoredVaultRecord[], space?: number) => string
+```
+
+**Parameters**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| `vaults` | `StoredVaultRecord[]` | The vault records. |
+| `space` | `number` | Indentation of the JSON. |
+
+</details>
+
+### ++dnt++upsertVaultRecord
+
+<div data-summary>
+
+Add a vault record, or replace the record of the same passkey, and put it first.
+
+</div>
+
+<details>
+<summary>Signature</summary>
+
+```typescript
+upsertVaultRecord: (input: {
+    vaults: StoredVaultRecord[];
+    record: StoredVaultRecord;
+}) => StoredVaultRecord[]
+```
+
+**Parameters**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| `input` | `{ vaults: StoredVaultRecord[]; record: StoredVaultRecord; }` | The vault records and the record to add. |
+
+</details>
+
+### ++dnt++vaultHasAccount
+
+<div data-summary>
+
+Check whether a vault holds an account, ignoring the case of the address.
+
+</div>
+
+<details>
+<summary>Signature</summary>
+
+```typescript
+vaultHasAccount: (vault: StoredVaultRecord, address: string) => boolean
+```
+
+**Parameters**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| `vault` | `StoredVaultRecord` | The vault record. |
+| `address` | `string` | The address of the account. |
+
+</details>
+
+### ++dnt++VaultRegistryGroup
+
+<div data-summary>
+
+Vault records holding the same accounts, usually the passkeys of one wallet.
+
+</div>
+
+<details>
+<summary>Definition</summary>
 
 ```typescript
 export type VaultRegistryGroup = {
@@ -1819,8 +4197,479 @@ export type VaultRegistryGroup = {
 };
 ```
 
+</details>
 
-## type ++dnt++WalletDecryptedFile
+### ++dnt++WalletGroup
+
+<div data-summary>
+
+An account with the passkeys able to unlock it.
+
+</div>
+
+<details>
+<summary>Definition</summary>
+
+```typescript
+export type WalletGroup = {
+    address: `0x${string}`;
+    name: string;
+    addressIndex: number;
+    derivationPath: string;
+    passkeys: StoredVaultRecord[];
+};
+```
+
+</details>
+
+### ++dnt++formatAddress
+
+<div data-summary>
+
+Shorten an address for display, as `0x1234...abcd`.
+
+</div>
+
+<details>
+<summary>Signature</summary>
+
+```typescript
+formatAddress: (address: string) => string
+```
+
+**Parameters**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| `address` | `string` | The address. |
+
+</details>
+
+### ++dnt++formatCredentialId
+
+<div data-summary>
+
+Shorten a passkey identifier longer than 18 characters for display.
+
+</div>
+
+<details>
+<summary>Signature</summary>
+
+```typescript
+formatCredentialId: (credentialId: string) => string
+```
+
+**Parameters**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| `credentialId` | `string` | The passkey identifier. |
+
+</details>
+
+### ++dnt++getNextAddressIndex
+
+<div data-summary>
+
+Get the address index of the next account to derive: one more than the highest index of the records, or 0.
+
+</div>
+
+<details>
+<summary>Signature</summary>
+
+```typescript
+getNextAddressIndex: (records: StoredVaultRecord[]) => number
+```
+
+**Parameters**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| `records` | `StoredVaultRecord[]` | The vault records. |
+
+</details>
+
+### ++dnt++getVaultAccount
+
+<div data-summary>
+
+Find an account of a vault record, ignoring the case of the address.
+
+</div>
+
+<details>
+<summary>Signature</summary>
+
+```typescript
+getVaultAccount: (vault: StoredVaultRecord, address: string) => StoredVaultAccount | null
+```
+
+**Parameters**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| `vault` | `StoredVaultRecord` | The vault record. |
+| `address` | `string` | The address of the account. |
+
+**Returns**
+
+| Type | Description |
+| --- | --- |
+| `StoredVaultAccount \| null` | The account, or `null`. |
+
+</details>
+
+### ++dnt++getVaultRegistryGroupId
+
+<div data-summary>
+
+Identify the set of accounts of a vault record, by address index and address.
+
+</div>
+
+<details>
+<summary>Signature</summary>
+
+```typescript
+getVaultRegistryGroupId: (vault: StoredVaultRecord) => string
+```
+
+**Parameters**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| `vault` | `StoredVaultRecord` | The vault record. |
+
+</details>
+
+### ++dnt++groupVaultRecordsBySeed
+
+<div data-summary>
+
+Group vault records holding the same accounts, oldest first.
+
+</div>
+
+<details>
+<summary>Signature</summary>
+
+```typescript
+groupVaultRecordsBySeed: (vaults: StoredVaultRecord[]) => VaultRegistryGroup[]
+```
+
+**Parameters**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| `vaults` | `StoredVaultRecord[]` | The vault records. |
+
+</details>
+
+### ++dnt++groupVaultsByWallet
+
+<div data-summary>
+
+Group vault records by account, ordered by address index.
+
+</div>
+
+<details>
+<summary>Signature</summary>
+
+```typescript
+groupVaultsByWallet: (vaults: StoredVaultRecord[]) => WalletGroup[]
+```
+
+**Parameters**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| `vaults` | `StoredVaultRecord[]` | The vault records. |
+
+</details>
+
+### ++dnt++mergeVaults
+
+<div data-summary>
+
+Merge imported vault records into local ones, newest first.
+
+</div>
+
+An imported record replaces the local record of the same passkey.
+
+<details>
+<summary>Signature</summary>
+
+```typescript
+mergeVaults: (localVaults: StoredVaultRecord[], importedVaults: StoredVaultRecord[]) => StoredVaultRecord[]
+```
+
+**Parameters**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| `localVaults` | `StoredVaultRecord[]` | The local records. |
+| `importedVaults` | `StoredVaultRecord[]` | The imported records. |
+
+</details>
+
+## Backups
+
+Vault records can be backed up on a server. Each backup exposes only its vault envelope and passkey identifier: the rest of the record is encrypted with a key derived from the recovery phrase, so that the server learns nothing beyond the wallet address, and any passkey of the wallet can restore every backup.
+
+### ++dnt++RemoteVaultBackupPackage
+
+<div data-summary>
+
+The backups of a wallet, as exported or restored.
+
+</div>
+
+<details>
+<summary>Definition</summary>
+
+```typescript
+export type RemoteVaultBackupPackage = {
+    version: 1;
+    address: `0x${string}`;
+    backups: RemoteVaultBackupRecord[];
+    exportedAt: string;
+};
+```
+
+</details>
+
+### ++dnt++RemoteVaultBackupRecord
+
+<div data-summary>
+
+A vault record encrypted for backup on a server.
+
+</div>
+
+A backup exposes its vault envelope, which only its own passkey can decrypt, with the identifier of that passkey. The rest of the vault record (account addresses, names, devices) is encrypted with a key derived from the recovery phrase, so that any passkey of the wallet can restore every backup while the server learns nothing beyond the wallet address.
+
+<details>
+<summary>Definition</summary>
+
+```typescript
+export type RemoteVaultBackupRecord = {
+    version: 2;
+    backupId: string;
+    credentialId: string;
+    envelope: PasskeyVaultEnvelopeData;
+    salt: string;
+    iv: string;
+    ciphertext: string;
+    createdAt: string;
+};
+```
+
+</details>
+
+### ++dnt++createRemoteVaultBackupPackage
+
+<div data-summary>
+
+Wrap the backups of a wallet in a package.
+
+</div>
+
+<details>
+<summary>Signature</summary>
+
+```typescript
+createRemoteVaultBackupPackage: (input: {
+    address: `0x${string}`;
+    backups: RemoteVaultBackupRecord[];
+}) => RemoteVaultBackupPackage
+```
+
+**Parameters**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| `input` | `` { address: `0x${string}`; backups: RemoteVaultBackupRecord[]; } `` | The address of the wallet and its backups. |
+
+</details>
+
+### ++dnt++createRemoteVaultBackupRecord
+
+<div data-summary>
+
+Encrypt a vault record for backup.
+
+</div>
+
+The backup key is derived with HKDF from a SHA-256 hash of the recovery phrase, a random salt, and the address. The recovery phrase itself is never part of the backup.
+
+<details>
+<summary>Signature</summary>
+
+```typescript
+createRemoteVaultBackupRecord: (input: {
+    address: `0x${string}`;
+    record: StoredVaultRecord;
+    recoveryPhrase: string;
+}) => Promise<RemoteVaultBackupRecord>
+```
+
+**Parameters**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| `input` | `` { address: `0x${string}`; record: StoredVaultRecord; recoveryPhrase: string; } `` | The address of the wallet, the vault record and the recovery phrase of the wallet. |
+
+</details>
+
+### ++dnt++createVaultBackupDigest
+
+<div data-summary>
+
+Hash backups with SHA-256, over a JSON serialization with sorted keys.
+
+</div>
+
+<details>
+<summary>Signature</summary>
+
+```typescript
+createVaultBackupDigest: (backups: RemoteVaultBackupRecord[]) => Promise<string>
+```
+
+**Parameters**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| `backups` | `RemoteVaultBackupRecord[]` | The backups. |
+
+**Returns**
+
+| Type | Description |
+| --- | --- |
+| `Promise<string>` | The digest, in hex. |
+
+</details>
+
+### ++dnt++createVaultBackupSignatureMessage
+
+<div data-summary>
+
+Build the message the wallet signs to authorize storing backups.
+
+</div>
+
+<details>
+<summary>Signature</summary>
+
+```typescript
+createVaultBackupSignatureMessage: (input: {
+    address: `0x${string}`;
+    vaultCount: number;
+    digest: string;
+}) => string
+```
+
+**Parameters**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| `input` | `` { address: `0x${string}`; vaultCount: number; digest: string; } `` | The address of the wallet, the number of backups and their digest from `createVaultBackupDigest()`. |
+
+</details>
+
+### ++dnt++decryptRemoteVaultBackupRecord
+
+<div data-summary>
+
+Decrypt a vault record from a backup.
+
+</div>
+
+The result is not validated: check it with `isStoredVaultRecord()` before use.
+
+<details>
+<summary>Signature</summary>
+
+```typescript
+decryptRemoteVaultBackupRecord: (input: {
+    address: `0x${string}`;
+    backup: RemoteVaultBackupRecord;
+    recoveryPhrase: string;
+}) => Promise<StoredVaultRecord>
+```
+
+**Parameters**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| `input` | `` { address: `0x${string}`; backup: RemoteVaultBackupRecord; recoveryPhrase: string; } `` | The address of the wallet, the backup and the recovery phrase of the wallet. |
+
+</details>
+
+### ++dnt++normalizeBackupAddress
+
+<div data-summary>
+
+Check and checksum an address typed by a user to restore backups.
+
+</div>
+
+<details>
+<summary>Signature</summary>
+
+```typescript
+normalizeBackupAddress: (value: string) => `0x${string}`
+```
+
+**Parameters**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| `value` | `string` | The address. |
+
+</details>
+
+### ++dnt++parseRemoteVaultBackupPackage
+
+<div data-summary>
+
+Read a backup package.
+
+</div>
+
+<details>
+<summary>Signature</summary>
+
+```typescript
+parseRemoteVaultBackupPackage: (value: unknown) => RemoteVaultBackupPackage
+```
+
+**Parameters**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| `value` | `unknown` | The package, parsed from JSON. |
+
+</details>
+
+## End-to-end encryption
+
+Each wallet has an ECDH P-256 key pair, stored in its vaults, to encrypt files and texts that only it can decrypt. Its public key can be shared with an app in a Sign-In with Ethereum resource. Texts encrypted for an app are bound to the origin of that app, so that another app cannot have them decrypted.
+
+### ++dnt++WalletDecryptedFile
+
+<div data-summary>
+
+A decrypted file.
+
+</div>
+
+<details>
+<summary>Definition</summary>
 
 ```typescript
 export type WalletDecryptedFile = {
@@ -1831,8 +4680,18 @@ export type WalletDecryptedFile = {
 };
 ```
 
+</details>
 
-## type ++dnt++WalletEncryptedFilePackage
+### ++dnt++WalletEncryptedFilePackage
+
+<div data-summary>
+
+A file encrypted for the wallet that encrypted it.
+
+</div>
+
+<details>
+<summary>Definition</summary>
 
 ```typescript
 export type WalletEncryptedFilePackage = {
@@ -1856,8 +4715,18 @@ export type WalletEncryptedFilePackage = {
 };
 ```
 
+</details>
 
-## type ++dnt++WalletEncryptedPayload
+### ++dnt++WalletEncryptedPayload
+
+<div data-summary>
+
+A text encrypted by a wallet for itself, which only one application origin may have decrypted.
+
+</div>
+
+<details>
+<summary>Definition</summary>
 
 ```typescript
 export type WalletEncryptedPayload = {
@@ -1876,8 +4745,20 @@ export type WalletEncryptedPayload = {
 };
 ```
 
+</details>
 
-## type ++dnt++WalletEncryptionKeyPairPayload
+### ++dnt++WalletEncryptionKeyPairPayload
+
+<div data-summary>
+
+The ECDH P-256 key pair of a wallet for end-to-end encryption, stored in its passkey vaults.
+
+</div>
+
+Holds the private key in clear: keep it in the encrypted vault and in memory only, never store, send or log it elsewhere.
+
+<details>
+<summary>Definition</summary>
 
 ```typescript
 export type WalletEncryptionKeyPairPayload = {
@@ -1889,8 +4770,18 @@ export type WalletEncryptionKeyPairPayload = {
 };
 ```
 
+</details>
 
-## type ++dnt++WalletEncryptionPublicKeySiweResource
+### ++dnt++WalletEncryptionPublicKeySiweResource
+
+<div data-summary>
+
+The public key of a wallet, read from a Sign-In with Ethereum resource.
+
+</div>
+
+<details>
+<summary>Definition</summary>
 
 ```typescript
 export type WalletEncryptionPublicKeySiweResource = {
@@ -1901,17 +4792,267 @@ export type WalletEncryptionPublicKeySiweResource = {
 };
 ```
 
+</details>
 
-## type ++dnt++WalletGroup
+### ++dnt++createWalletEncryptionKeyPair
+
+<div data-summary>
+
+Generate a new ECDH P-256 key pair for a wallet.
+
+</div>
+
+The private key is exportable, so that it can be stored in the passkey vaults of the wallet. Keep it there.
+
+<details>
+<summary>Signature</summary>
 
 ```typescript
-export type WalletGroup = {
-    address: `0x${string}`;
-    name: string;
-    addressIndex: number;
-    derivationPath: string;
-    passkeys: StoredVaultRecord[];
-};
+createWalletEncryptionKeyPair: () => Promise<WalletEncryptionKeyPairPayload>
 ```
 
+</details>
+
+### ++dnt++createWalletEncryptionPublicKeySiweResource
+
+<div data-summary>
+
+Encode the public key of a wallet as a resource of a Sign-In with Ethereum message.
+
+</div>
+
+Signing in with this resource lets the application learn the public key of the wallet, bound to its address by the signature.
+
+<details>
+<summary>Signature</summary>
+
+```typescript
+createWalletEncryptionPublicKeySiweResource: (input: {
+    address: `0x${string}`;
+    keyPair: WalletEncryptionKeyPairPayload;
+}) => string
+```
+
+**Parameters**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| `input` | `` { address: `0x${string}`; keyPair: WalletEncryptionKeyPairPayload; } `` | The address of the wallet and its key pair. Only the public key is encoded. |
+
+</details>
+
+### ++dnt++decryptFileWithWalletEncryptionKey
+
+<div data-summary>
+
+Decrypt a file encrypted with `encryptFileWithWalletEncryptionKey()`.
+
+</div>
+
+<details>
+<summary>Signature</summary>
+
+```typescript
+decryptFileWithWalletEncryptionKey: (input: {
+    encryptedPackage: WalletEncryptedFilePackage;
+    keyPair: WalletEncryptionKeyPairPayload;
+}) => Promise<WalletDecryptedFile>
+```
+
+**Parameters**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| `input` | `{ encryptedPackage: WalletEncryptedFilePackage; keyPair: WalletEncryptionKeyPairPayload; }` | The encrypted package and the key pair of the wallet. |
+
+</details>
+
+### ++dnt++decryptPayloadWithWalletEncryptionKey
+
+<div data-summary>
+
+Decrypt a text encrypted with `encryptPayloadWithWalletEncryptionKey()`.
+
+</div>
+
+<details>
+<summary>Signature</summary>
+
+```typescript
+decryptPayloadWithWalletEncryptionKey: (input: {
+    encryptedPayload: WalletEncryptedPayload;
+    appOrigin: string;
+    keyPair: WalletEncryptionKeyPairPayload;
+}) => Promise<string>
+```
+
+**Parameters**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| `input` | `{ encryptedPayload: WalletEncryptedPayload; appOrigin: string; keyPair: WalletEncryptionKeyPairPayload; }` | The encrypted payload, the origin of the application asking for it, and the key pair of the wallet. |
+
+</details>
+
+### ++dnt++encryptFileWithWalletEncryptionKey
+
+<div data-summary>
+
+Encrypt a file so that only the wallet holding the key pair can decrypt it.
+
+</div>
+
+The AES-GCM key is derived by ECDH between the private and public keys of the same key pair. The name, type, size and date of the file stay in clear and are not authenticated with the ciphertext.
+
+<details>
+<summary>Signature</summary>
+
+```typescript
+encryptFileWithWalletEncryptionKey: (input: {
+    address: `0x${string}`;
+    file: File;
+    keyPair: WalletEncryptionKeyPairPayload;
+}) => Promise<WalletEncryptedFilePackage>
+```
+
+**Parameters**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| `input` | `` { address: `0x${string}`; file: File; keyPair: WalletEncryptionKeyPairPayload; } `` | The address of the wallet, the file and the key pair. |
+
+</details>
+
+### ++dnt++encryptPayloadWithWalletEncryptionKey
+
+<div data-summary>
+
+Encrypt a text so that only the wallet holding the key pair can decrypt it, for one application origin.
+
+</div>
+
+The application origin, the address and the key version are authenticated with the ciphertext, so that the payload cannot be decrypted for another application or relabelled for it.
+
+<details>
+<summary>Signature</summary>
+
+```typescript
+encryptPayloadWithWalletEncryptionKey: (input: {
+    address: `0x${string}`;
+    appOrigin: string;
+    plaintext: string;
+    keyPair: WalletEncryptionKeyPairPayload;
+}) => Promise<WalletEncryptedPayload>
+```
+
+**Parameters**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| `input` | `` { address: `0x${string}`; appOrigin: string; plaintext: string; keyPair: WalletEncryptionKeyPairPayload; } `` | The address of the wallet, the origin of the application, the text and the key pair. |
+
+</details>
+
+### ++dnt++parseWalletEncryptedFilePackage
+
+<div data-summary>
+
+Read an encrypted file package.
+
+</div>
+
+<details>
+<summary>Signature</summary>
+
+```typescript
+parseWalletEncryptedFilePackage: (value: unknown) => WalletEncryptedFilePackage
+```
+
+**Parameters**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| `value` | `unknown` | The package, parsed from JSON. |
+
+</details>
+
+### ++dnt++parseWalletEncryptedPayload
+
+<div data-summary>
+
+Read an encrypted payload.
+
+</div>
+
+<details>
+<summary>Signature</summary>
+
+```typescript
+parseWalletEncryptedPayload: (value: unknown) => WalletEncryptedPayload
+```
+
+**Parameters**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| `value` | `unknown` | The payload, parsed from JSON. |
+
+</details>
+
+### ++dnt++parseWalletEncryptionKeyPair
+
+<div data-summary>
+
+Read a wallet encryption key pair.
+
+</div>
+
+<details>
+<summary>Signature</summary>
+
+```typescript
+parseWalletEncryptionKeyPair: (value: unknown) => WalletEncryptionKeyPairPayload
+```
+
+**Parameters**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| `value` | `unknown` | The key pair, parsed from JSON. |
+
+</details>
+
+### ++dnt++parseWalletEncryptionPublicKeySiweResource
+
+<div data-summary>
+
+Read the public key of a wallet from the resources of a Sign-In with Ethereum message.
+
+</div>
+
+Only trust the result once the signature of the message is verified.
+
+<details>
+<summary>Signature</summary>
+
+```typescript
+parseWalletEncryptionPublicKeySiweResource: (input: {
+    address: string;
+    resources: string[] | undefined;
+}) => WalletEncryptionPublicKeySiweResource | null
+```
+
+**Parameters**
+
+| Name | Type | Description |
+| --- | --- | --- |
+| `input` | `{ address: string; resources: string[] \| undefined; }` | The address that signed the message, and the resources of the message. |
+
+**Returns**
+
+| Type | Description |
+| --- | --- |
+| `WalletEncryptionPublicKeySiweResource \| null` | The public key, or `null` if no valid resource of this address is found. |
+
+</details>
 

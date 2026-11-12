@@ -94,6 +94,10 @@ const apiExtractorConfig = {
     extractorMessageReporting: {
       default: {
         logLevel: 'warning'
+      },
+      // Packages do not use @alpha/@beta/@public release tags.
+      'ae-missing-release-tag': {
+        logLevel: 'none'
       }
     },
     tsdocMessageReporting: {

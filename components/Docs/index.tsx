@@ -12,6 +12,7 @@ import Grid from '@mui/material/Grid'
 import Box from '@mui/material/Box'
 import CircularProgress from '@mui/material/CircularProgress'
 import Button from '@mui/material/Button'
+import Typography from '@mui/material/Typography'
 import ChevronRightIcon from '@mui/icons-material/ChevronRight'
 import { type SxProps } from '@mui/material/styles'
 
@@ -23,6 +24,8 @@ import Toc, {
 import DocsNavigation from './Navigation'
 import DocsBreadcrumbs from './Breadcrumbs'
 import { findPostByPath, MDXComponents } from '../../lib/mdx'
+import { t } from '../../lib/i18n'
+import Link from '../Link'
 import { getDocsImporter } from '../../lib/modules'
 import { useBreakpoint } from '../../lib/client'
 import { type FileTree } from '../../types'
@@ -88,8 +91,10 @@ const Docs: React.FC<{
   trees: FileTree[]
   url: string
   headings: HeadingType[] | null
+  /** The server-rendered page body, shown while it loads. */
+  html?: string | null
   integrations?: DocsIntegrations
-}> = ({ trees, url, headings, integrations }) => {
+}> = ({ trees, url, headings, html, integrations }) => {
   const { query, push } = useRouter()
   const isTabletOrAbove = useBreakpoint('sm')
   const isNotebookOrAbove = useBreakpoint('md')
@@ -98,7 +103,14 @@ const Docs: React.FC<{
   const currentTree = findPostByPath(trees, docUrl)
   const docsImporter =
     getDocsImporter(docUrl) ?? getDocsImporter('/introduction/index.mdx')
-  const Loading = integrations?.loading ?? <Loader />
+  // The body comes from the repository's own MDX files, rendered at build time.
+  // Emotion moves its styles to the head on load, hence the differing markup.
+  const Loading =
+    html != null ? (
+      <div suppressHydrationWarning dangerouslySetInnerHTML={{ __html: html }} />
+    ) : (
+      (integrations?.loading ?? <Loader />)
+    )
   const SidebarButton = integrations?.SidebarButton ?? DefaultSidebarButton
   const Footer = integrations?.Footer
   const Mdx = dynamic<{
@@ -191,6 +203,34 @@ const Docs: React.FC<{
               <Mdx
                 components={MDXComponents as Record<string, React.FC<unknown>>}
               />
+              {/^\/guides\/.+/.test(docUrl) && !docUrl.startsWith('/guides/index') && (
+                <Box
+                  sx={{
+                    my: 6,
+                    p: 3,
+                    borderRadius: 2,
+                    border: '1px solid',
+                    borderColor: 'divider',
+                    textAlign: 'center'
+                  }}
+                >
+                  <Typography mb={2}>
+                    {t('Start with a pilot: our team sets up your first decisions with you, from your bylaws to your tools.')}
+                  </Typography>
+                  <Grid container spacing={2} justifyContent='center'>
+                    <Grid item>
+                      <Link href='/pricing'>
+                        <Button variant='outlined'>{t('Pricing')}</Button>
+                      </Link>
+                    </Grid>
+                    <Grid item>
+                      <Link href='/certified-governance-pilot'>
+                        <Button variant='contained'>{t('Talk to an expert')}</Button>
+                      </Link>
+                    </Grid>
+                  </Grid>
+                </Box>
+              )}
             </Box>
             <DocsNavigation trees={trees} current={currentTree} />
           </Grid>

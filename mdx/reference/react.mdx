@@ -1,1457 +1,1144 @@
 export const metadata = { title: "React", order: 5.3 }
 
-# React reference
+# Organigram React
 
-The official React documentation for the hooks, components, theme helpers, and utilities exposed by the Organigram.ai stack.
+Organigram React provides the React components and hooks of [Organigram.ai](https://organigram.ai): diagrams of organizations built on the [Organigram Protocol](https://organigram.ai/en/docs/protocol), the screens to propose and decide through procedures, and the chat panel of the workspace agent. It builds on `@organigram/js`, which reads and writes the contracts.
 
-## @organigram/react
-
-### Install
+## Installation
 
 ```bash
-pnpm add @organigram/react
+pnpm add @organigram/react @organigram/js viem recoil react-flow-renderer @mui/material @mui/icons-material react-i18next
 ```
 
-### Quick start
+The components use [MUI](https://mui.com) for their styles and [Recoil](https://recoiljs.org) for the state they share, so wrap your application in a `RecoilRoot` and, to get the Organigram look, in a MUI `ThemeProvider` with `theme`. The theme expects its fonts at `/fonts/*.woff2`: copy `node_modules/@organigram/react/dist/fonts` to the public assets of your application.
+
+## How it works
+
+### Drawing an organigram
+
+`Diagram` draws an organigram as an interactive graph: organs, procedures and assets are nodes, and the permissions they hold on each other are links. Users can move the nodes, and `onNodePositionsChange` lets you save their positions. `ClassicOrgChart` draws the same organigram as a classic tree, where an organ sits below the organ whose members decide on its membership.
+
+Both take an organigram as plain JSON, from `organigram.toJson()`. Layers, defined by your application, let users show only part of a large organigram: `useLayers` filters the organigram for either view and remembers the active layers.
+
+### Proposals and decisions
+
+`procedures` holds the screens of each procedure type, by type name: `Component` describes a procedure, and `Proposal` shows a proposal with the actions the connected account may take, such as voting or blocking it.
+
+### The workspace agent
+
+`AgentPanel` is the chat panel of the workspace agent, including the preview of the changes the agent proposes, which the user confirms or cancels. They only render: your application sends the messages to its agent and stores the conversations. Every text can be replaced through the `labels` props, to translate them.
+
+## Usage
 
 ```tsx
-import { Diagram, useOrganigramClient } from '@organigram/react'
-```
+import { RecoilRoot } from 'recoil'
+import { ThemeProvider, createTheme, type ThemeOptions } from '@mui/material/styles'
+import { Diagram, theme, useOrganigramClient } from '@organigram/react'
+import { Organigram, getTemplate } from '@organigram/js'
+import { createPublicClient, http } from 'viem'
+import { sepolia } from 'viem/chains'
 
-### Exports
+const publicClient = createPublicClient({ chain: sepolia, transport: http() })
 
-### Components
+const OrganigramView = () => {
+  const client = useOrganigramClient(publicClient, null, sepolia.id)
+  const organigram = new Organigram(getTemplate('nonProfit', client?.chainId ?? String(sepolia.id)))
 
-- [AgentPanel](/docs/reference/react#component_AgentPanel)
-- [AgentPreview](/docs/reference/react#component_AgentPreview)
-- [Animated](/docs/reference/react#component_Animated)
-- [AssetNode](/docs/reference/react#component_AssetNode)
-- [ChatMessage](/docs/reference/react#component_ChatMessage)
-- [ClassicOrgChart](/docs/reference/react#component_ClassicOrgChart)
-- [DecidersActions](/docs/reference/react#component_DecidersActions)
-- [defaultNodeTypes](/docs/reference/react#constant_defaultNodeTypes)
-- [defaultPanelLabels](/docs/reference/react#constant_defaultPanelLabels)
-- [defaultPreviewLabels](/docs/reference/react#constant_defaultPreviewLabels)
-- [Diagram](/docs/reference/react#component_Diagram)
-- [DiagramNode](/docs/reference/react#component_DiagramNode)
-- [ElectionComponent](/docs/reference/react#component_ElectionComponent)
-- [EntryCount](/docs/reference/react#component_EntryCount)
-- [getOrganNodeIconKind](/docs/reference/react#constant_getOrganNodeIconKind)
-- [MemberCount](/docs/reference/react#component_MemberCount)
-- [OrganNode](/docs/reference/react#component_OrganNode)
-- [ProcedureIcon](/docs/reference/react#component_ProcedureIcon)
-- [ProcedureNode](/docs/reference/react#component_ProcedureNode)
-- [projectOrganigramToClassicForest](/docs/reference/react#constant_projectOrganigramToClassicForest)
-- [StreamBox](/docs/reference/react#component_StreamBox)
-- [Summit](/docs/reference/react#component_Summit)
-- [TimeLeft](/docs/reference/react#component_TimeLeft)
-- [Token](/docs/reference/react#component_Token)
-- [VetoProposal](/docs/reference/react#component_VetoProposal)
-- [VoteEnded](/docs/reference/react#component_VoteEnded)
-
-### Hooks
-
-- [defaultDiagramDisplayOptions](/docs/reference/react#hook_defaultDiagramDisplayOptions)
-- [filterClassicDiagramByLayers](/docs/reference/react#hook_filterClassicDiagramByLayers)
-- [filterDiagramByLayers](/docs/reference/react#hook_filterDiagramByLayers)
-- [getDiagramLayerStorageKey](/docs/reference/react#hook_getDiagramLayerStorageKey)
-- [readActiveDiagramLayerIds](/docs/reference/react#hook_readActiveDiagramLayerIds)
-- [sanitizeActiveDiagramLayerIds](/docs/reference/react#hook_sanitizeActiveDiagramLayerIds)
-- [useDiagramDisplayOptions](/docs/reference/react#hook_useDiagramDisplayOptions)
-- [useLayers](/docs/reference/react#hook_useLayers)
-- [useModal](/docs/reference/react#hook_useModal)
-- [useOrganigramClient](/docs/reference/react#hook_useOrganigramClient)
-- [useSetModal](/docs/reference/react#hook_useSetModal)
-- [writeActiveDiagramLayerIds](/docs/reference/react#hook_writeActiveDiagramLayerIds)
-
-### State
-
-- [modalState](/docs/reference/react#state_modalState)
-- [organigramIdState](/docs/reference/react#state_organigramIdState)
-- [useModalState](/docs/reference/react#state_useModalState)
-
-### Theme
-
-- [breakpoints](/docs/reference/react#constant_breakpoints)
-- [components](/docs/reference/react#export_components)
-- [mobileNavHeight](/docs/reference/react#constant_mobileNavHeight)
-- [navHeight](/docs/reference/react#constant_navHeight)
-- [palette](/docs/reference/react#constant_palette)
-- [theme](/docs/reference/react#constant_theme)
-- [typography](/docs/reference/react#constant_typography)
-- [workspaceNavHeight](/docs/reference/react#constant_workspaceNavHeight)
-
-### Utilities
-
-- [filterProposals](/docs/reference/react#constant_filterProposals)
-- [isUserInSourceOrgan](/docs/reference/react#constant_isUserInSourceOrgan)
-- [secondsToHms](/docs/reference/react#constant_secondsToHms)
-
-### Types
-
-- [AssetNodeProps](/docs/reference/react#interface_AssetNodeProps)
-- [ChatRole](/docs/reference/react#type_ChatRole)
-- [Citation](/docs/reference/react#type_Citation)
-- [ClassicOrgChartNode](/docs/reference/react#interface_ClassicOrgChartNode)
-- [ClassicOrgChartProps](/docs/reference/react#interface_ClassicOrgChartProps)
-- [CreateProcedure](/docs/reference/react#type_CreateProcedure)
-- [DecidersActionsProps](/docs/reference/react#interface_DecidersActionsProps)
-- [DeployOrganInput](/docs/reference/react#type_DeployOrganInput)
-- [DiagramDisplayOptions](/docs/reference/react#interface_DiagramDisplayOptions)
-- [DiagramEntryUser](/docs/reference/react#type_DiagramEntryUser)
-- [DiagramLayer](/docs/reference/react#interface_DiagramLayer)
-- [DiagramLayerStorage](/docs/reference/react#interface_DiagramLayerStorage)
-- [DiagramProps](/docs/reference/react#interface_DiagramProps)
-- [ElectionComponentProps](/docs/reference/react#interface_ElectionComponentProps)
-- [LayersState](/docs/reference/react#interface_LayersState)
-- [MergeOrganigramPreview](/docs/reference/react#type_MergeOrganigramPreview)
-- [Message](/docs/reference/react#type_Message)
-- [ModalType](/docs/reference/react#type_ModalType)
-- [NewOrganigramPreview](/docs/reference/react#type_NewOrganigramPreview)
-- [OrganigramPreview](/docs/reference/react#type_OrganigramPreview)
-- [OrganNodeIconKind](/docs/reference/react#type_OrganNodeIconKind)
-- [OrganNodeProps](/docs/reference/react#interface_OrganNodeProps)
-- [PanelLabels](/docs/reference/react#type_PanelLabels)
-- [PanelMessage](/docs/reference/react#type_PanelMessage)
-- [PreviewLabels](/docs/reference/react#type_PreviewLabels)
-- [ProcedureNodeProps](/docs/reference/react#interface_ProcedureNodeProps)
-- [ProposalFilter](/docs/reference/react#type_ProposalFilter)
-- [Response](/docs/reference/react#type_Response)
-- [SetModal](/docs/reference/react#type_SetModal)
-- [StoredMessage](/docs/reference/react#type_StoredMessage)
-- [Thread](/docs/reference/react#type_Thread)
-- [ThreadSource](/docs/reference/react#type_ThreadSource)
-- [ThreadWorkspace](/docs/reference/react#type_ThreadWorkspace)
-- [UseLayersOptions](/docs/reference/react#interface_UseLayersOptions)
-
-### Namespaces
-
-- [procedures](/docs/reference/react#export_procedures)
-
-
-## Components
-
-### component ++dnt++AgentPanel
-
-```tsx
-export const AgentPanel: React.FC<{
-  open: boolean
-  onClose: () => void
-  showThreadList: boolean
-  onShowThreadList: () => void
-  threads: Thread[]
-  selectedThreadId: string | null
-  historyLoading: boolean
-  onSelectThread: (threadId: string) => void
-  onStartNewThread: () => void
-  messages: PanelMessage[]
-  welcomeMessage: string
-  currentOrganigram: OrganigramJson | null
-  canAsk: boolean
-  canConfirmPreview: boolean
-  savingPreviewKey: string | null
-  dismissedPreviewIndexes: number[]
-  input: string
-  loading: boolean
-  error: string | null
-  documentName: string | null
-  onInputChange: (value: string) => void
-  onInputKeyDown: (event: KeyboardEvent<HTMLDivElement>) => void
-  onDocumentChange: (file: File | null) => void
-  onSubmit: (event: FormEvent<HTMLFormElement>) => void
-  onConfirmPreview: (preview: OrganigramPreview, messageIndex: number) => void
-  onCancelPreview: (messageIndex: number) => void
-  labels?: Partial<PanelLabels>
-}>
-```
-
-
-
-### component ++dnt++AgentPreview
-
-```tsx
-export const AgentPreview: React.FC<{
-  preview: OrganigramPreview
-  currentOrganigram: OrganigramJson | null
-  canConfirm: boolean
-  saving: boolean
-  onConfirm: () => void
-  onCancel: () => void
-  labels?: Partial<PreviewLabels>
-}>
-```
-
-
-
-### component ++dnt++Animated
-
-```tsx
-export const Animated: React.FC<AnimatedProps>
-```
-
-
-
-### component ++dnt++AssetNode
-
-Default React Flow node used to display one asset inside a diagram.
-
-```tsx
-export const AssetNode: React.FC<NodeProps & AssetNodeProps>
-```
-
-
-
-### component ++dnt++ChatMessage
-
-```tsx
-export const ChatMessage: React.FC<{
-  role: ChatRole
-  content: string
-  streaming?: boolean
-  thinkingLabel?: string
-}>
-```
-
-
-
-### component ++dnt++ClassicOrgChart
-
-```tsx
-export const ClassicOrgChart: React.FC<ClassicOrgChartProps>
-```
-
-
-
-### component ++dnt++DecidersActions
-
-```tsx
-export const DecidersActions: React.FC<ElectionComponentProps>
-```
-
-
-
-### constant ++dnt++defaultNodeTypes
-
-Default React Flow node registry used by the diagram component.
-
-```tsx
-export const defaultNodeTypes = {
-  procedure: ProcedureNode as React.FC<NodeProps<{ procedure: Procedure }>>,
-  organ: OrganNode as React.FC<NodeProps<{ organ: Organ }>>,
-  asset: AssetNode as React.FC<NodeProps<{ asset: Asset }>>
+  return <Diagram organigram={organigram.toJson()} controls style={{ height: 600 }} />
 }
+
+export const App = () => (
+  <RecoilRoot>
+    <ThemeProvider theme={createTheme(theme as ThemeOptions)}>
+      <OrganigramView />
+    </ThemeProvider>
+  </RecoilRoot>
+)
 ```
 
+## Contributing
 
+We are looking for React developers and testers to keep this project secure and up to date. Please open issues on [GitHub](https://github.com/organigram/react), fork the repository and send pull requests.
 
-### constant ++dnt++defaultPanelLabels
+## Diagrams
+
+`Diagram` draws an organigram as a graph of organs, procedures and assets, linked by the permissions they hold on each other. `ClassicOrgChart` draws it as a tree of organs and their members. Both take the organigram as plain JSON, from `organigram.toJson()`, and the node components can be used on their own.
+
+### ++dnt++Diagram
+
+<div data-summary>
+
+Draw an organigram as an interactive diagram: organs, procedures and assets, linked by the permissions they hold on each other.
+
+</div>
 
 ```tsx
-export const defaultLabels: PanelLabels
+<Diagram organigram={organigram.toJson()} onClickOrgan={organ => open(organ)} controls />
 ```
 
+<details>
+<summary>Definition</summary>
 
-
-### constant ++dnt++defaultPreviewLabels
-
-```tsx
-export const defaultPreviewLabels: PreviewLabels
+```typescript
+const Diagram: React.FC<DiagramProps>
 ```
 
+</details>
 
+### ++dnt++DiagramProps
 
-### component ++dnt++Diagram
-
-Render an organigram as a React Flow diagram with automatic layout.
-
-```tsx
-export const Diagram: React.FC<DiagramProps>
-```
-
-**Parameters**
-
-| Name | Description |
-| --- | --- |
-| `props` | Diagram configuration, callbacks, and the serialized organigram to render. |
-
-
-### component ++dnt++DiagramNode
-
-Shared visual shell used by organ, procedure, and asset nodes.
-
-```tsx
-export const DiagramNode: React.FC<{
-  onClick?: () => void
-  label?: string
-  id?: string
-  icon: React.ReactNode
-}>
-```
-
-
-
-### component ++dnt++ElectionComponent
-
-```tsx
-export const ElectionComponent: React.FC<ElectionComponentProps>
-```
-
-
-
-### component ++dnt++EntryCount
-
-Small helper that renders the current entry count for an organ.
-
-```tsx
-export const EntryCount: React.FC<{
-  organ: OrganJson
-  translateLabel?: (label: string) => string
-}>
-```
-
-
-
-### constant ++dnt++getOrganNodeIconKind
-
-```tsx
-export const getOrganNodeIconKind: ({ organ, hasUserEntries, isMaster }: {    organ: OrganJson;    hasUserEntries: boolean;    isMaster: boolean;}) => OrganNodeIconKind
-```
-
-
-
-### component ++dnt++MemberCount
-
-```tsx
-export const MemberCount: React.FC<{
-  organ: OrganJson
-  count: number
-  translateLabel?: (label: string) => string
-}>
-```
-
-
-
-### component ++dnt++OrganNode
-
-Default React Flow node used to display one organ inside a diagram.
-
-```tsx
-export const OrganNode: React.FC<Partial<NodeProps> & OrganNodeProps>
-```
-
-
-
-### component ++dnt++ProcedureIcon
-
-```tsx
-export const Procedure: (props: React.SVGProps<SVGSVGElement>) => JSX.Element
-```
-
-
-
-### component ++dnt++ProcedureNode
-
-Default React Flow node used to display one procedure inside a diagram.
-
-```tsx
-export const ProcedureNode: React.FC<
-  Partial<
-    NodeProps<{
-      procedure: ProcedureJson
-      onClick?: (procedure: ProcedureJson) => void
-      organigram?: OrganigramJson
-      translateLabel?: (label: string) => string
-    }>
-  > &
-    ProcedureNodeProps
->
-```
-
-
-
-### constant ++dnt++projectOrganigramToClassicForest
-
-```tsx
-export const projectOrganigramToClassicForest: (organigram: OrganigramJson) => ClassicOrgChartNode[]
-```
-
-
-
-### component ++dnt++StreamBox
-
-```tsx
-export const StreamBox: React.FC<{
-  content: string
-  thinkingLabel?: string
-}>
-```
-
-
-
-### component ++dnt++Summit
-
-```tsx
-export const Summit: (props: React.SVGProps<SVGSVGElement>) => JSX.Element
-```
-
-
-
-### component ++dnt++TimeLeft
-
-```tsx
-export const TimeLeft: ({ election, procedure }: {    election: Election | undefined;    procedure: ERC20VoteProcedure | VoteProcedure;}) => JSX.Element | null
-```
-
-
-
-### component ++dnt++Token
-
-```tsx
-export const Token: (props: React.SVGProps<SVGSVGElement>) => JSX.Element
-```
-
-
-
-### component ++dnt++VetoProposal
-
-```tsx
-export const VetoProposal: React.FC<ElectionComponentProps>
-```
-
-
-
-### component ++dnt++VoteEnded
-
-```tsx
-export const VoteEnded: React.FC<ElectionComponentProps>
-```
-
-
-
-
-## Hooks
-
-### hook ++dnt++defaultDiagramDisplayOptions
-
-```tsx
-export const defaultDiagramDisplayOptions: DiagramDisplayOptions
-```
-
-
-
-### hook ++dnt++filterClassicDiagramByLayers
-
-```tsx
-export const filterClassicDiagramByLayers: (organigram: OrganigramJson, layers: ReadonlyArray<DiagramLayer>, activeLayerIds: string[]) => OrganigramJson
-```
-
-
-
-### hook ++dnt++filterDiagramByLayers
-
-```tsx
-export const filterDiagramByLayers: (organigram: OrganigramJson, layers: ReadonlyArray<DiagramLayer>, activeLayerIds: string[]) => OrganigramJson
-```
-
-
-
-### hook ++dnt++getDiagramLayerStorageKey
-
-```tsx
-export const getDiagramLayerStorageKey: (organigramId: string) => string
-```
-
-
-
-### hook ++dnt++readActiveDiagramLayerIds
-
-```tsx
-export const readActiveDiagramLayerIds: (storage: DiagramLayerStorage, organigramId: string) => string[]
-```
-
-
-
-### hook ++dnt++sanitizeActiveDiagramLayerIds
-
-```tsx
-export const sanitizeActiveDiagramLayerIds: (activeLayerIds: string[], availableLayerIds: string[]) => string[]
-```
-
-
-
-### hook ++dnt++useDiagramDisplayOptions
-
-```tsx
-export const useDiagramDisplayOptions: () => [DiagramDisplayOptions, SetterOrUpdater<DiagramDisplayOptions>]
-```
-
-
-
-### hook ++dnt++useLayers
-
-Applies user-selected visual layers to an organigram without owning layer
-persistence or editing. Applications provide their persisted definitions.
-
-```tsx
-export const useLayers: (organigram: OrganigramJson, layers: ReadonlyArray<DiagramLayer>, options?: UseLayersOptions) => LayersState
-```
-
-
-
-### hook ++dnt++useModal
-
-Read the current modal content.
-
-```tsx
-export const useModal: () => ModalType
-```
-
-
-
-### hook ++dnt++useOrganigramClient
-
-Create an \{@link OrganigramClient\} tied to the provided viem clients.
-
-The hook returns `null` until a public client is available.
-
-```tsx
-export const useOrganigramClient: (publicClient?: PublicClient | null, walletClient?: WalletClient | null, chainId?: string | number | null) => OrganigramClient | null
-```
-
-**Parameters**
-
-| Name | Description |
-| --- | --- |
-| `publicClient` | Read-only viem client used for chain queries. |
-| `walletClient` | Optional wallet client used for write operations. |
-
-
-### hook ++dnt++useSetModal
-
-Update the current modal content.
-
-```tsx
-export const useSetModal: () => SetterOrUpdater<ModalType>
-```
-
-
-
-### hook ++dnt++writeActiveDiagramLayerIds
-
-```tsx
-export const writeActiveDiagramLayerIds: (storage: DiagramLayerStorage, organigramId: string, activeLayerIds: string[]) => void
-```
-
-
-
-
-## State
-
-### state ++dnt++modalState
-
-Global recoil state storing the currently opened modal.
-
-```tsx
-export const modalState: RecoilState<JSX.Element | null>
-```
-
-
-
-### state ++dnt++organigramIdState
-
-Global recoil state storing the active organigram identifier.
-
-```tsx
-export const organigramIdState: RecoilState<string>
-```
-
-
-
-### state ++dnt++useModalState
-
-Read and update the current modal content.
-
-```tsx
-export const useModalState: () => [
-  ModalType,
-  SetterOrUpdater<ModalType>
-]
-```
-
-
-
-
-## Theme
-
-### constant ++dnt++breakpoints
-
-```tsx
-export const breakpoints = {
-  values: {
-    xs: 0,
-    sm: 600,
-    md: 900,
-    lg: 1200,
-    xl: 1536
-  }
-}
-```
-
-
-
-### export ++dnt++components
-
-```tsx
-export { MuiAccordion } from './MuiAccordion'
-export { MuiAccordionSummary } from './MuiAccordionSummary'
-export { MuiAutocomplete } from './MuiAutocomplete'
-export { MuiButton } from './MuiButton'
-export { MuiCard } from './MuiCard'
-export { MuiContainer } from './MuiContainer'
-export { MuiCssBaseline } from './MuiCssBaseline'
-export { MuiGrid } from './MuiGrid'
-export { MuiMenu } from './MuiMenu'
-export { MuiMenuItem } from './MuiMenuItem'
-export { MuiModal } from './MuiModal'
-export { MuiOutlinedInput } from './MuiOutlinedInput'
-export { MuiSelect } from './MuiSelect'
-export { MuiSpeedDial } from './MuiSpeedDial'
-export { MuiSpeedDialAction } from './MuiSpeedDialAction'
-export { MuiTab } from './MuiTab'
-export { MuiTextField } from './MuiTextField'
-export { MuiToggleButton } from './MuiToggleButton'
-export { MuiTooltip } from './MuiTooltip'
-
-```
-
-
-
-### constant ++dnt++mobileNavHeight
-
-Mobile navigation height used by the hosted Organigram UI.
-
-```tsx
-export const mobileNavHeight = 50
-```
-
-
-
-### constant ++dnt++navHeight
-
-Desktop navigation height used by the hosted Organigram UI.
-
-```tsx
-export const navHeight = 100
-```
-
-
-
-### constant ++dnt++palette
-
-```tsx
-export const palette = {
-  primary: {
-    main: '#3E85DE',
-    light: '#659DE5',
-    light2: '#8BB6EB',
-    light3: '#B2CEF2',
-    light4: '#D8E7F8'
-  },
-  secondary: {
-    main: '#F58FD3',
-    light: '#F7A5DC',
-    light2: '#F9BCE5',
-    light3: '#FBD2ED'
-  },
-  error: {
-    main: '#FF5555'
-  },
-  white: '#fff',
-  grey: {
-    main: '#5A5673',
-    light: '#AAA7BD',
-    light2: '#D2D5DD',
-    light3: '#DEE2EC',
-    light4: '#E4E8F2',
-    light5: '#66637C'
-  },
-  violet: {
-    main: '#B9ACF6',
-    light: '#C7BDF8',
-    light2: '#D5CDFA',
-    light3: '#E3DEFB',
-    light4: '#F1EEFD'
-  },
-  text: {
-    primary: '#0C052F',
-    disabled: '#aaa'
-  },
-  background: {
-    default: '#F7F8FB',
-    paper: '#F7F8FB',
-    secondary: '#0C052F'
-  },
-  brickRed: {
-    main: '#DB585F'
-  },
-  gradient: {
-    main: 'radial-gradient(101.53% 183.39% at 100.00% -0.00%, #FDE9F6 0%, #D8E7F8 62.85%, #F7F8FB 100%), #F1EEFD;',
-    secondary:
-      'background: radial-gradient(154.19% 141.42% at 100.00% -0.00%, #F7F8FB 0%, #D8E7F8 48.23%, #FBD2ED 100%, #FBD2ED 100%), radial-gradient(50% 50.00% at 50% 50.00%, #F7F8FB 0%, rgba(247, 248, 251, 0.00) 100%), #F7F8FB;',
-    red: 'radial-gradient(81.36% 141.42% at 100.00% -0.00%, #F7F8FB 0%, #FDE9F6 52.40%, #FBD2ED 100%), radial-gradient(50% 50.00% at 50% 50.00%, #F7F8FB 0%, rgba(247, 248, 251, 0.00) 100%), #F7F8FB;',
-    blue: 'radial-gradient(94.27% 141.42% at 100.00% -0.00%, #F7F8FB 0%, #D8E7F8 52.40%, #B2CEF2 100%), radial-gradient(50% 50.00% at 50% 50.00%, #F7F8FB 0%, rgba(247, 248, 251, 0.00) 100%), #F7F8FB;',
-    violet:
-      'radial-gradient(70.86% 141.42% at 100.00% -0.00%, #F7F8FB 0%, #F1EEFD 52.40%, #E3DEFB 100%), radial-gradient(50% 50.00% at 50% 50.00%, #F7F8FB 0%, rgba(247, 248, 251, 0.00) 100%), #F7F8FB;'
-  }
-}
-```
-
-
-
-### constant ++dnt++theme
-
-Default MUI theme primitives shared by Organigram React components.
-
-```tsx
-export const theme = {
-  palette,
-  components,
-  shape: {
-    borderRadius: 16
-  },
-  typography,
-  breakpoints
-}
-```
-
-
-
-### constant ++dnt++typography
-
-```tsx
-export const typography = {
-  color: palette.text.primary,
-  fontFamily: 'RobotoRegular',
-  lineHeight: '132%',
-  h1: {
-    fontFamily: 'Aspekta500',
-    lineHeight: '100%',
-    fontSize: '60px',
-    letterSpacing: '-1.2px'
-    // [mediaQueries.smUp]: {
-    //   fontSize: '210px'
-    // }
-  },
-  h2: {
-    fontSize: '40px',
-    lineHeight: '110%',
-    fontFamily: 'Aspekta400',
-    letterSpacing: '-0.4px'
-  },
-  h3: {
-    fontFamily: 'Aspekta550',
-    textTransform: 'uppercase',
-    letterSpacing: '1px',
-    lineHeight: '130%'
-  },
-  subtitle1: {
-    fontSize: '13px',
-    fontWeight: 600,
-    lineHeight: '25px',
-    letterSpacing: '0.08em',
-    textTransform: 'uppercase',
-    color: palette.primary.main
-  },
-  button: {
-    textTransform: 'none',
-    fontSize: '13px'
-  },
-  body1: {
-    fontSize: '13px'
-  }
-}
-```
-
-
-
-### constant ++dnt++workspaceNavHeight
-
-Workspace navigation height used inside authenticated screens.
-
-```tsx
-export const workspaceNavHeight = 60
-```
-
-
-
-
-## Utilities
-
-### constant ++dnt++filterProposals
-
-Filter hydrated proposals according to their workflow status.
-
-```tsx
-export const filterProposals: (
-  filter: ProposalFilter,
-  proposals: ProcedureProposal[]
-) => ProcedureProposal[]
-```
-
-**Parameters**
-
-| Name | Description |
-| --- | --- |
-| `filter` | Filter label selected by the UI. |
-| `proposals` | Proposals to filter. |
-
-
-### constant ++dnt++isUserInSourceOrgan
-
-Check whether the current user belongs to the organ assigned to one procedure role.
-
-```tsx
-export const isUserInSourceOrgan: (
-  roleType: ProcedureRoleTypeName,
-  organs: OrganJson[],
-  deployedProcedure?: ProcedureJson,
-  userAddress?: string
-) => boolean
-```
-
-**Parameters**
-
-| Name | Description |
-| --- | --- |
-| `roleType` | Procedure role to inspect. |
-| `organs` | Hydrated organs available in the current organigram. |
-| `deployedProcedure` | Procedure whose role organ should be checked. |
-| `userAddress` | Connected user address. |
-
-
-### constant ++dnt++secondsToHms
-
-Convert a duration in seconds into a human-readable string.
-
-```tsx
-export const secondsToHms: (d: number) => string
-```
-
-
-
-
-## Types
-
-### interface ++dnt++AssetNodeProps
-
-Props accepted by the default asset node renderer.
-
-```tsx
-export interface AssetNodeProps {
-  Token: React.FC<{ style: any }>
-  data: {
-    asset: Asset
-    onClick?: (asset: Asset) => void
-    translateLabel?: (label: string) => string
-  }
-  hideHandles?: boolean
-}
-```
-
-**Members**
-
-| Name | Type | Description |
-| --- | --- | --- |
-| `Token` | `React.FC<{ style: any }>` |   |
-| `data` | `{ asset: Asset; onClick?: (asset: Asset) => void; translateLabel?: (label: string) => string }` |   |
-| `hideHandles` | `boolean` |   |
-
-
-### type ++dnt++ChatRole
-
-```tsx
-export type ChatRole = 'user' | 'assistant'
-```
-
-
-
-### type ++dnt++Citation
-
-```tsx
-export type Citation = {
-  type:
-    | 'workspace'
-    | 'organigram'
-    | 'organ'
-    | 'procedure'
-    | 'asset'
-    | 'notification'
-    | 'file'
-  id: string
-  label: string
-}
-```
-
-
-
-### interface ++dnt++ClassicOrgChartNode
-
-```tsx
-export interface ClassicOrgChartNode {
-  organ: OrganJson
-  entries: OrganEntry[]
-  children: ClassicOrgChartNode[]
-}
-```
-
-**Members**
-
-| Name | Type | Description |
-| --- | --- | --- |
-| `organ` | `OrganJson` |   |
-| `entries` | `OrganEntry[]` |   |
-| `children` | `ClassicOrgChartNode[]` |   |
-
-
-### interface ++dnt++ClassicOrgChartProps
-
-```tsx
-export interface ClassicOrgChartProps {
-  organigram: OrganigramJson | null
-  controls?: boolean
-  isTabletOrAbove?: boolean
-  onClickOrgan?: (organ: OrganJson) => void
-  style?: Record<string, unknown>
-  testIdPrefix?: string
-  translateLabel?: (label: string) => string
-}
-```
-
-**Members**
-
-| Name | Type | Description |
-| --- | --- | --- |
-| `organigram` | `OrganigramJson \| null` |   |
-| `controls` | `boolean` |   |
-| `isTabletOrAbove` | `boolean` |   |
-| `onClickOrgan` | `(organ: OrganJson) => void` |   |
-| `style` | `Record<string, unknown>` |   |
-| `testIdPrefix` | `string` |   |
-| `translateLabel` | `(label: string) => string` |   |
-
-
-### type ++dnt++CreateProcedure
-
-Helper signature used by flows that deploy one procedure from the UI.
-
-```tsx
-export type CreateProcedure = (
-  type: string,
-  options: TransactionOptions,
-  metadataCid: string,
-  proposers: string,
-  moderators: string,
-  deciders: string,
-  withModeration: boolean,
-  forwarder: string,
-  salt: string,
-  ...args: unknown[]
-) => Promise<Procedure & { type: ProcedureType }>
-```
-
-
-
-### interface ++dnt++DecidersActionsProps
-
-```tsx
-export interface DecidersActionsProps {
-  procedure: ERC20VoteProcedure | VoteProcedure
-  accountInOrgans: AccountInOrgans
-  proposal: ProcedureProposal
-  wrapTransaction: () => void
-}
-```
-
-**Members**
-
-| Name | Type | Description |
-| --- | --- | --- |
-| `procedure` | `ERC20VoteProcedure \| VoteProcedure` |   |
-| `accountInOrgans` | `AccountInOrgans` |   |
-| `proposal` | `ProcedureProposal` |   |
-| `wrapTransaction` | `() => void` |   |
-
-
-### type ++dnt++DeployOrganInput
-
-Helper signature used by flows that deploy one organ from the UI.
-
-```tsx
-export type DeployOrganInput = (
-  metadataCid: string,
-  salt: string,
-  index?: number
-) => Promise<Organ>
-```
-
-
-
-### interface ++dnt++DiagramDisplayOptions
-
-```tsx
-export interface DiagramDisplayOptions {
-  showAdminPermissions: boolean
-  showEntriesPermissions: boolean
-  showAssetsPermissions: boolean
-}
-```
-
-**Members**
-
-| Name | Type | Description |
-| --- | --- | --- |
-| `showAdminPermissions` | `boolean` |   |
-| `showEntriesPermissions` | `boolean` |   |
-| `showAssetsPermissions` | `boolean` |   |
-
-
-### type ++dnt++DiagramEntryUser
-
-```tsx
-export type DiagramEntryUser = {
-  image?: string | null
-  name?: string | null
-}
-```
-
-
-
-### interface ++dnt++DiagramLayer
-
-```tsx
-export interface DiagramLayer {
-  id: string
-  organs: ReadonlyArray<{ organAddress: string }>
-  procedures: ReadonlyArray<{ procedureAddress: string }>
-  assets: ReadonlyArray<{ assetAddress: string }>
-}
-```
-
-**Members**
-
-| Name | Type | Description |
-| --- | --- | --- |
-| `id` | `string` |   |
-| `organs` | `ReadonlyArray<{ organAddress: string }>` |   |
-| `procedures` | `ReadonlyArray<{ procedureAddress: string }>` |   |
-| `assets` | `ReadonlyArray<{ assetAddress: string }>` |   |
-
-
-### interface ++dnt++DiagramLayerStorage
-
-```tsx
-export interface DiagramLayerStorage {
-  getItem: (key: string) => string | null
-  setItem: (key: string, value: string) => void
-}
-```
-
-**Members**
-
-| Name | Type | Description |
-| --- | --- | --- |
-| `getItem` | `(key: string) => string \| null` |   |
-| `setItem` | `(key: string, value: string) => void` |   |
-
-
-### interface ++dnt++DiagramProps
+<div data-summary>
 
 Props accepted by the default `Diagram` component.
 
-```tsx
-export interface DiagramProps {
-  nodeTypes?: NodeTypes
-  direction?: string
-  edgeType?: OrganigramEdgeType
-  organigram: OrganigramJson | null
-  onNodePositionsChange?: (nodePositions: OrganigramNodePositions) => void
-  style?: Record<string, unknown>
-  controls?: boolean
-  options?: ReactFlowProps
-  isTabletOrAbove?: boolean
-  onClickOrgan?: (organ: OrganJson) => void
-  onClickAsset?: (asset: AssetJson) => void
-  onClickProcedure?: (procedure: ProcedureJson) => void
-  onOrganDeployed?: (organ: OrganJson) => void
-  onAssetDeployed?: (asset: AssetJson) => void
-  onProcedureDeployed?: (procedure: ProcedureJson) => void
-  translateLabel?: (label: string) => string
-  entryUsers?: Record<string, DiagramEntryUser>
-  displayOptions?: DiagramDisplayOptions
-}
-```
+</div>
 
-**Members**
-
-| Name | Type | Description |
+| Property | Type | Description |
 | --- | --- | --- |
-| `nodeTypes` | `NodeTypes` |   |
-| `direction` | `string` |   |
-| `edgeType` | `OrganigramEdgeType` |   |
-| `organigram` | `OrganigramJson \| null` |   |
-| `onNodePositionsChange` | `(nodePositions: OrganigramNodePositions) => void` |   |
-| `style` | `Record<string, unknown>` |   |
-| `controls` | `boolean` |   |
-| `options` | `ReactFlowProps` |   |
-| `isTabletOrAbove` | `boolean` |   |
-| `onClickOrgan` | `(organ: OrganJson) => void` |   |
-| `onClickAsset` | `(asset: AssetJson) => void` |   |
-| `onClickProcedure` | `(procedure: ProcedureJson) => void` |   |
-| `onOrganDeployed` | `(organ: OrganJson) => void` |   |
-| `onAssetDeployed` | `(asset: AssetJson) => void` |   |
-| `onProcedureDeployed` | `(procedure: ProcedureJson) => void` |   |
-| `translateLabel` | `(label: string) => string` |   |
-| `entryUsers` | `Record<string, DiagramEntryUser>` |   |
-| `displayOptions` | `DiagramDisplayOptions` |   |
+| `controls` | `boolean` | Whether to show the zoom controls. |
+| `direction` | `string` | Layout direction: `TB` from top to bottom, or `LR` from left to right. |
+| `displayOptions` | `DiagramDisplayOptions` | Which permission links to draw. |
+| `edgeType` | `OrganigramEdgeType` | Line style of the links. |
+| `entryUsers` | `Record<string, DiagramEntryUser>` | Names and avatars of the members, by address. |
+| `isTabletOrAbove` | `boolean` | Whether the screen is at least tablet-sized, to place the controls. |
+| `nodeTypes` | `NodeTypes` | React Flow node components, by node type. Defaults to `defaultNodeTypes`. |
+| `options` | `ReactFlowProps` | Extra props passed to React Flow. |
+| `organigram` | `OrganigramJson \| null` | Organigram to draw, or `null` while it loads. |
+| `style` | `Record<string, unknown>` | Style of the diagram container. |
 
+#### ++dnt++DiagramProps.onClickAsset
 
-### interface ++dnt++ElectionComponentProps
+Called when the user clicks an asset.
 
-```tsx
-export interface ElectionComponentProps {
-  procedure: ERC20VoteProcedure | VoteProcedure
-  proposal: ProcedureProposal
-  accountInOrgans: {
-    proposers?: boolean
-    moderators?: boolean
-    deciders?: boolean
-  }
-  wrapTransaction: TransactionOptions['onTransaction']
-  t: (key: string) => string
-  publicClient?: PublicClient | null
-  walletClient?: WalletClient | null
-  voterAddress?: string
-  compact?: boolean
-}
+<details>
+<summary>Signature</summary>
+
+```typescript
+onClickAsset?: (asset: AssetJson) => void;
 ```
 
-**Members**
+</details>
 
-| Name | Type | Description |
+#### ++dnt++DiagramProps.onClickOrgan
+
+Called when the user clicks an organ.
+
+<details>
+<summary>Signature</summary>
+
+```typescript
+onClickOrgan?: (organ: OrganJson) => void;
+```
+
+</details>
+
+#### ++dnt++DiagramProps.onClickProcedure
+
+Called when the user clicks a procedure.
+
+<details>
+<summary>Signature</summary>
+
+```typescript
+onClickProcedure?: (procedure: ProcedureJson) => void;
+```
+
+</details>
+
+#### ++dnt++DiagramProps.onNodePositionsChange
+
+Called when the user moves nodes, to save their positions.
+
+<details>
+<summary>Signature</summary>
+
+```typescript
+onNodePositionsChange?: (nodePositions: OrganigramNodePositions) => void;
+```
+
+</details>
+
+#### ++dnt++DiagramProps.translateLabel
+
+Translation function for the labels.
+
+<details>
+<summary>Signature</summary>
+
+```typescript
+translateLabel?: (label: string) => string;
+```
+
+</details>
+
+### ++dnt++ClassicOrgChart
+
+<div data-summary>
+
+Draw an organigram as a classic tree of organs and their members, as most people picture an organization chart.
+
+</div>
+
+<details>
+<summary>Definition</summary>
+
+```typescript
+const ClassicOrgChart: React.FC<ClassicOrgChartProps>
+```
+
+</details>
+
+### ++dnt++ClassicOrgChartProps
+
+<div data-summary>
+
+Props of `ClassicOrgChart`.
+
+</div>
+
+| Property | Type | Description |
 | --- | --- | --- |
-| `procedure` | `ERC20VoteProcedure \| VoteProcedure` |   |
-| `proposal` | `ProcedureProposal` |   |
-| `accountInOrgans` | `{ proposers?: boolean; moderators?: boolean; deciders?: boolean }` |   |
-| `wrapTransaction` | `TransactionOptions['onTransaction']` |   |
-| `t` | `(key: string) => string` |   |
-| `publicClient` | `PublicClient \| null` |   |
-| `walletClient` | `WalletClient \| null` |   |
-| `voterAddress` | `string` |   |
-| `compact` | `boolean` |   |
+| `controls` | `boolean` | Whether to show the zoom controls. |
+| `isTabletOrAbove` | `boolean` | Whether the screen is at least tablet-sized, to place the controls. |
+| `organigram` | `OrganigramJson \| null` | Organigram to draw, or `null` while it loads. |
+| `style` | `Record<string, unknown>` | Style of the chart container. |
+| `testIdPrefix` | `string` | Prefix of the test identifiers of the nodes. |
 
+#### ++dnt++ClassicOrgChartProps.onClickOrgan
 
-### interface ++dnt++LayersState
+Called when the user clicks an organ.
 
-```tsx
-export interface LayersState {
-  activeLayerIds: string[]
-  visibleOrganigram: OrganigramJson
-  classicVisibleOrganigram: OrganigramJson
-  toggleLayer: (layerId: string) => void
-  showAll: () => void
-}
+<details>
+<summary>Signature</summary>
+
+```typescript
+onClickOrgan?: (organ: OrganJson) => void;
 ```
 
-**Members**
+</details>
 
-| Name | Type | Description |
-| --- | --- | --- |
-| `activeLayerIds` | `string[]` |   |
-| `visibleOrganigram` | `OrganigramJson` |   |
-| `classicVisibleOrganigram` | `OrganigramJson` |   |
-| `toggleLayer` | `(layerId: string) => void` |   |
-| `showAll` | `() => void` |   |
+#### ++dnt++ClassicOrgChartProps.translateLabel
 
+Translation function for the labels.
 
-### type ++dnt++MergeOrganigramPreview
+<details>
+<summary>Signature</summary>
 
-```tsx
-export type MergeOrganigramPreview = {
-  type: 'organigram'
-  organigramId: string
-  persistence: 'merge-additive'
-  summary: string[]
-  organigram: OrganigramJson
-}
+```typescript
+translateLabel?: (label: string) => string;
 ```
 
+</details>
 
+### ++dnt++OrganNode
 
-### type ++dnt++Message
+<div data-summary>
 
-```tsx
-export type Message = {
-  role: 'user' | 'assistant'
-  content: string
-}
+Default React Flow node used to display one organ inside a diagram.
+
+</div>
+
+<details>
+<summary>Definition</summary>
+
+```typescript
+const OrganNode: React.FC<Partial<NodeProps> & OrganNodeProps>
 ```
 
+</details>
 
+### ++dnt++OrganNodeProps
 
-### type ++dnt++ModalType
-
-React element currently mounted inside the shared modal slot.
-
-```tsx
-export type ModalType = null | JSX.Element
-```
-
-
-
-### type ++dnt++NewOrganigramPreview
-
-```tsx
-export type NewOrganigramPreview = {
-  type: 'new-organigram'
-  persistence: 'create'
-  summary: string[]
-  organigram: OrganigramJson
-}
-```
-
-
-
-### type ++dnt++OrganigramPreview
-
-```tsx
-export type OrganigramPreview =
-  | MergeOrganigramPreview
-  | NewOrganigramPreview
-```
-
-
-
-### type ++dnt++OrganNodeIconKind
-
-```tsx
-export type OrganNodeIconKind = 'master' | 'people' | 'funds' | 'documents'
-```
-
-
-
-### interface ++dnt++OrganNodeProps
+<div data-summary>
 
 Props accepted by the default organ node renderer.
 
-```tsx
-export interface OrganNodeProps {
-  data: {
-    organ: Organ
-    entryUsers?: Record<string, DiagramEntryUser>
-    position?: { x: number; y: number }
-    isMaster?: boolean
-    onClick?: () => void
-    translateLabel?: (label: string) => string
-  }
-  hideHandles?: boolean
-}
-```
+</div>
 
-**Members**
-
-| Name | Type | Description |
+| Property | Type | Description |
 | --- | --- | --- |
-| `data` | `{ organ: Organ; entryUsers?: Record<string, DiagramEntryUser>; position?: { x: number; y: number }; isMaster?: boolean; onClick?: () => void; translateLabel?: (label: string) => string }` |   |
-| `hideHandles` | `boolean` |   |
+| `data` | `{ organ: Organ; entryUsers?: Record<string, DiagramEntryUser>; position?: { x: number; y: number; }; isMaster?: boolean; onClick?: () => void; translateLabel?: (label: string) => string; }` | The organ, its members' names and avatars, and the click handler. |
+| `hideHandles` | `boolean` | Whether to hide the connection handles, to show the node on its own. |
 
+### ++dnt++DiagramEntryUser
 
-### type ++dnt++PanelLabels
+<div data-summary>
 
-```tsx
-export type PanelLabels = PreviewLabels & {
-  title: string
-  close: string
-  threads: string
-  newChat: string
-  noConversationsYet: string
-  thinking: string
-  askPlaceholder: string
-  attachDocument: string
-  selectedDocument: string
-  removeDocument: string
-  sourceHero: string
-  sourceWorkspace: string
-}
+Name and avatar shown for a member address.
+
+</div>
+
+<details>
+<summary>Definition</summary>
+
+```typescript
+export type DiagramEntryUser = {
+    image?: string | null;
+    name?: string | null;
+};
 ```
 
+</details>
 
+### ++dnt++ProcedureNode
 
-### type ++dnt++PanelMessage
+<div data-summary>
 
-```tsx
-export type PanelMessage = Message & {
-  id?: string
-  response?: Response
-  streaming?: boolean
-}
+Default React Flow node used to display one procedure inside a diagram.
+
+</div>
+
+<details>
+<summary>Definition</summary>
+
+```typescript
+const ProcedureNode: React.FC<Partial<NodeProps<{
+    procedure: ProcedureJson;
+    onClick?: (procedure: ProcedureJson) => void;
+    organigram?: OrganigramJson;
+    translateLabel?: (label: string) => string;
+}>> & ProcedureNodeProps>
 ```
 
+</details>
 
+### ++dnt++ProcedureNodeProps
 
-### type ++dnt++PreviewLabels
-
-```tsx
-export type PreviewLabels = {
-  preview: string
-  confirmationNotice: string
-  organ: string
-  newOrgan: string
-  newProcedure: string
-  newAsset: string
-  newEntry: string
-  entry: string
-  organType: string
-  procedureType: string
-  assetType: string
-  cancel: string
-  confirm: string
-}
-```
-
-
-
-### interface ++dnt++ProcedureNodeProps
+<div data-summary>
 
 Props accepted by the default procedure node renderer.
 
-```tsx
-export interface ProcedureNodeProps {
-  hideHandles?: boolean
-  organigram?: OrganigramJson
-}
-```
+</div>
 
-**Members**
-
-| Name | Type | Description |
+| Property | Type | Description |
 | --- | --- | --- |
-| `hideHandles` | `boolean` |   |
-| `organigram` | `OrganigramJson` |   |
+| `hideHandles` | `boolean` | Whether to hide the connection handles, to show the node on its own. |
+| `organigram` | `OrganigramJson` | Organigram the procedure belongs to, to name the organs it links. |
 
+### ++dnt++DiagramDisplayOptions
 
-### type ++dnt++ProposalFilter
+<div data-summary>
 
-Named filters used by proposal list UIs.
+Which permission links a diagram draws.
 
-```tsx
-export type ProposalFilter = 'current' | 'drafts' | 'passed' | 'blocked' | ''
+</div>
+
+| Property | Type | Description |
+| --- | --- | --- |
+| `showAdminPermissions` | `boolean` | Draw the permissions to manage permissions. |
+| `showAssetsPermissions` | `boolean` | Draw the permissions to move funds. |
+| `showEntriesPermissions` | `boolean` | Draw the permissions to change members and documents. |
+
+### ++dnt++useDiagramDisplayOptions
+
+<div data-summary>
+
+Read and change the diagram display options, shared across the app.
+
+</div>
+
+<details>
+<summary>Signature</summary>
+
+```typescript
+useDiagramDisplayOptions: () => [DiagramDisplayOptions, SetterOrUpdater<DiagramDisplayOptions>]
 ```
 
+</details>
 
+### ++dnt++ProcedureIcon
 
-### type ++dnt++Response
+<div data-summary>
 
-```tsx
-export type Response = {
-  threadId?: string
-  message: string
-  citations: Citation[]
-  preview?: OrganigramPreview
-}
+Procedure icon.
+
+</div>
+
+<details>
+<summary>Signature</summary>
+
+```typescript
+Procedure: (props: React.SVGProps<SVGSVGElement>) => import("react/jsx-runtime").JSX.Element
 ```
 
+</details>
 
+## Layers
 
-### type ++dnt++SetModal
+Layers are subsets of an organigram defined by your application, such as departments. `useLayers` filters the organigram for either view according to the layers the user selects, and remembers the selection in a storage you provide.
+
+### ++dnt++DiagramLayer
+
+<div data-summary>
+
+A named subset of an organigram, such as a department, that users can show or hide.
+
+</div>
+
+| Property | Type | Description |
+| --- | --- | --- |
+| `assets` | `ReadonlyArray<{ assetAddress: string; }>` | Assets in the layer. |
+| `id` | `string` | Layer identifier. |
+| `organs` | `ReadonlyArray<{ organAddress: string; }>` | Organs in the layer. |
+| `procedures` | `ReadonlyArray<{ procedureAddress: string; }>` | Procedures in the layer. |
+
+### ++dnt++DiagramLayerStorage
+
+<div data-summary>
+
+A key-value storage for the active layers, such as `localStorage`.
+
+</div>
+
+#### ++dnt++DiagramLayerStorage.getItem
+
+Read a value.
+
+<details>
+<summary>Signature</summary>
+
+```typescript
+getItem: (key: string) => string | null;
+```
+
+</details>
+
+#### ++dnt++DiagramLayerStorage.setItem
+
+Write a value.
+
+<details>
+<summary>Signature</summary>
+
+```typescript
+setItem: (key: string, value: string) => void;
+```
+
+</details>
+
+### ++dnt++LayersState
+
+<div data-summary>
+
+The layers state returned by `useLayers`.
+
+</div>
+
+| Property | Type | Description |
+| --- | --- | --- |
+| `activeLayerIds` | `string[]` | Layers currently shown. Empty means everything is shown. |
+| `classicVisibleOrganigram` | `OrganigramJson` | The organigram filtered for `ClassicOrgChart`. |
+| `visibleOrganigram` | `OrganigramJson` | The organigram filtered for `Diagram`. |
+
+#### ++dnt++LayersState.showAll
+
+Show every layer.
+
+<details>
+<summary>Signature</summary>
+
+```typescript
+showAll: () => void;
+```
+
+</details>
+
+#### ++dnt++LayersState.toggleLayer
+
+Show or hide one layer.
+
+<details>
+<summary>Signature</summary>
+
+```typescript
+toggleLayer: (layerId: string) => void;
+```
+
+</details>
+
+### ++dnt++UseLayersOptions
+
+<div data-summary>
+
+Options of `useLayers`.
+
+</div>
+
+| Property | Type | Description |
+| --- | --- | --- |
+| `storage` | `DiagramLayerStorage \| null` | Where to remember the active layers, such as `localStorage`. Without it, the selection is not kept. |
+
+#### ++dnt++UseLayersOptions.onStorageError
+
+Called when the storage cannot be read or written.
+
+<details>
+<summary>Signature</summary>
+
+```typescript
+onStorageError?: () => void;
+```
+
+</details>
+
+### ++dnt++useLayers
+
+<div data-summary>
+
+Applies user-selected visual layers to an organigram without owning layer persistence or editing. Applications provide their persisted definitions.
+
+</div>
+
+<details>
+<summary>Signature</summary>
+
+```typescript
+useLayers: (organigram: OrganigramJson, layers: ReadonlyArray<DiagramLayer>, options?: UseLayersOptions) => LayersState
+```
+
+</details>
+
+## Procedures
+
+Screens to follow and decide on proposals. `procedures` gives, for each procedure type, a `Component` that describes the procedure and a `Proposal` that shows a proposal with the actions the connected account may take.
+
+### ++dnt++ElectionComponentProps
+
+<div data-summary>
+
+Props of the vote components.
+
+</div>
+
+| Property | Type | Description |
+| --- | --- | --- |
+| `accountInOrgans` | `{ proposers?: boolean; moderators?: boolean; deciders?: boolean; }` | Roles of the connected account in the procedure. |
+| `compact` | `boolean` | Whether to use the condensed layout of lists. |
+| `procedure` | `ERC20VoteProcedure \| VoteProcedure` | Vote procedure the proposal belongs to. |
+| `proposal` | `ProcedureProposal` | Proposal being voted on. |
+| `publicClient` | `PublicClient \| null` | Client used for reads, when the procedure has none. |
+| `voterAddress` | `string` | Address whose vote is shown, by default the connected wallet. |
+| `walletClient` | `WalletClient \| null` | Client that signs the vote, when the procedure has none. |
+| `wrapTransaction` | `TransactionOptions['onTransaction']` | Called with each transaction as soon as it is sent, for example to show its progress. |
+
+#### ++dnt++ElectionComponentProps.t
+
+Translation function for the labels.
+
+<details>
+<summary>Signature</summary>
+
+```typescript
+t: (key: string) => string;
+```
+
+</details>
+
+### ++dnt++NominationProposalProps
+
+<div data-summary>
+
+Props of the proposal screen of a nomination procedure.
+
+</div>
+
+| Property | Type | Description |
+| --- | --- | --- |
+| `accountInOrgans` | `{ proposers?: boolean; moderators?: boolean; deciders?: boolean; }` | Roles of the connected account in the procedure. |
+| `compact` | `boolean` | Whether to use the condensed layout of lists. |
+| `procedure` | `NominationProcedure` | Nomination procedure the proposal belongs to. |
+| `proposal` | `ProcedureProposal` | Proposal shown. |
+| `publicClient` | `PublicClient \| null` | Client used for reads, when the procedure has none. |
+| `walletClient` | `WalletClient \| null` | Client that signs the decision, when the procedure has none. |
+| `wrapTransaction` | `TransactionOptions['onTransaction']` | Called with each transaction as soon as it is sent, for example to show its progress. |
+
+#### ++dnt++NominationProposalProps.t
+
+Translation function for the labels.
+
+<details>
+<summary>Signature</summary>
+
+```typescript
+t: (key: string, options?: any) => string;
+```
+
+</details>
+
+### ++dnt++procedures
+
+<div data-summary>
+
+UI of each procedure type: `Component` describes the procedure, `Proposal` shows a proposal and its decision.
+
+</div>
+
+```tsx
+const { Proposal } = procedures[procedure.typeName]
+```
+
+## Workspace agent
+
+The chat panel of the workspace agent, with the preview of the changes it proposes. These components only render: your application sends the messages to its agent and stores the conversations. Every text can be replaced through the `labels` props.
+
+### ++dnt++AgentPanel
+
+<div data-summary>
+
+Chat panel of the workspace agent: conversations, messages, document upload and proposed changes.
+
+</div>
+
+The panel only renders: the application sends the messages and stores the conversations.
+
+### ++dnt++Animated
+
+<div data-summary>
+
+Fade and slide its content in and out.
+
+</div>
+
+<details>
+<summary>Definition</summary>
+
+```typescript
+const Animated: React.FC<AnimatedProps>
+```
+
+</details>
+
+### ++dnt++AgentResponse
+
+<div data-summary>
+
+An answer of the workspace agent.
+
+</div>
+
+<details>
+<summary>Definition</summary>
+
+```typescript
+export type AgentResponse = {
+    threadId?: string;
+    message: string;
+    citations: Citation[];
+    preview?: OrganigramPreview;
+};
+```
+
+</details>
+
+### ++dnt++AnimatedProps
+
+<div data-summary>
+
+Props of `Animated`.
+
+</div>
+
+<details>
+<summary>Definition</summary>
+
+```typescript
+export type AnimatedProps = {
+    visible?: boolean;
+    delay?: number;
+    children: ReactNode;
+    translateY?: number;
+    cursor?: CSSProperties['cursor'];
+    unmountOnExit?: boolean;
+};
+```
+
+</details>
+
+### ++dnt++Citation
+
+<div data-summary>
+
+A workspace object the agent refers to in an answer.
+
+</div>
+
+<details>
+<summary>Definition</summary>
+
+```typescript
+export type Citation = {
+    type: 'workspace' | 'organigram' | 'organ' | 'procedure' | 'asset' | 'notification' | 'file';
+    id: string;
+    label: string;
+};
+```
+
+</details>
+
+### ++dnt++MergeOrganigramPreview
+
+<div data-summary>
+
+Changes the agent proposes to an existing organigram, added to it once confirmed.
+
+</div>
+
+<details>
+<summary>Definition</summary>
+
+```typescript
+export type MergeOrganigramPreview = {
+    type: 'organigram';
+    organigramId: string;
+    persistence: 'merge-additive';
+    summary: string[];
+    organigram: OrganigramJson;
+};
+```
+
+</details>
+
+### ++dnt++Message
+
+<div data-summary>
+
+A message of a conversation with the workspace agent.
+
+</div>
+
+<details>
+<summary>Definition</summary>
+
+```typescript
+export type Message = {
+    role: 'user' | 'assistant';
+    content: string;
+};
+```
+
+</details>
+
+### ++dnt++NewOrganigramPreview
+
+<div data-summary>
+
+A new organigram the agent proposes, created once confirmed.
+
+</div>
+
+<details>
+<summary>Definition</summary>
+
+```typescript
+export type NewOrganigramPreview = {
+    type: 'new-organigram';
+    persistence: 'create';
+    summary: string[];
+    organigram: OrganigramJson;
+};
+```
+
+</details>
+
+### ++dnt++OrganigramPreview
+
+<div data-summary>
+
+Changes the agent proposes, which the user confirms or cancels.
+
+</div>
+
+<details>
+<summary>Definition</summary>
+
+```typescript
+export type OrganigramPreview = MergeOrganigramPreview | NewOrganigramPreview;
+```
+
+</details>
+
+### ++dnt++PanelLabels
+
+<div data-summary>
+
+Texts of the agent panel, to translate it.
+
+</div>
+
+<details>
+<summary>Definition</summary>
+
+```typescript
+export type PanelLabels = PreviewLabels & {
+    title: string;
+    close: string;
+    threads: string;
+    newChat: string;
+    noConversationsYet: string;
+    thinking: string;
+    askPlaceholder: string;
+    attachDocument: string;
+    selectedDocument: string;
+    removeDocument: string;
+    sourceHero: string;
+    sourceWorkspace: string;
+};
+```
+
+</details>
+
+### ++dnt++PanelMessage
+
+<div data-summary>
+
+A message shown in the agent panel, possibly still streaming.
+
+</div>
+
+<details>
+<summary>Definition</summary>
+
+```typescript
+export type PanelMessage = Message & {
+    id?: string;
+    response?: AgentResponse;
+    streaming?: boolean;
+};
+```
+
+</details>
+
+### ++dnt++PreviewLabels
+
+<div data-summary>
+
+Texts of the change preview, to translate it.
+
+</div>
+
+<details>
+<summary>Definition</summary>
+
+```typescript
+export type PreviewLabels = {
+    preview: string;
+    confirmationNotice: string;
+    organ: string;
+    newOrgan: string;
+    newProcedure: string;
+    newAsset: string;
+    newEntry: string;
+    entry: string;
+    organType: string;
+    procedureType: string;
+    assetType: string;
+    cancel: string;
+    confirm: string;
+};
+```
+
+</details>
+
+### ++dnt++StoredMessage
+
+<div data-summary>
+
+A saved message of a conversation.
+
+</div>
+
+<details>
+<summary>Definition</summary>
+
+```typescript
+export type StoredMessage = Message & {
+    id: string;
+    createdAt: string;
+    response?: AgentResponse;
+};
+```
+
+</details>
+
+### ++dnt++Thread
+
+<div data-summary>
+
+A conversation with the workspace agent.
+
+</div>
+
+<details>
+<summary>Definition</summary>
+
+```typescript
+export type Thread = {
+    id: string;
+    title: string;
+    source: ThreadSource;
+    workspace?: ThreadWorkspace | null;
+    currentOrganigramId?: string | null;
+    createdAt: string;
+    updatedAt: string;
+    messages: StoredMessage[];
+};
+```
+
+</details>
+
+### ++dnt++ThreadSource
+
+<div data-summary>
+
+Where a conversation started: in a workspace or on the home page.
+
+</div>
+
+<details>
+<summary>Definition</summary>
+
+```typescript
+export type ThreadSource = 'workspace' | 'hero';
+```
+
+</details>
+
+### ++dnt++ThreadWorkspace
+
+<div data-summary>
+
+The workspace a conversation belongs to.
+
+</div>
+
+<details>
+<summary>Definition</summary>
+
+```typescript
+export type ThreadWorkspace = {
+    id: string;
+    name?: string | null;
+};
+```
+
+</details>
+
+## Client and shared state
+
+`useOrganigramClient` creates an `OrganigramClient` from your viem clients. The other hooks share state through Recoil, so your application must be wrapped in a `RecoilRoot`.
+
+### ++dnt++useOrganigramClient
+
+<div data-summary>
+
+Create an `OrganigramClient` from viem clients, or return `null` until a public client is available.
+
+</div>
+
+The client is created synchronously with the procedure types known for the chain. Use `OrganigramClient.load()` to read them from chain instead.
+
+```tsx
+const client = useOrganigramClient(publicClient, walletClient, chainId)
+```
+
+<details>
+<summary>Signature</summary>
+
+```typescript
+useOrganigramClient: (publicClient?: PublicClient | null, walletClient?: WalletClient | null, chainId?: string | number | null) => OrganigramClient | null
+```
+
+</details>
+
+### ++dnt++ModalType
+
+<div data-summary>
+
+React element currently mounted inside the shared modal slot.
+
+</div>
+
+<details>
+<summary>Definition</summary>
+
+```typescript
+export type ModalType = null | JSX.Element;
+```
+
+</details>
+
+### ++dnt++SetModal
+
+<div data-summary>
 
 React state setter signature for the shared modal slot.
 
-```tsx
-export type SetModal = Dispatch<SetStateAction<ModalType>>
+</div>
+
+<details>
+<summary>Definition</summary>
+
+```typescript
+export type SetModal = Dispatch<SetStateAction<ModalType>>;
 ```
 
+</details>
 
+### ++dnt++useSetModal
 
-### type ++dnt++StoredMessage
+<div data-summary>
 
-```tsx
-export type StoredMessage = Message & {
-  id: string
-  createdAt: string
-  response?: Response
-}
+Update the current modal content.
+
+</div>
+
+<details>
+<summary>Signature</summary>
+
+```typescript
+useSetModal: () => SetterOrUpdater<ModalType>
 ```
 
+</details>
 
+### ++dnt++modalState
 
-### type ++dnt++Thread
+<div data-summary>
 
-```tsx
-export type Thread = {
-  id: string
-  title: string
-  source: ThreadSource
-  workspace?: ThreadWorkspace | null
-  currentOrganigramId?: string | null
-  createdAt: string
-  updatedAt: string
-  messages: StoredMessage[]
-}
+Global recoil state storing the currently opened modal.
+
+</div>
+
+<details>
+<summary>Definition</summary>
+
+```typescript
+const modalState: import('recoil').RecoilState<JSX.Element | null>
 ```
 
+</details>
 
+### ++dnt++ProposalFilter
 
-### type ++dnt++ThreadSource
+<div data-summary>
 
-```tsx
-export type ThreadSource = 'workspace' | 'hero'
+Named filters used by proposal list UIs.
+
+</div>
+
+<details>
+<summary>Definition</summary>
+
+```typescript
+export type ProposalFilter = 'current' | 'drafts' | 'passed' | 'blocked' | '';
 ```
 
+</details>
 
+### ++dnt++isUserInSourceOrgan
 
-### type ++dnt++ThreadWorkspace
+<div data-summary>
 
-```tsx
-export type ThreadWorkspace = {
-  id: string
-  name?: string | null
-}
+Check whether the current user belongs to the organ assigned to one procedure role.
+
+</div>
+
+<details>
+<summary>Signature</summary>
+
+```typescript
+isUserInSourceOrgan: (roleType: ProcedureRoleTypeName, organs: OrganJson[], deployedProcedure?: ProcedureJson, userAddress?: string) => boolean
 ```
 
-
-
-### interface ++dnt++UseLayersOptions
-
-```tsx
-export interface UseLayersOptions {
-  storage?: DiagramLayerStorage | null
-  onStorageError?: () => void
-}
-```
-
-**Members**
+**Parameters**
 
 | Name | Type | Description |
 | --- | --- | --- |
-| `storage` | `DiagramLayerStorage \| null` |   |
-| `onStorageError` | `() => void` |   |
+| `roleType` | `ProcedureRoleTypeName` | Procedure role to inspect. |
+| `organs` | `OrganJson[]` | Hydrated organs available in the current organigram. |
+| `deployedProcedure` | `ProcedureJson` | Procedure whose role organ should be checked. |
+| `userAddress` | `string` | Connected user address. |
 
+</details>
 
+## Theme
 
-## Namespaces
+The MUI theme of Organigram. Pass it to `createTheme()` and a `ThemeProvider`, and serve its fonts from `/fonts`.
 
-### export ++dnt++procedures
+### ++dnt++mobileNavHeight
 
-```tsx
-import nomination from './nomination'
-import vote from './vote'
-import erc20Vote from './erc20Vote'
+<div data-summary>
 
-const procedures = { nomination, vote, erc20Vote }
+Mobile navigation height used by the hosted Organigram UI.
 
-export default procedures
+</div>
 
+<details>
+<summary>Definition</summary>
+
+```typescript
+const mobileNavHeight = 50
 ```
 
+</details>
 
+### ++dnt++navHeight
+
+<div data-summary>
+
+Desktop navigation height used by the hosted Organigram UI.
+
+</div>
+
+<details>
+<summary>Definition</summary>
+
+```typescript
+const navHeight = 100
+```
+
+</details>
+
+### ++dnt++palette
+
+<div data-summary>
+
+Colors of the Organigram theme.
+
+</div>
+
+### ++dnt++theme
+
+<div data-summary>
+
+The MUI theme of Organigram: palette, typography, breakpoints and component styles.
+
+</div>
+
+Its fonts are served from `/fonts/*.woff2`: copy `node_modules/@organigram/react/dist/fonts` to the public assets of your application.
+
+### ++dnt++typography
+
+<div data-summary>
+
+Fonts and text styles of the Organigram theme.
+
+</div>
+
+### ++dnt++workspaceNavHeight
+
+<div data-summary>
+
+Workspace navigation height used inside authenticated screens.
+
+</div>
+
+<details>
+<summary>Definition</summary>
+
+```typescript
+const workspaceNavHeight = 60
+```
+
+</details>
 
